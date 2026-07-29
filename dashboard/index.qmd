@@ -7,13 +7,16 @@ format: dashboard
 
 ```{python}
 import boto3, gzip, json, io
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import pandas as pd
+from zoneinfo import ZoneInfo
 import plotly.express as px
 
 BUCKET = "mem-ed-wait-times"
 DAYS = 7
 s3 = boto3.client("s3")
+
+rendered_at = datetime.now(ZoneInfo("America/Chicago")).strftime("%b %d, %I:%M %p %Z")
 
 def _keys(prefix):
     pages = s3.get_paginator("list_objects_v2").paginate(Bucket=BUCKET, Prefix=prefix)
@@ -74,3 +77,7 @@ latency_fig.update_layout(
 )
 
 ```
+
+::: {.card}
+Last rendered: `{python} rendered_at`
+:::
