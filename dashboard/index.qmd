@@ -1,0 +1,76 @@
+---
+title: "Memphis ED wait times"
+format: dashboard
+
+---
+
+
+```{python}
+import boto3, gzip, json, io
+from datetime import date, timedelta
+import pandas as pd
+import plotly.express as px
+
+BUCKET = "mem-ed-wait-times"
+DAYS = 7
+s3 = boto3.client("s3")
+
+def _keys(prefix):
+    pages = s3.get_paginator("list_objects_v2").paginate(Bucket=BUCKET, Prefix=prefix)
+    return [o["Key"] for p in pages for o in p.get("Contents", [])]
+
+def _records(key):
+    body = s3.get_object(Bucket=BUCKET, Key=key)["Body"].read()
+    if key.endswith(".gz"):
+        body = gzip.decompress(body)
+    return [json.loads(l) for l in body.decode("utf-8").splitlines() if l.strip()]
+
+def load(days=DAYS):
+    rows = []
+    for i in range(days):
+        d = (date.today() - timedelta(days=i)).isoformat()
+        keys = _keys(f"compacted/ed_wait/dt={d}/") or _keys(f"raw/ed_wait/dt={d}/")
+        for k in keys:
+            rows.extend(_records(k))
+
+    df = pd.DataFrame(rows)
+    df["observed_at"] = pd.to_datetime(df["observed_at"], utc=True).dt.tz_convert("America/Chicago")
+    df["wait_minutes"] = pd.to_numeric(df["wait_minutes"], errors="coerce")
+    return df.sort_values("observed_at")
+
+df = load()
+latest = df.groupby("facility", as_index=False).last()
+
+```
+
+
+## Row
+```{python}
+wait_fig = px.line(df, x="observed_at", y = "wait_minutes", color="facility", template="simple_white")
+
+wait_fig.update_layout(
+    legend=dict(
+        orientation="h",
+        yanchor="top", y=-0.2,
+        xanchor="left", x=0,
+        entrywidth=0.2, entrywidthmode="fraction",
+    ),
+    margin=dict(l=40, r=20, t=30, b=140),
+)
+```
+
+## Row
+```{python}
+latency_fig = px.line(df, x="observed_at", y = "latency_ms", color="facility", template="simple_white")
+
+latency_fig.update_layout(
+    legend=dict(
+        orientation="h",
+        yanchor="top", y=-0.2,
+        xanchor="left", x=0,
+        entrywidth=0.2, entrywidthmode="fraction",
+    ),
+    margin=dict(l=40, r=20, t=30, b=140),
+)
+
+```
