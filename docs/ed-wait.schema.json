@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ED wait observation",
+  "description": "One facility/metric observation in a collection batch. Applies to each JSON line in s3://mem-ed-wait-times/raw/ed_wait/ and in decompressed compacted/ed_wait/ objects. Derived from mem-ed-lambda.py and checked against 1,960 sampled records on 2026-09-11. See s3-buckets.md for layout, provenance, and reading rules.",
+  "$comment": "This schema describes the current producer's six-field record. It does not validate complete JSONL files, enforce record uniqueness, or establish historical coverage. Facility and metric values remain open to upstream changes. Date-time format checking must be enabled in validators that treat format as annotation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "facility",
+    "metric",
+    "wait_minutes",
+    "observed_at",
+    "batch_id",
+    "latency_ms"
+  ],
+  "properties": {
+    "facility": {
+      "type": "string",
+      "description": "Facility slug supplied to the upstream API as the fac parameter. Current configured values are listed in s3-buckets.md.",
+      "examples": ["arlington", "memphis", "childrens"]
+    },
+    "metric": {
+      "type": "string",
+      "description": "Metric key from the upstream API response. All inspected records use CV_ED_Wait, but the producer accepts other keys. The repository does not define its precise clinical meaning.",
+      "examples": ["CV_ED_Wait"]
+    },
+    "wait_minutes": {
+      "type": "integer",
+      "description": "Upstream metric value converted with Python int(), in minutes. The producer defines no bounds or sentinel meanings. Zero is present in sampled data.",
+      "examples": [0, 34, 122]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Observation timestamp captured after the facility HTTP response succeeds. The producer writes ISO 8601 UTC with a +00:00 offset and fractional seconds when present. This is collection time, not an upstream event timestamp.",
+      "examples": ["2026-09-11T00:08:51.380937+00:00"]
+    },
+    "batch_id": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Collection start timestamp shared by all records in a batch, written as ISO 8601 UTC with a +00:00 offset. Its UTC date determines the dt partition; its time at second precision determines the raw object filename. This is not a UUID.",
+      "examples": ["2026-09-11T00:08:50.867368+00:00"]
+    },
+    "latency_ms": {
+      "type": "integer",
+      "description": "Python Requests response.elapsed.total_seconds() multiplied by 1000 and rounded, in milliseconds. This measures the facility HTTP request through response headers, not the complete collection batch or a patient wait.",
+      "examples": [512]
+    }
+  },
+  "examples": [
+    {
+      "facility": "arlington",
+      "metric": "CV_ED_Wait",
+      "wait_minutes": 34,
+      "observed_at": "2026-09-11T00:08:51.380937+00:00",
+      "batch_id": "2026-09-11T00:08:50.867368+00:00",
+      "latency_ms": 512
+    }
+  ]
+}
