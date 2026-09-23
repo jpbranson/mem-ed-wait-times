@@ -135,3 +135,24 @@ and preserved; **20/20 current facilities**; recommendations disabled. HTML SHA-
 row selection moved the focus chart, comparisons were current, Compare stayed
 disabled with "Emergency destinations awaiting verification", and no console errors.
 No Lambda, EventBridge, bucket policy, raw/latest/comparison/travel schema changed.
+
+## Campus-fallback release through GitHub Actions
+
+With `gh` now installed and authenticated, dispatched
+[run 35833123203](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35833123203)
+at 07:42:26 UTC for [`36d89bf`](https://github.com/jpbranson/mem-ed-wait-times/commit/36d89bf).
+It completed successfully at 07:44:01 UTC: 64 Python and 41 JavaScript tests, read-only
+preparation, Quarto render, protected sync (`data/*` excluded) and the exact public
+build/freshness check (including four browser modules) all passed. The runner's
+build replaced the Windows-built assets from the 07:21 direct publication.
+
+An independent check at **07:44:28 UTC** passed (`.cache/release-20260923-campus.json`):
+context generated 07:43:24 (64 s old), **20/20 current facilities**, recommendations
+disabled, HTML modified 07:43:59 with SHA-256
+`1bce3e2011fc58fb2a31db8fdf2e1ea43ea9fbb30a505f23cd1a609ae09acaeb`. Public
+`travel.json` reports `arrival: "campus"` for all 20 facilities, 18 adult and 4
+child eligible destinations, and the campus recommendation blocker. Public
+`/api/routes/status` returns HTTP 403, so the page shows "4 eligible destinations ·
+all to campus center, ER entrance unconfirmed · road estimates not available on
+this site yet" for children and keeps Compare disabled; no coordinates are sent.
+This was a manual dispatch, not scheduled-delivery evidence.
