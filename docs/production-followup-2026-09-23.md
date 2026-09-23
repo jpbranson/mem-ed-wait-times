@@ -66,3 +66,23 @@ and context age. The local-midnight expiry still intentionally pauses comparison
 until the first fresh build after midnight; moving the minute does not remove
 that gap. If delayed starts persist, select a reliable scheduler separately rather
 than lengthening freshness limits to hide stale context.
+
+## Requested redeployment of current main
+
+On the user's request to deploy, commit and push, confirmed `main` was clean and
+already synchronized with origin at `1a2b16be755a4fe503d03a4a07803f697c97b9f5`.
+Dispatched [run 35820920480](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35820920480)
+at 05:04:43 UTC. The run deployed that revision and completed successfully at
+05:06:28 UTC. Both test suites, history preparation, Quarto rendering, the S3 sync
+with `data/*` excluded, and exact public build/freshness verification passed.
+
+An independent public check at **05:07:19 UTC** passed with **20/20 current
+facilities**. Context was generated at 05:05:45, after Chicago midnight; latest
+observations were generated at 04:54:07 and remained current. Public HTML was
+modified at 05:06:25, with SHA-256
+`d47c9ed33d25c52aa215dab1d8c96a805733a96c9d6827c9044459294c2bf88e`.
+Local sanitized evidence: `.cache/production-redeploy-20260923.json`.
+
+This was another manual dispatch; scheduled cadence remains unverified. The
+follow-up commit records deployment evidence only. Public routing and forecasts
+remain gated; no application, Lambda, storage or record contract changed.
