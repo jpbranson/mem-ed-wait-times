@@ -6,9 +6,15 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 **[Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html).**
 M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
 2026-09-22. M2's map and illustrative travel interface are published; real routing
-and recommendations remain disabled. M3–M5, including forecasting, remain planned.
+and recommendations remain disabled. M3–M4 remain planned; M5's offline benchmark
+and ARIMA development study is in progress, with no public forecasts.
 See the [release evidence](docs/aws-deployment-2026-09-22.md) and
 [current plan](docs/development-plan.md).
+
+The [production follow-up](docs/production-followup-2026-09-23.md) records a
+successful updated GitHub build and public desktop/mobile review. The approved
+workflow mitigation moves the hourly cron to minute 17 and verifies public
+freshness/build artifacts after publication; scheduled delivery remains best effort.
 
 ## Project documentation
 
@@ -30,6 +36,10 @@ See the [release evidence](docs/aws-deployment-2026-09-22.md) and
   preparation, website publication, and release checks.
 - [M2 operations](docs/m2-operations.md) and [validation](docs/m2-validation.md): free
   routing prototype, local review, privacy, and unresolved activation gates.
+- [M2 readiness follow-up](docs/m2-readiness-2026-09-23.md): live TomTom check,
+  remaining destination/metric evidence, and free hosting design.
+- [M5 benchmarks](docs/m5-validation.md) and [ARIMA pilot](docs/m5-arima-validation.md):
+  frozen development study, error/support results, and remaining validation.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
 - [Route response schema](docs/routes.schema.json): transient TomTom timing and traffic delay.
 - [Development instructions](AGENTS.md): how to keep the plan and data
@@ -69,11 +79,12 @@ individual patient's wait or hospital care quality.
 M2's published Drive + wait prototype includes a labeled example. Its local
 gateway has a TomTom Routing API v3 adapter that requests live traffic where
 available. Keys stay server-side;
-a persistent request budget bounds usage within the free allowance. No account,
-key, or billing is configured, and real destinations still need verification.
+a persistent request budget bounds usage within the free allowance. A user-provided
+local key passed one live API contract check on 2026-09-23 UTC; real destinations
+still need verification and account/billing settings have not been audited.
 M2 remains in progress; recommendations and public routing are not enabled.
 See [M2 setup](docs/m2-operations.md#preparation-and-local-review) for local key
-configuration and preview commands. Live TomTom validation remains pending.
+configuration and preview commands. Representative hospital-route validation remains pending.
 The free origin map and Use my location work independently of routing eligibility
 or a TomTom key. Click/tap to place a pin, drag it to adjust, or enter coordinates.
 Map labels use Inter at 16 px minimum. See [map operation and privacy](docs/m2-operations.md#origin-map-and-location-controls).
@@ -88,7 +99,7 @@ local historical context.
 
 In production, the existing collector is scheduled every 15 minutes; the browser
 polls its latest artifact every 60 seconds. The website workflow is **configured**
-hourly and can be run manually. It rebuilds history and comparison context; it
+hourly at minute 17 and can be run manually. It rebuilds history and comparison context; it
 does not deploy Lambda code. A Git push alone does not trigger publication.
 Actual workflow starts can be delayed, so current comparisons pause when their
 context is two hours old or reaches the next Chicago midnight. The page's refresh

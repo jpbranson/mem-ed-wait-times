@@ -1,10 +1,13 @@
 # M2 travel comparison: local operation and release gates
 
-Updated 2026-09-22. M2 is implemented as a prototype and remains **in
-progress**. No production routing service, account, API key, or billing has been
-configured. M0/M1 and M2's static interface were deployed on 2026-09-22;
+Updated 2026-09-23 UTC. M2 is implemented as a prototype and remains **in
+progress**. The user supplied a local API key and one live v3 contract probe passed;
+account/billing settings have not been audited and no production routing service
+is configured. M0/M1 and M2's static interface were deployed on 2026-09-22;
 the public routing endpoint remains unavailable, destinations remain excluded,
 and recommendations remain disabled. See the [release record](aws-deployment-2026-09-22.md).
+The [readiness follow-up](m2-readiness-2026-09-23.md) records the live check,
+partial destination evidence, and selected free hosting design.
 
 ## TomTom provider and free usage
 
@@ -51,8 +54,9 @@ and impose a 60-second cooldown. Failed or partial routes never become
 straight-line estimates. Route endpoints must be within 250 meters of the origin
 and 150 meters of the verified entrance; geometry is then discarded.
 
-The static S3 website cannot run this gateway. Before public activation, select
-free HTTPS hosting with a durable shared counter and aggregate rate enforcement,
+The static S3 website cannot run this gateway. Cloudflare Workers Free with one
+SQLite Durable Object is the selected design target; no account or gateway has
+been configured. Before public activation, implement durable shared accounting,
 review the full provider license/privacy terms, and validate real routes. Do not
 deploy independent public proxies with separate budgets or enable paid fallback.
 
@@ -89,6 +93,8 @@ for missing-data behavior and when to rebuild history.
 The server is a local development tool, not a production server.
 The server reads `TOMTOM_API_KEY` at startup; restart it after changing the key.
 `.env` and `.env.local` are ignored by Git but are **not automatically loaded**.
+The standalone `python scripts/check_tomtom.py` diagnostic explicitly loads
+`.env.local` for one budgeted nonclinical API probe; it does not configure the server.
 Without a key, the charts and fictional example still work; eligible route
 requests return `routing_not_configured` without contacting TomTom. Verified
 destinations are also required before real comparisons can run.
@@ -230,12 +236,13 @@ movement screen is strictly greater than 10 minutes plus the changes for both
 the candidate and closest hospital. Missing support prevents passing the screen.
 Even a passing result **cannot enable a recommendation**: metric semantics and
 traffic uncertainty remain unverified. Code and schema enforce
-`recommendations_enabled: false`. M5 forecasting is unchanged and unstarted.
+`recommendations_enabled: false`. M5 now has an [offline development study](m5-validation.md);
+it does not change this policy or provide arrival-time forecasts.
 
 ## Remaining M2 acceptance work
 
-Configure a free-plan key locally and validate the v3 contract against actual
-TomTom responses. Verify emergency arrival points and applicability, confirm the
+Local key configuration and one actual v3 response check are complete. Verify
+account free-plan settings, emergency arrival points and applicability, confirm the
 current wait API's clinical/averaging/update/zero-value contract, evaluate representative real routes
 and threshold sensitivity, and settle a free public gateway's operational terms.
 Then review the interpretation and presentation before enabling public use.

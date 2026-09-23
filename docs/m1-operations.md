@@ -156,7 +156,7 @@ unchanged. Direction becomes unavailable if the recent reference is too sparse.
 ## Refresh and troubleshooting
 
 The [workflow](../.github/workflows/dashboard.yml) runs on the configured cron
-`0 * * * *` and `workflow_dispatch`, using `main`. It has no push trigger.
+`17 * * * *` and `workflow_dispatch`, using `main`. It has no push trigger.
 It tests, prepares, renders, and uploads the website; it does not package or
 deploy either Lambda. To request a website rebuild, use GitHub Actions →
 **Render dashboard** → **Run workflow** on `main`. Publish source changes to
@@ -165,8 +165,11 @@ deploy either Lambda. To request a website rebuild, use GitHub Actions →
 The cron is a requested cadence, not evidence of hourly completion. GitHub
 documents that scheduled jobs can be delayed or dropped under high load,
 including at the start of an hour ([schedule behavior](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)).
-The [dated release follow-up](aws-deployment-2026-09-22.md#documentation-audit-follow-up)
-records the last observed runs. A delayed build can let comparisons expire even
+The [production follow-up](production-followup-2026-09-23.md) records the successful
+updated manual build, browser review and approved schedule mitigation. Deployments
+are serialized, bounded to 30 minutes, and checked afterward using
+`node scripts/check_public.mjs --expected-site dashboard/_site` for exact public
+build bytes and browser freshness/contracts. A delayed build can let comparisons expire even
 while live readings continue updating successfully.
 
 | Symptom | Check or action |
