@@ -41,8 +41,8 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
   [comparison bars](dashboard/travel.mjs), [origin controls](dashboard/origin.mjs),
   [clickable map](dashboard/origin-map.mjs), and [local review server](edwait/serve.py)
 
-M0 and M1 are implemented and validated locally; production rollout remains
-pending. The dashboard opens with a full-width all-hospital plotting canvas, with
+M0 and M1 were deployed to AWS on 2026-09-22. [Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html)
+or see the [deployment evidence](docs/aws-deployment-2026-09-22.md). The dashboard opens with a full-width all-hospital plotting canvas, with
 an axis that fits the selected time window and visible hospitals. M1 adds individual
 current wait versus usual, explicit support and freshness, recent direction,
 and selectable 24-hour/seven-day history. Seven days and all 20 hospitals are
@@ -50,8 +50,9 @@ selected on first visit; the same time control drives both chart sections.
 History in the overview updates with the build, while individual readings refresh
 independently. Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
-The latest M1 checks passed 35 Python and 15 JavaScript tests, plus desktop/mobile
-browser checks; see the dated validation record above. These describe
+Release checks passed 49 Python and 33 JavaScript tests, plus public data/asset
+and live-refresh checks; earlier desktop/mobile browser evidence remains in the
+dated validation record above. These describe
 published observations, not an individual patient's wait or hospital care quality.
 
 M2 has a local Drive + wait prototype with a labeled example and a TomTom Routing

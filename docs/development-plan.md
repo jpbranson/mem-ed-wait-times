@@ -2,14 +2,15 @@
 
 Last updated: 2026-09-22
 
-Status: M0 and M1 are complete in local implementation and validation. AWS
-rollout is in progress as of 2026-09-22. M2 is in progress; M3–M5 remain planned. M5 adds
+Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
+2026-09-22. M2's static interface is published, but routing and acceptance work
+remain in progress; M3–M5 remain planned. M5 adds
 time-series and ARIMA modeling; no forecasting implementation or validation has
 been performed.
 
 Local preview rebuilt and started on 2026-09-22 at `http://127.0.0.1:8765/`
-using read-only S3 history and the existing review server. This does not change
-production rollout status; see the dated progress entry below.
+using read-only S3 history and the existing review server. That local launch
+preceded the [AWS release](aws-deployment-2026-09-22.md) recorded below.
 
 This is the project's living development and design document. It records current
 capabilities, intended behavior, implementation order, open decisions, and
@@ -56,11 +57,12 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Travel prototype | Independent GPS/manual/clickable-map origin selection; free OpenFreeMap display with Inter labels; TomTom Routing v3 adapter with live traffic requested, server-side key and persistent usage budget; strict destination gates, transient origins, drive/wait bars, fictional example and historical movement context; key/live validation pending, all real destinations excluded and recommendations disabled | [M2 operations](m2-operations.md), [validation](m2-validation.md) |
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [application](../dashboard/app.mjs) |
-| Deployment | Hourly/manual workflow tests and prepares context before Quarto and protects collector-owned `data/*` from sync; AWS rollout in progress with existing schedules retained | [Workflow](../.github/workflows/dashboard.yml), [M0 operations](m0-operations.md), [M1 operations](m1-operations.md) |
+| Deployment | M0/M1 and M2 static assets deployed to S3; both Lambda packages updated; hourly/manual workflow source updated with protected `data/*`; existing schedules retained | [AWS release evidence](aws-deployment-2026-09-22.md), [workflow](../.github/workflows/dashboard.yml) |
 | Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json) |
 
-This table describes repository implementation. AWS rollout began on 2026-09-22;
-deployment evidence is recorded separately in the progress log.
+Implementation and production deployment are recorded separately. Public artifact
+and refresh checks passed for the 2026-09-22 AWS release. A new public visual review
+and observation of the next GitHub-hosted build remain operational follow-ups.
 
 A read-only assessment on 2026-09-14 inspected the 47 compacted partitions from
 2026-07-29 through 2026-09-13, inclusive, under
@@ -126,8 +128,8 @@ Deployment status must be recorded separately from implementation status.
 | M4 | Area summaries, stability, and historical alternatives | Follow-on features | Planned | M1; geographic summaries need region metadata; travel scenarios need M2 |
 | M5 | Time-series modeling and short-horizon forecasts | Analytical track; conditional forecast release | Planned | M0 validated history and freshness, M1 benchmarks; M2/M3 integration follows separate validation |
 
-M0 and M1 acceptance criteria are satisfied by local validation described below; no
-milestone has been deployed by this development change. M3 analysis can begin
+M0 and M1 acceptance criteria are satisfied by local validation described below;
+their AWS release is documented separately on 2026-09-22. M3 analysis can begin
 after M1's data preparation without waiting for M2's UI. M5 can also begin after
 M0/M1; its number preserves existing milestone references rather than requiring
 M2–M4 to finish first. M2's initial release does not depend on forecasting.
@@ -204,9 +206,11 @@ Implementation and validation evidence (2026-09-14):
   ownership, cache, and rollout details are in [S3 reference](s3-buckets.md) and
   [M0 operations](m0-operations.md). Original raw records were not rewritten.
 
-Deployment: **not deployed**. Remaining release operations are IAM/environment
-setup, packaging shared code with both Lambdas, workflow rollout with data-path
-protection first, and a deployed collection/browser smoke check. Provider API
+Deployment: **deployed 2026-09-22**. IAM/environment setup, Linux packaging of both
+Lambdas, workflow data-path protection, and S3 publication are complete. Scheduled
+collection, public schemas/headers, ETag preservation, and production client refresh
+were verified; a new visual browser review remains pending because browser
+automation was unavailable. See the [release evidence](aws-deployment-2026-09-22.md). Provider API
 clinical/update/sentinel semantics remain unconfirmed; the provisional freshness
 policy measures collection age only. Verified travel metadata is required before
 M2 uses any destination. These limits are explicit in the UI and registry.
@@ -289,9 +293,11 @@ Implementation and validation evidence (2026-09-14):
   selection, 24-hour/seven-day history, keyboard navigation/table expansion,
   readable layout, and text labels for unusual, stale, and missing fixtures.
 
-Deployment: **not deployed**. No required local M1 implementation or acceptance
-work remains. Production release still requires M0 rollout, website publication,
-and deployed collection-to-comparison smoke checks. The limited 47-day assessment
+Deployment: **deployed 2026-09-22** with M0. No required local M1 implementation or
+acceptance work remains. Public comparison/context schemas and current client
+state were verified, including a real collector update with unchanged HTML.
+A new public visual review and next hourly GitHub build check remain operational
+follow-ups; see the [release evidence](aws-deployment-2026-09-22.md). The limited 47-day assessment
 does not establish seasonal stability; revisit settings with longer history.
 Provider metric/sentinel semantics remain unconfirmed. M2 was still planned at
 this M1 completion checkpoint; the later M2 section records its current progress.
@@ -344,7 +350,8 @@ Started 2026-09-14 after the documentation audit through M1. **In progress:** th
 local prototype and TomTom adapter are implemented with automated validation;
 key configuration, live TomTom validation, destination/metric verification,
 representative real-route evaluation, and free public hosting remain unresolved.
-M2 is not complete or deployed. No preferred hospital recommendations are enabled.
+M2 is not complete. Its static interface was deployed with M0/M1 on 2026-09-22,
+but routing remains local-only and no preferred hospital recommendations are enabled.
 
 Implemented locally:
 
@@ -611,7 +618,7 @@ change. This planning addition does not alter existing record/storage contracts.
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
 | What schedules and completion guarantees exist in deployment? | M0 | Verified enabled 15-minute collector and 01:30 UTC daily compactor rules/targets on 2026-09-14; no execution-completeness guarantee; see [operations](m0-operations.md) |
-| Where will independently refreshed public data live? | M0 | Resolved: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; production rollout remains separate |
+| Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
 | Which facilities are valid alternatives for each supported use case? | M2 | All 20 remain excluded; exact ED entrance, general emergency service, age applicability, active status, and dated evidence are required by implemented gates |
 | Which travel provider and benefit rule should be used? | M2 | User selected TomTom Routing; v3 adapter, live traffic request and conservative usage budget implemented. Configure a free-plan key, validate actual responses/coverage and representative routes, then review threshold sensitivity, full terms, and zero-cost public hosting. Historical movement screen remains descriptive |
@@ -623,7 +630,8 @@ Next checkpoint: user review of the TomTom integration and local free-plan key
 configuration, followed by live API, destination and current metric verification,
 representative route/uncertainty validation,
 and an explicitly free public hosting decision. M2 remains in progress. M0/M1
-are locally complete with rollout pending. M5 remains planned; its first
+are deployed; the next hourly GitHub build and public visual review remain
+operational follow-ups. M5 remains planned; its first
 checkpoint is the target policy, frozen data/split manifest, and simple forecast
 benchmarks. Deployment is separate from local completion. Provider-contract
 uncertainty permits collection-age display but blocks M2 preferred-option claims.
@@ -655,6 +663,7 @@ uncertainty permits collection-age display but blocks M2 preferred-option claims
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-22 | Release through the existing S3 website and Lambda functions, preserve schedules and hourly/manual triggers, and grant only the collector's needed publication permissions | User approved the GitHub source push and exact AWS changes; maintain `data/*` protection and prior Lambda versions without adding a public routing service or new deployment trigger |
 | 2026-09-14 | Separate origin selection from route eligibility and add a free OpenFreeMap/MapLibre picker | User reported the disabled GPS button and requested a clickable map. Locations can be selected before destination verification; only Compare sends TomTom requests. Pin/GPS/manual state stays transient, map-area requests are disclosed, and local Inter labels preserve the 16 px minimum |
 | 2026-09-14 | Replace the initial OSRM adapter with TomTom Orbis Routing v3, using individual live-traffic Routing requests, not Matrix | User explicitly selected TomTom. Standard Routing's checked free allowance is 20,000 requests/month; keep the account without prepaid credit, bound usage with a persistent 32-date counter, keep keys server-side, and label coverage uncertainty. Account setup, actual responses and public deployment remain unvalidated |
 | 2026-09-14 | Use free FOSSGIS OSRM for a local M2 prototype, with no billing/account and no live traffic | User requires zero cost; Google requires billing even inside its allowance. Bound usage, disclose provider logging, and leave public gateway/terms review open |
@@ -680,6 +689,7 @@ uncertainty permits collection-age display but blocks M2 preferred-option claims
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-22 | AWS production release | Published source `17d4e57`, deployed both Lambdas as version 2, configured scoped collector access/latest output, and uploaded the rebuilt site. 49 Python/33 JS tests passed; verified 39 public files, three schemas, 20 successful scheduled readings, 1,920 compacted records with fingerprint metadata, preserved latest ETag across sync, and real client refresh for 20 facilities without rebuilding HTML. [Full evidence and rollback notes](aws-deployment-2026-09-22.md). | M0/M1 deployed; M2 static interface published with routing/recommendations disabled. Existing schedules retained. Browser automation unavailable; public visual review and the next GitHub-hosted run remain follow-ups |
 | 2026-09-22 | AWS rollout preparation | User authorized production deployment. Existing 15-minute collection and daily compaction schedules remain enabled. Preserved both prior Lambda packages as AWS version 1; prepared a Linux x86_64/Python 3.14 package and scoped access for collection attempts and latest data. Local validation passed 49 Python/33 JavaScript tests, rendering, and artifact/asset checks. | In progress: first publish source and the existing hourly/manual workflow with protected `data/*`, then update the Lambdas and website, and verify public artifacts. No new push trigger or routing service |
 | 2026-09-22 | M0/M1/M2 local launch | Refreshed context from read-only S3 history for 20 facilities and 13,439 seven-day points; Quarto rendered successfully. All 49 Python and 33 JavaScript tests passed. HTTP checks confirmed the updated page, 12 required assets, and schema-valid comparisons, travel, and latest artifacts; latest returned 20 reporting facilities with observations through 2026-09-23 03:54 UTC. Browser automation was unavailable, so no new visual review was completed. | [Local review server](../edwait/serve.py) started at `http://127.0.0.1:8765/` with `--live-s3`. Latest readings refresh through the server; historical context remains build-time and needs another preparation/render when it expires. Pre-M0 collection failure metadata cannot be reconstructed. Production rollout remains pending; M2 activation gates are unchanged |
 | 2026-09-14 | M2 origin selection | Fixed GPS being disabled by destination/context gates; added click/tap map, draggable pin, keyboard center selection, independent location status, synchronized coordinates, Clear and late-response cancellation. Bundled the map renderer/style and updated privacy/storage docs. 49 Python/33 JS tests, Quarto, actual map rendering and desktop/mobile click/drag/keyboard checks passed. GPS responses were simulated. [Evidence](m2-validation.md#origin-selection-follow-up--2026-09-14). | Local only; no user GPS read, TomTom route call, account, billing or deployment. M2 remains in progress with existing activation gates |

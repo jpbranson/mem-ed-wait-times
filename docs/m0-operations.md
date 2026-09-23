@@ -1,8 +1,9 @@
 # M0 operations and deployment
 
-Implementation date: 2026-09-14. Locally implemented and validated; production
-rollout has not been performed. Existing Lambdas and the published site continue
-to run their prior versions until deployment.
+Implementation date: 2026-09-14. Deployed to production on 2026-09-22; both Lambdas
+run version 2 code, and the collector publishes latest readings and attempts.
+See the [deployment record](aws-deployment-2026-09-22.md) for permissions, package
+identity, preserved schedules, smoke checks, and remaining operational checks.
 
 ## Local validation
 
@@ -43,7 +44,7 @@ tests passed on 2026-09-14; Quarto 1.10.18 rendered against read-only live histo
 
 | Component | Owns | Access needed |
 | --- | --- | --- |
-| Collector `ed-wait-times` | Raw, attempts, latest | Put raw/operations in data bucket; Get/Put `data/latest.json` in website bucket |
+| Collector `ed-wait-times` | Raw, attempts, latest | Put raw/operations in data bucket; Get/Put `data/latest.json` and ListBucket on website bucket for initial missing-object detection |
 | Compactor `ed-wait-compaction` | Compacted gzip and snapshot metadata | List/Get raw, Put compacted |
 | Quarto job | HTML and website assets | List/Get history; website sync with `data/*` exclusion |
 | Browser | No writes | Same-origin public Get of `data/latest.json` |

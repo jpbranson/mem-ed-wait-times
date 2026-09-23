@@ -1,6 +1,8 @@
 # M1 preparation and rollout
 
-Implemented and locally validated 2026-09-14; **not deployed**. M1 uses M0's
+Implemented and locally validated 2026-09-14; **deployed 2026-09-22** with M0.
+See the [release evidence](aws-deployment-2026-09-22.md) for public artifact and
+refresh verification, including the limits of the browser checks. M1 uses M0's
 collector/latest contract without changing Lambda behavior. Follow the
 [M0 rollout](m0-operations.md) for the shared package, IAM, environment, and
 collector-owned data path before verifying the complete public feature.

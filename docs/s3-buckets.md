@@ -1,17 +1,18 @@
 # S3 bucket reference
 
-Contract updated: 2026-09-14 for M0 and M1; implementation is locally validated, not yet
-deployed. Live record sampling below remains dated 2026-09-11 (three objects,
-1,960 records). Read-only schedule and website policy checks on 2026-09-14 are
-recorded separately below. New artifact paths describe the deployment contract,
-not an assertion that those objects already exist in production.
+Contract updated: 2026-09-14 for M0 and M1; deployed 2026-09-22 with the M2 static
+interface. [Production verification](aws-deployment-2026-09-22.md) confirms latest,
+comparisons, travel, static assets, and compaction metadata. No record schema
+changed during rollout. Earlier record sampling below remains dated 2026-09-11
+(three objects, 1,960 records); the 2026-09-14 schedule/policy checks remain
+historical evidence. Existing schedules and public read policy were preserved.
 
 ## Overview
 
 | Bucket | Purpose | Contents |
 | --- | --- | --- |
 | `s3://mem-ed-wait-times/` | Source data for ED wait-time analysis | Raw JSON Lines batches, daily gzip copies, and collection attempt summaries |
-| `s3://mem-ed-wait-times-dashboard/` | Dashboard hosting | Rendered HTML, supporting assets, website-owned `comparisons.json`/`travel.json`, and independently published `data/latest.json`; new repository outputs remain undeployed |
+| `s3://mem-ed-wait-times-dashboard/` | Dashboard hosting | Rendered HTML, supporting assets, website-owned `comparisons.json`/`travel.json`, and independently published `data/latest.json`; verified deployed 2026-09-22 |
 
 The machine-readable [ED wait record schema](ed-wait.schema.json) describes one
 JSON object per line in both raw and compacted data. The dashboard bucket is
@@ -213,7 +214,7 @@ No exception text or upstream response body is published.
 
 ## Website bucket: `mem-ed-wait-times-dashboard`
 
-Expected repository output through M1 and the M2 local prototype (not yet deployed):
+Deployed output through M1 and the M2 static interface (verified 2026-09-22):
 
 ```text
 s3://mem-ed-wait-times-dashboard/

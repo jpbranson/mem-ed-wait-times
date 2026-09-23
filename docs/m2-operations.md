@@ -1,8 +1,10 @@
 # M2 travel comparison: local operation and release gates
 
-Updated 2026-09-14. M2 is implemented as a local prototype and remains **in
+Updated 2026-09-22. M2 is implemented as a prototype and remains **in
 progress**. No production routing service, account, API key, or billing has been
-configured. M0/M1 deployment is also still pending.
+configured. M0/M1 and M2's static interface were deployed on 2026-09-22;
+the public routing endpoint remains unavailable, destinations remain excluded,
+and recommendations remain disabled. See the [release record](aws-deployment-2026-09-22.md).
 
 ## TomTom provider and free usage
 
