@@ -1,83 +1,208 @@
 ---
-title: "Memphis ED wait times"
-format: dashboard
-
+title: "ED waits"
+pagetitle: "ED waits · TN / AR / MS"
+format:
+  html:
+    theme: cosmo
+    css: [vendor/maplibre/maplibre-gl.css, latest.css]
+    toc: false
+    anchor-sections: false
+    page-layout: full
+    include-in-header:
+      text: |
+        <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+execute:
+  echo: false
+  warning: false
 ---
 
-
 ```{python}
-import boto3, gzip, json, io
-from datetime import date, timedelta, datetime
-import pandas as pd
-from zoneinfo import ZoneInfo
-import plotly.express as px
+import html
+import json
+import sys
+from pathlib import Path
+from IPython.display import HTML, display
 
-BUCKET = "mem-ed-wait-times"
-DAYS = 7
-s3 = boto3.client("s3")
-
-rendered_at = datetime.now(ZoneInfo("America/Chicago")).strftime("%b %d, %I:%M %p %Z")
-
-def _keys(prefix):
-    pages = s3.get_paginator("list_objects_v2").paginate(Bucket=BUCKET, Prefix=prefix)
-    return [o["Key"] for p in pages for o in p.get("Contents", [])]
-
-def _records(key):
-    body = s3.get_object(Bucket=BUCKET, Key=key)["Body"].read()
-    if key.endswith(".gz"):
-        body = gzip.decompress(body)
-    return [json.loads(l) for l in body.decode("utf-8").splitlines() if l.strip()]
-
-def load(days=DAYS):
-    rows = []
-    for i in range(days):
-        d = (date.today() - timedelta(days=i)).isoformat()
-        keys = _keys(f"compacted/ed_wait/dt={d}/") or _keys(f"raw/ed_wait/dt={d}/")
-        for k in keys:
-            rows.extend(_records(k))
-
-    df = pd.DataFrame(rows)
-    df["observed_at"] = pd.to_datetime(df["observed_at"], utc=True).dt.tz_convert("America/Chicago")
-    df["wait_minutes"] = pd.to_numeric(df["wait_minutes"], errors="coerce")
-    return df.sort_values("observed_at")
-
-df = load()
-latest = df.groupby("facility", as_index=False).last()
-
+sys.path.insert(0, str(Path.cwd().parent))
+from edwait.data import registry
+facilities = registry()
+context_path = Path("comparisons.json")
+context = json.loads(context_path.read_text(encoding="utf-8")) if context_path.exists() else None
 ```
 
-
-## Row
-```{python}
-wait_fig = px.line(df, x="observed_at", y = "wait_minutes", color="facility", template="simple_white")
-
-wait_fig.update_layout(
-    legend=dict(
-        orientation="h",
-        yanchor="top", y=-0.2,
-        xanchor="left", x=0,
-        entrywidth=0.2, entrywidthmode="fraction",
-    ),
-    margin=dict(l=40, r=20, t=30, b=140),
-)
+```{=html}
+<header class="masthead">
+  <div class="wordmark"><h1>ED waits<span class="title-dot">.</span></h1><span class="territory">TN / AR / MS</span></div>
+  <div class="top-controls">
+    <div class="window-switch" role="group" aria-label="Chart time window">
+      <button type="button" data-overview-hours="24" aria-pressed="false">24 hours</button>
+      <button type="button" data-overview-hours="168" aria-pressed="true">7 days</button>
+    </div>
+    <button id="refresh-waits" class="refresh-button" type="button" title="Refresh live readings and historical references">↻ <span>Refresh</span></button>
+  </div>
+</header>
+<section class="overview-stage" aria-label="All hospitals">
+  <div class="plot-meta"><span>Published wait · minutes</span><span id="overview-count">20 / 20 hospitals</span></div>
+  <div id="all-hospitals-chart" tabindex="0" role="region" aria-label="Published wait history for all hospitals">
 ```
 
-## Row
 ```{python}
-latency_fig = px.line(df, x="observed_at", y = "latency_ms", color="facility", template="simple_white")
+from dashboard.overview import build_overview
+from plotly.offline import get_plotlyjs
 
-latency_fig.update_layout(
-    legend=dict(
-        orientation="h",
-        yanchor="top", y=-0.2,
-        xanchor="left", x=0,
-        entrywidth=0.2, entrywidthmode="fraction",
-    ),
-    margin=dict(l=40, r=20, t=30, b=140),
-)
-
+if context is None or not any(entry["history"] for entry in context["facilities"]):
+    display(HTML("<p class='empty-chart'>All-hospital history is unavailable until comparison preparation succeeds.</p>"))
+else:
+    overview = build_overview(context, facilities)
+    # Quarto moves library output into the document head. Keep the plot in a
+    # separate output so its container stays here, immediately above the legend.
+    display(HTML("<script>" + get_plotlyjs() + "</script>"))
+    display(HTML(overview.to_html(full_html=False, include_plotlyjs=False,
+                                div_id="all-hospitals-plot", default_height="100%",
+                                post_script="document.dispatchEvent(new CustomEvent('overview-ready'));",
+                                config={"responsive": True, "displayModeBar": False})))
+    from edwait.data import LOCAL_TIMEZONE, timestamp
+    from zoneinfo import ZoneInfo
+    prepared = timestamp(context["generated_at"]).astimezone(ZoneInfo(LOCAL_TIMEZONE))
 ```
 
-::: {.card}
-Last rendered: `{python} rendered_at`
-:::
+```{=html}
+  </div>
+```
+
+```{python}
+choices = "".join('<option value="' + html.escape(f["slug"], quote=True) + '"' +
+                  (' selected' if f["slug"] == "memphis" else '') + '>' +
+                  html.escape(f["display_name"]) + '</option>' for f in facilities)
+if context is not None and any(entry["history"] for entry in context["facilities"]):
+    legend = "".join('<button type="button" class="trace-toggle" data-trace-index="' + str(i) +
+                     '" aria-pressed="true" aria-controls="all-hospitals-plot" title="' +
+                     html.escape(facilities[i]["display_name"] + ": toggle line; double-click or Shift-click to isolate", quote=True) +
+                     '" style="--trace-color:' + trace.line.color + '"><span class="trace-swatch ' +
+                     ('dotted' if trace.line.dash == 'dot' else '') + '"></span>' + html.escape(trace.name) + '</button>'
+                     for i, trace in enumerate(overview.data))
+    display(HTML('<div class="hospital-key" role="group" aria-label="Visible hospitals">' +
+                 '<button id="overview-all" class="show-all" type="button">All</button>' + legend + '</div>'))
+    display(HTML('<p class="overview-stamp" title="Overview updates with the site build; gaps over 20 minutes stay blank">' +
+                 'History · ' + html.escape(prepared.strftime('%b %d, %I:%M %p %Z')) + '</p>'))
+display(HTML('<script type="application/json" id="facility-registry">' +
+             json.dumps([{"slug": f["slug"], "display_name": f["display_name"]} for f in facilities]).replace("<", "\\u003c") +
+             '</script>'))
+```
+
+```{=html}
+</section>
+<section class="focus-stage" aria-label="Individual hospital comparison">
+```
+
+```{python}
+display(HTML('<div class="focus-toolbar"><label for="hospital-select">Focus</label>' +
+             '<select id="hospital-select">' + choices + '</select>' +
+             '<input id="history-hours" type="hidden" value="168">' +
+             '<p id="refresh-status" role="status" aria-live="polite">Loading readings…</p></div>'))
+```
+
+```{=html}
+<div class="focus-layout">
+  <section id="hospital-summary" class="hospital-summary" aria-label="Selected hospital comparison"><p>Loading…</p></section>
+  <div class="focus-plot">
+    <div class="plot-meta"><span>Wait + usual range</span><span class="chart-key"><i class="key-band"></i> Middle 50% <i class="key-median"></i> Median</span></div>
+    <div id="history-chart" tabindex="0" role="region" aria-label="Wait and deviation charts"></div>
+  </div>
+</div>
+<p id="context-status" role="status" aria-live="polite"></p>
+<details class="data-disclosure"><summary>Data table</summary><div id="history-table" class="table-scroll" tabindex="0" role="region" aria-label="Historical observation table"></div></details>
+</section>
+<section id="travel-stage" class="travel-stage" aria-labelledby="travel-heading">
+  <div class="travel-heading"><h2 id="travel-heading">Drive + wait</h2><button type="button" class="travel-example" aria-pressed="false">View example</button></div>
+  <p class="travel-intro">Traffic-aware driving + published wait · not a time to treatment</p>
+  <div class="origin-map-toolbar"><span id="origin-map-help">Click or tap to place your pin</span><button type="button" class="origin-center" disabled>Use map center</button></div>
+  <div class="origin-map-frame"><div class="origin-map" role="region" aria-label="Choose your origin on the map"></div><span class="origin-crosshair" aria-hidden="true">+</span></div>
+  <p class="origin-map-attribution"><a href="https://openfreemap.org/">OpenFreeMap</a> · <a href="https://openmaptiles.org/">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a></p>
+  <p class="origin-map-status" role="status" aria-live="polite"></p><button type="button" class="origin-map-retry" hidden>Reload map</button>
+  <form class="travel-controls" autocomplete="off">
+    <label>Age group<select name="age_group" required><option value="">Choose…</option><option value="adult">Adult · 18+</option><option value="child">Child · under 18</option></select></label>
+    <label>Origin latitude<input name="latitude" type="number" step="any" min="-90" max="90" placeholder="35.15" required autocomplete="off"></label>
+    <label>Origin longitude<input name="longitude" type="number" step="any" min="-180" max="180" placeholder="−90.05" required autocomplete="off"></label>
+    <button type="button" class="travel-location">Use my location</button>
+    <button type="submit" disabled>Compare</button>
+    <button type="button" class="travel-clear">Clear</button>
+  </form>
+  <p class="origin-status" role="status" aria-live="polite">Choose an origin using the map, your location, or coordinates</p>
+  <p class="travel-privacy">Viewing the map shares its area with <a href="https://openfreemap.org/privacy/">OpenFreeMap</a>. Compare sends your selected coordinates to <a href="https://www.tomtom.com/en_gb/privacy/">TomTom</a>. This app does not save your location.</p>
+  <p class="travel-status" role="status" aria-live="polite">Loading travel context…</p>
+  <div class="travel-chart" role="region" aria-label="Drive and published wait comparison"></div>
+  <details class="data-disclosure"><summary>Coverage &amp; uncertainty</summary>
+    <p>Only verified emergency destinations for the chosen age group are eligible. These Baptist facilities are a limited directory. TomTom uses live traffic where available alongside historical traffic. Current wait interpretation and travel-time uncertainty remain unverified, so no preferred hospital is recommended. Road estimates expire after five minutes; use Compare again to refresh.</p>
+    <p>The movement screen requires a difference larger than 10 minutes plus both hospitals’ historical 90th percentile absolute changes at the relevant drive horizons. It is a provisional descriptive screen, not a calibrated benefit threshold. No arrival-time forecasts are used.</p>
+    <div class="travel-support"></div>
+  </details>
+  <p class="travel-attribution">Routing: © <a href="https://www.tomtom.com/">TomTom</a></p>
+</section>
+<footer class="page-notes">
+<div class="notes-row"><span>Published observations, not a patient wait prediction.</span><span>Emergency: <a href="tel:911">call 911</a>.</span></div>
+<div class="disclosures">
+<details class="method-details"><summary>About the charts</summary>
+```
+
+Overview: toggle hospital names to show or hide lines; double-click or Shift-click
+to isolate one. Both charts follow the time control above. The overview rescales
+to the visible lines in that window and updates with each site build. Current
+readings refresh separately, about every minute. Times are America/Chicago.
+Collection gaps over 20 minutes stay blank.
+
+Usual range: the middle 50% of a hospital's readings across the preceding 28 local
+days, excluding the observation's entire day. The median and historical percentile
+describe published readings, not patient outcomes or care quality. Percentiles
+count lower readings plus half of tied readings. Zero is preserved; its upstream
+meaning is unconfirmed.
+
+We compare the same weekday/weekend group and neighboring hours (±1 hour), then
+fall back to ±2 hours, then all days if needed. A reference needs eight adequately
+covered days, 64 readings, and 75% of expected 15-minute slots. A contributing day
+also needs 75% coverage. Support and fallbacks appear with the selected hospital.
+
+Above/below usual: the outer 10% of the reference distribution plus at least a
+10-minute difference from its median. Recent direction: the latest reading minus
+the median of at least two readings 40–80 minutes earlier, with changes under
+10 minutes labeled little change. This describes recent movement, not a forecast.
+Current comparisons pause on unconfirmed freshness, failed reference fetches,
+references two hours old, or the next local midnight.
+
+These 20 configured Baptist facilities are not a complete regional directory.
+Collection time does not establish the provider's update time. Serious conditions
+receive priority through [triage](https://www.baptistonline.org/services/emergency).
+
+```{=html}
+</details>
+<details><summary>All readings &amp; freshness</summary><div id="latest-waits"></div></details>
+<details><summary>Operator diagnostics</summary>
+```
+
+Historical coverage spans the loaded reference window and is measured against
+observed batches; baseline slot coverage also counts missing calendar dates.
+Request latency describes HTTP collection, not patient waits or hospital capacity.
+
+```{python}
+if context is None:
+    display(HTML("<p>No valid historical observations are available until comparison preparation succeeds.</p>"))
+else:
+    display(HTML("<p>Historical artifact prepared: " + html.escape(context["generated_at"]) + "</p>"))
+    display(HTML("<pre>" + html.escape(json.dumps(context["coverage"], indent=2)) + "</pre>"))
+    names = {f["slug"]: f["display_name"] for f in facilities}
+    rows = "".join("<tr><th scope='row'>" + html.escape(names.get(r["slug"], r["slug"])) +
+                   "</th><td>" + str(r["samples"]) + "</td><td>" + str(r["median_ms"]) +
+                   "</td><td>" + str(r["p95_ms"]) + "</td></tr>" for r in context["latency"])
+    display(HTML("<div class='table-scroll'><table><caption>Request latency · seven days</caption>"
+                 "<thead><tr><th scope='col'>Facility</th><th scope='col'>Requests</th><th scope='col'>Median (ms)</th>"
+                 "<th scope='col'>95th percentile (ms)</th></tr></thead><tbody>" + rows + "</tbody></table></div>"))
+```
+
+```{=html}
+</details>
+</div>
+<noscript>JavaScript is required for charts and current readings. No current value is inferred from the build time.</noscript>
+</footer>
+<script type="module" src="overview.mjs"></script>
+<script type="module" src="app.mjs"></script>
+```

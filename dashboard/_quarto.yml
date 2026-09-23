@@ -1,7 +1,22 @@
 project:
   type: website
   output-dir: _site
+  execute-dir: project
+  resources:
+    - latest.mjs
+    - latest.css
+    - comparisons.mjs
+    - app.mjs
+    - overview.mjs
+    - comparisons.json
+    - travel.mjs
+    - origin.mjs
+    - origin-map.mjs
+    - origin-map-style.json
+    - vendor/maplibre/
+    - travel.json
+    - fonts/
 
 format:
-  dashboard:
+  html:
     theme: cosmo

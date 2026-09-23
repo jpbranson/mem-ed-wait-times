@@ -4,25 +4,20 @@ from datetime import datetime, timedelta, timezone
 
 import boto3
 
-BUCKET = os.environ["BUCKET"]
+from edwait.data import list_objects, source_fingerprint
+
 DATASET = "ed_wait"
-s3 = boto3.client("s3")
 
 
-def list_keys(bucket, prefix):
-    paginator = s3.get_paginator("list_objects_v2")
-    for page in paginator.paginate(Bucket=bucket, Prefix=prefix):
-        for obj in page.get("Contents", []):
-            yield obj["Key"]
-
-
-def compact(bucket, day):
+def compact(bucket, day, s3=None):
+    s3 = s3 or boto3.client("s3")
     src = f"raw/{DATASET}/dt={day:%Y-%m-%d}/"
     dst = f"compacted/{DATASET}/dt={day:%Y-%m-%d}/data.jsonl.gz"
 
     lines = []
-    for key in sorted(list_keys(bucket, src)):
-        body = s3.get_object(Bucket=bucket, Key=key)["Body"].read()
+    objects = [o for o in list_objects(s3, bucket, src) if o["Key"].endswith(".jsonl")]
+    for obj in objects:
+        body = s3.get_object(Bucket=bucket, Key=obj["Key"], IfMatch=obj["ETag"])["Body"].read()
         lines.extend(body.decode("utf-8").splitlines())
 
     if not lines:
@@ -34,6 +29,9 @@ def compact(bucket, day):
         Body=gzip.compress(("\n".join(lines) + "\n").encode("utf-8")),
         ContentType="application/x-ndjson",
         ContentEncoding="gzip",
+        Metadata={"source-fingerprint": source_fingerprint(objects),
+                  "source-object-count": str(len(objects)),
+                  "compacted-at": datetime.now(timezone.utc).isoformat()},
     )
     return dst, len(lines)
 
@@ -43,7 +41,7 @@ def lambda_handler(event, context):
         day = datetime.strptime(event["date"], "%Y-%m-%d").date()
     else:
         day = datetime.now(timezone.utc).date() - timedelta(days=1)
-    result = compact(BUCKET, day)
+    result = compact(os.environ["BUCKET"], day)
     if result is None:
         raise RuntimeError(f"No raw objects found for {day}")
     dst, count = result

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mem-ed-wait-times.example/schemas/routes.schema.json",
+  "title": "Transient TomTom route comparison response, without origins or credentials",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version","provider","traffic_mode","generated_at","ttl_seconds","age_group","routes"],
+  "properties": {
+    "schema_version": {"const":2},
+    "provider": {"const":"tomtom"},
+    "traffic_mode": {"const":"live","description":"Requested routing mode; does not prove live data coverage on every segment."},
+    "generated_at": {"type":"string","format":"date-time","description":"Comparison request start, not provider traffic observation time."},
+    "ttl_seconds": {"const":300},
+    "age_group": {"enum":["adult","child"]},
+    "routes": {
+      "type":"array","minItems":1,"maxItems":20,
+      "items": {
+        "type":"object","additionalProperties":false,
+        "required":["slug","status","seconds","meters","traffic_delay_seconds"],
+        "properties": {
+          "slug":{"type":"string","minLength":1},
+          "status":{"enum":["ok","unavailable"]},
+          "seconds":{"type":["number","null"],"minimum":0,"maximum":1000000000},
+          "meters":{"type":["number","null"],"minimum":0,"maximum":1000000000},
+          "traffic_delay_seconds":{"type":["number","null"],"minimum":0,"maximum":1000000000,"description":"Already included in seconds. Null is unknown; zero is a reported zero."}
+        },
+        "allOf":[
+          {"if":{"properties":{"status":{"const":"ok"}}},"then":{"properties":{"seconds":{"type":"number"},"meters":{"type":"number"}}}},
+          {"if":{"properties":{"status":{"const":"unavailable"}}},"then":{"properties":{"seconds":{"type":"null"},"meters":{"type":"null"},"traffic_delay_seconds":{"type":"null"}}}}
+        ]
+      }
+    }
+  }
+}

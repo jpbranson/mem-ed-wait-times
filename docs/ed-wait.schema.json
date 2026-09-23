@@ -1,8 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ED wait observation",
-  "description": "One facility/metric observation in a collection batch. Applies to each JSON line in s3://mem-ed-wait-times/raw/ed_wait/ and in decompressed compacted/ed_wait/ objects. Derived from mem-ed-lambda.py and checked against 1,960 sampled records on 2026-09-11. See s3-buckets.md for layout, provenance, and reading rules.",
-  "$comment": "This schema describes the current producer's six-field record. It does not validate complete JSONL files, enforce record uniqueness, or establish historical coverage. Facility and metric values remain open to upstream changes. Date-time format checking must be enabled in validators that treat format as annotation.",
+  "$id": "https://mem-ed-wait-times.example/schemas/ed-wait.schema.json",
+  "description": "One facility/metric observation in a collection batch. Applies to raw and decompressed compacted JSONL and latest.json last_success records. Six-field provenance remains unchanged. Historical samples checked on 2026-09-11; M0 validation and integer conversion tightened on 2026-09-14, not yet deployed. See s3-buckets.md.",
+  "$comment": "This schema describes the current producer's six-field record, unchanged by M1. M1 derived baseline models and historical display tuples have a separate comparisons.schema.json contract; they are not raw observations. This schema does not validate complete JSONL files, enforce uniqueness, or establish coverage. Facility and metric values remain open. Enable date-time format checking.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,17 +17,19 @@
   "properties": {
     "facility": {
       "type": "string",
+      "minLength": 1,
       "description": "Facility slug supplied to the upstream API as the fac parameter. Current configured values are listed in s3-buckets.md.",
       "examples": ["arlington", "memphis", "childrens"]
     },
     "metric": {
       "type": "string",
+      "minLength": 1,
       "description": "Metric key from the upstream API response. All inspected records use CV_ED_Wait, but the producer accepts other keys. The repository does not define its precise clinical meaning.",
       "examples": ["CV_ED_Wait"]
     },
     "wait_minutes": {
       "type": "integer",
-      "description": "Upstream metric value converted with Python int(), in minutes. The producer defines no bounds or sentinel meanings. Zero is present in sampled data.",
+      "description": "Upstream integer or integer string converted to an integer in minutes. M0 rejects booleans, decimals and null instead of truncating them. No bounds or sentinel meanings are established for waits. Zero is retained. Existing stored values are not rewritten.",
       "examples": [0, 34, 122]
     },
     "observed_at": {
@@ -43,6 +46,7 @@
     },
     "latency_ms": {
       "type": "integer",
+      "minimum": 0,
       "description": "Python Requests response.elapsed.total_seconds() multiplied by 1000 and rounded, in milliseconds. This measures the facility HTTP request through response headers, not the complete collection batch or a patient wait.",
       "examples": [512]
     }

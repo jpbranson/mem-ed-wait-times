@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mem-ed-wait-times.example/schemas/latest.schema.json",
+  "title": "Latest published ED wait observations",
+  "description": "Version 1 complete replacement at data/latest.json. Freshness is recomputed from timestamps at read time; reporting_state describes collection only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_version",
+    "metric",
+    "generated_at",
+    "freshness",
+    "source_range",
+    "coverage",
+    "facilities"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "method_version": {
+      "const": "latest-v1"
+    },
+    "metric": {
+      "const": "CV_ED_Wait"
+    },
+    "generated_at": {
+      "$ref": "#/$defs/time"
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_collection_seconds",
+        "stale_after_seconds",
+        "refresh_seconds",
+        "request_timeout_seconds"
+      ],
+      "properties": {
+        "expected_collection_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stale_after_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "refresh_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "request_timeout_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "source_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/nullableTime"
+        },
+        "end": {
+          "$ref": "#/$defs/nullableTime"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configured",
+        "with_reading",
+        "failed_latest_attempt",
+        "missing"
+      ],
+      "properties": {
+        "configured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "with_reading": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed_latest_attempt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "facilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug",
+          "display_name",
+          "region",
+          "timezone",
+          "last_success",
+          "last_attempt",
+          "reporting_state"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "region": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timezone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_success": {
+            "anyOf": [
+              {
+                "$ref": "ed-wait.schema.json"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_attempt": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/attempt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reporting_state": {
+            "enum": [
+              "reporting",
+              "failed",
+              "missing"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nullableTime": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "batch_id",
+        "attempted_at",
+        "state",
+        "error_code"
+      ],
+      "properties": {
+        "batch_id": {
+          "$ref": "#/$defs/time"
+        },
+        "attempted_at": {
+          "$ref": "#/$defs/time"
+        },
+        "state": {
+          "enum": [
+            "success",
+            "failed"
+          ]
+        },
+        "error_code": {
+          "enum": [
+            null,
+            "request_failed",
+            "invalid_response",
+            "expected_metric_missing",
+            "collection_deadline"
+          ]
+        }
+      }
+    }
+  }
+}

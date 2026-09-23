@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mem-ed-wait-times.example/schemas/travel.schema.json",
+  "title": "Website-owned M2 context, without origins",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","method_version","metric","generated_at","source_start","source_end","policy","recommendations_enabled","recommendation_blockers","facilities"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "method_version": {"const": "travel-wait-v1"},
+    "metric": {"const": "CV_ED_Wait"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "source_start": {"type": "string", "format": "date-time"},
+    "source_end": {"type": "string", "format": "date-time"},
+    "policy": {"const": {"lookback_days":28,"horizons_minutes":[15,30,60,120],"minimum_days":8,"minimum_pairs":64,"minimum_day_coverage":0.75,"gap_seconds":1200,"horizon_tolerance_seconds":450,"quantile":0.9,"meaningful_minutes":10,"route_ttl_seconds":300,"context_ttl_seconds":7200,"verification_days":90}},
+    "recommendations_enabled": {"const": false},
+    "recommendation_blockers": {"type":"array","minItems":1,"items":{"type":"string"}},
+    "facilities": {
+      "type": "array", "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["slug","display_name","eligibility","movement"],
+        "properties": {
+          "slug": {"type":"string","minLength":1},
+          "display_name": {"type":"string","minLength":1},
+          "eligibility": {
+            "type":"object","additionalProperties":false,"required":["adult","child"],
+            "properties":{"adult":{"type":["string","null"]},"child":{"type":["string","null"]}}
+          },
+          "movement": {
+            "type":"array","minItems":4,"maxItems":4,
+            "items": {
+              "type":"object","additionalProperties":false,
+              "required":["horizon_minutes","pairs","days","absolute_change_p90"],
+              "properties":{
+                "horizon_minutes":{"enum":[15,30,60,120]},
+                "pairs":{"type":"integer","minimum":0},
+                "days":{"type":"integer","minimum":0,"maximum":28},
+                "absolute_change_p90":{"type":["number","null"],"minimum":0}
+              },
+              "allOf":[{"if":{"properties":{"absolute_change_p90":{"type":"number"}}},"then":{"properties":{"pairs":{"minimum":64},"days":{"minimum":8}}}}]
+            }
+          }
+        }
+      }
+    }
+  }
+}

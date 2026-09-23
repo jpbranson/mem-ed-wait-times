@@ -1,0 +1,1233 @@
+{
+  "selection_start": "2026-08-19T00:00:00Z",
+  "selection_end_exclusive": "2026-09-07T00:00:00Z",
+  "later_start": "2026-09-07T00:00:00Z",
+  "later_end_exclusive": "2026-09-14T00:00:00Z",
+  "policy_except_candidates": {
+    "lookback_days": 28,
+    "hour_radius": 1,
+    "fallback_hour_radius": 2,
+    "minimum_days": 8,
+    "minimum_samples": 64,
+    "minimum_coverage": 0.75,
+    "minimum_day_coverage": 0.75,
+    "band_low": 0.25,
+    "band_high": 0.75,
+    "unusual_low": 10,
+    "unusual_high": 90,
+    "meaningful_minutes": 10,
+    "trend_minutes": 60,
+    "trend_tolerance_minutes": 20,
+    "trend_minimum_samples": 2,
+    "cadence_seconds": 900,
+    "gap_seconds": 1200
+  },
+  "candidates": [
+    {
+      "candidate": "28d-radius1",
+      "selection": {
+        "comparisons": 9120,
+        "supported": 9017,
+        "support_rate": 0.9887061403508772,
+        "median_absolute_deviation": 10.0,
+        "mean_absolute_deviation": 21.183985804591327,
+        "typical_band_fraction": 0.49207053343684154,
+        "unusual_fraction": 0.22446489963402463,
+        "groups": {
+          "weekday_weekend": 8037,
+          "wider_hours": 20,
+          "all_days": 960
+        }
+      },
+      "later_period": {
+        "comparisons": 3360,
+        "supported": 3360,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 11.0,
+        "mean_absolute_deviation": 20.672619047619047,
+        "typical_band_fraction": 0.4973214285714286,
+        "unusual_fraction": 0.19404761904761905,
+        "groups": {
+          "weekday_weekend": 3360
+        }
+      },
+      "common_selection": {
+        "comparisons": 3740,
+        "supported": 3740,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 11.0,
+        "mean_absolute_deviation": 22.150267379679143,
+        "typical_band_fraction": 0.4770053475935829,
+        "unusual_fraction": 0.22647058823529412,
+        "groups": {
+          "weekday_weekend": 3740
+        }
+      }
+    },
+    {
+      "candidate": "28d-radius2",
+      "selection": {
+        "comparisons": 9120,
+        "supported": 8995,
+        "support_rate": 0.9862938596491229,
+        "median_absolute_deviation": 10.0,
+        "mean_absolute_deviation": 21.14246803779878,
+        "typical_band_fraction": 0.4989438576987215,
+        "unusual_fraction": 0.2197887715397443,
+        "groups": {
+          "weekday_weekend": 8035,
+          "all_days": 960
+        }
+      },
+      "later_period": {
+        "comparisons": 3360,
+        "supported": 3360,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 11.0,
+        "mean_absolute_deviation": 20.609970238095237,
+        "typical_band_fraction": 0.5095238095238095,
+        "unusual_fraction": 0.18958333333333333,
+        "groups": {
+          "weekday_weekend": 3360
+        }
+      },
+      "common_selection": {
+        "comparisons": 3740,
+        "supported": 3740,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 11.0,
+        "mean_absolute_deviation": 22.11911764705882,
+        "typical_band_fraction": 0.4893048128342246,
+        "unusual_fraction": 0.22192513368983957,
+        "groups": {
+          "weekday_weekend": 3740
+        }
+      }
+    },
+    {
+      "candidate": "42d-radius1",
+      "selection": {
+        "comparisons": 9120,
+        "supported": 3760,
+        "support_rate": 0.41228070175438597,
+        "median_absolute_deviation": 10.0,
+        "mean_absolute_deviation": 21.978590425531916,
+        "typical_band_fraction": 0.4925531914893617,
+        "unusual_fraction": 0.22446808510638297,
+        "groups": {
+          "weekday_weekend": 3757,
+          "all_days": 3
+        }
+      },
+      "later_period": {
+        "comparisons": 3360,
+        "supported": 3360,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 10.0,
+        "mean_absolute_deviation": 20.896875,
+        "typical_band_fraction": 0.5017857142857143,
+        "unusual_fraction": 0.18898809523809523,
+        "groups": {
+          "weekday_weekend": 3360
+        }
+      },
+      "common_selection": {
+        "comparisons": 3740,
+        "supported": 3740,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 10.0,
+        "mean_absolute_deviation": 21.97192513368984,
+        "typical_band_fraction": 0.49224598930481284,
+        "unusual_fraction": 0.22459893048128343,
+        "groups": {
+          "weekday_weekend": 3737,
+          "all_days": 3
+        }
+      }
+    },
+    {
+      "candidate": "42d-radius2",
+      "selection": {
+        "comparisons": 9120,
+        "supported": 3740,
+        "support_rate": 0.4100877192982456,
+        "median_absolute_deviation": 10.5,
+        "mean_absolute_deviation": 21.965508021390374,
+        "typical_band_fraction": 0.5005347593582887,
+        "unusual_fraction": 0.21310160427807487,
+        "groups": {
+          "weekday_weekend": 3735,
+          "all_days": 5
+        }
+      },
+      "later_period": {
+        "comparisons": 3360,
+        "supported": 3360,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 10.0,
+        "mean_absolute_deviation": 20.89761904761905,
+        "typical_band_fraction": 0.5133928571428571,
+        "unusual_fraction": 0.1875,
+        "groups": {
+          "weekday_weekend": 3360
+        }
+      },
+      "common_selection": {
+        "comparisons": 3740,
+        "supported": 3740,
+        "support_rate": 1.0,
+        "median_absolute_deviation": 10.5,
+        "mean_absolute_deviation": 21.965508021390374,
+        "typical_band_fraction": 0.5005347593582887,
+        "unusual_fraction": 0.21310160427807487,
+        "groups": {
+          "weekday_weekend": 3735,
+          "all_days": 5
+        }
+      }
+    }
+  ],
+  "trend_candidates": [
+    {
+      "minutes": 30,
+      "meaningful_minutes": 5,
+      "states": {
+        "falling": 2010,
+        "little_change": 8365,
+        "rising": 2100,
+        "insufficient_recent_history": 5
+      },
+      "opposite_direction_next_hour": 0.10120385232744783
+    },
+    {
+      "minutes": 30,
+      "meaningful_minutes": 10,
+      "states": {
+        "falling": 1236,
+        "little_change": 10065,
+        "rising": 1174,
+        "insufficient_recent_history": 5
+      },
+      "opposite_direction_next_hour": 0.059470304975922955
+    },
+    {
+      "minutes": 60,
+      "meaningful_minutes": 5,
+      "states": {
+        "little_change": 6331,
+        "rising": 3252,
+        "falling": 2896,
+        "insufficient_recent_history": 1
+      },
+      "opposite_direction_next_hour": 0.15850722311396467
+    },
+    {
+      "minutes": 60,
+      "meaningful_minutes": 10,
+      "states": {
+        "little_change": 8504,
+        "falling": 1986,
+        "rising": 1989,
+        "insufficient_recent_history": 1
+      },
+      "opposite_direction_next_hour": 0.10585874799357946
+    }
+  ],
+  "source": {
+    "bucket": "mem-ed-wait-times",
+    "start": "2026-07-29T00:00:00Z",
+    "end": "2026-09-14T00:00:00Z",
+    "partitions": [
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-07-29",
+        "objects": 84,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-07-30",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-07-31",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-01",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-02",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-03",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-04",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-05",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-06",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-07",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-08",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-09",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-10",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-11",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-12",
+        "objects": 94,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-13",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-14",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-15",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-16",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-17",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-18",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-19",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-20",
+        "objects": 97,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-21",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-22",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-23",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-24",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-25",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-26",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-27",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-28",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-29",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-30",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-08-31",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-01",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-02",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-03",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-04",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-05",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-06",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-07",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-08",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-09",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-10",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-11",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-12",
+        "objects": 96,
+        "source": "raw"
+      },
+      {
+        "completeness": "raw_snapshot",
+        "date": "2026-09-13",
+        "objects": 96,
+        "source": "raw"
+      }
+    ],
+    "rejected_records": 0,
+    "duplicate_records": 0,
+    "records": 89978,
+    "snapshot_sha256": "61df6eb59d43aa0db800d0ec5aca98d12a5626cc062231f50bbba7b1c10a3896"
+  },
+  "selected_policy": {
+    "lookback_days": 28,
+    "hour_radius": 1,
+    "fallback_hour_radius": 2,
+    "minimum_days": 8,
+    "minimum_samples": 64,
+    "minimum_coverage": 0.75,
+    "minimum_day_coverage": 0.75,
+    "band_low": 0.25,
+    "band_high": 0.75,
+    "unusual_low": 10,
+    "unusual_high": 90,
+    "meaningful_minutes": 10,
+    "trend_minutes": 60,
+    "trend_tolerance_minutes": 20,
+    "trend_minimum_samples": 2,
+    "cadence_seconds": 900,
+    "gap_seconds": 1200
+  },
+  "selected_candidate": "28d-radius1",
+  "unusualness_sensitivity": [
+    {
+      "tail_percent": 5,
+      "minimum_minutes": 5,
+      "selection": {
+        "supported": 9017,
+        "flagged": 1347,
+        "fraction": 0.1493844959520905
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 395,
+        "fraction": 0.11755952380952381
+      }
+    },
+    {
+      "tail_percent": 5,
+      "minimum_minutes": 10,
+      "selection": {
+        "supported": 9017,
+        "flagged": 1280,
+        "fraction": 0.14195408672507487
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 363,
+        "fraction": 0.10803571428571429
+      }
+    },
+    {
+      "tail_percent": 5,
+      "minimum_minutes": 15,
+      "selection": {
+        "supported": 9017,
+        "flagged": 1151,
+        "fraction": 0.1276477764223134
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 311,
+        "fraction": 0.09255952380952381
+      }
+    },
+    {
+      "tail_percent": 10,
+      "minimum_minutes": 5,
+      "selection": {
+        "supported": 9017,
+        "flagged": 2195,
+        "fraction": 0.2434290784074526
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 723,
+        "fraction": 0.21517857142857144
+      }
+    },
+    {
+      "tail_percent": 10,
+      "minimum_minutes": 10,
+      "selection": {
+        "supported": 9017,
+        "flagged": 2024,
+        "fraction": 0.22446489963402463
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 652,
+        "fraction": 0.19404761904761905
+      }
+    },
+    {
+      "tail_percent": 10,
+      "minimum_minutes": 15,
+      "selection": {
+        "supported": 9017,
+        "flagged": 1755,
+        "fraction": 0.1946323610957081
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 528,
+        "fraction": 0.15714285714285714
+      }
+    },
+    {
+      "tail_percent": 15,
+      "minimum_minutes": 5,
+      "selection": {
+        "supported": 9017,
+        "flagged": 3121,
+        "fraction": 0.34612398802262395
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 1095,
+        "fraction": 0.32589285714285715
+      }
+    },
+    {
+      "tail_percent": 15,
+      "minimum_minutes": 10,
+      "selection": {
+        "supported": 9017,
+        "flagged": 2774,
+        "fraction": 0.3076411223244982
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 971,
+        "fraction": 0.2889880952380952
+      }
+    },
+    {
+      "tail_percent": 15,
+      "minimum_minutes": 15,
+      "selection": {
+        "supported": 9017,
+        "flagged": 2314,
+        "fraction": 0.2566263724076744
+      },
+      "later": {
+        "supported": 3360,
+        "flagged": 745,
+        "fraction": 0.22172619047619047
+      }
+    }
+  ],
+  "later_by_facility": {
+    "anderson": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 16.0,
+      "mean_absolute_deviation": 29.0,
+      "typical_band_fraction": 0.4583333333333333,
+      "unusual_fraction": 0.2261904761904762,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "arlington": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 8.75,
+      "mean_absolute_deviation": 13.770833333333334,
+      "typical_band_fraction": 0.6190476190476191,
+      "unusual_fraction": 0.11904761904761904,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "baptist-medical-center": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 18.75,
+      "mean_absolute_deviation": 42.17857142857143,
+      "typical_band_fraction": 0.4880952380952381,
+      "unusual_fraction": 0.25595238095238093,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "baptist-medical-center-attala": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 12.0,
+      "mean_absolute_deviation": 13.505952380952381,
+      "typical_band_fraction": 0.5059523809523809,
+      "unusual_fraction": 0.23214285714285715,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "baptist-medical-center-leake": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 6.25,
+      "mean_absolute_deviation": 7.455357142857143,
+      "typical_band_fraction": 0.5833333333333334,
+      "unusual_fraction": 0.10714285714285714,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "baptist-medical-center-yazoo": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 9.0,
+      "mean_absolute_deviation": 11.413690476190476,
+      "typical_band_fraction": 0.5297619047619048,
+      "unusual_fraction": 0.19047619047619047,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "booneville": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 6.75,
+      "mean_absolute_deviation": 8.821428571428571,
+      "typical_band_fraction": 0.39880952380952384,
+      "unusual_fraction": 0.20833333333333334,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "calhoun": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 5.5,
+      "mean_absolute_deviation": 5.979166666666667,
+      "typical_band_fraction": 0.5297619047619048,
+      "unusual_fraction": 0.08928571428571429,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "childrens": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 11.0,
+      "mean_absolute_deviation": 16.342261904761905,
+      "typical_band_fraction": 0.6190476190476191,
+      "unusual_fraction": 0.10714285714285714,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "collierville": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 15.0,
+      "mean_absolute_deviation": 29.69345238095238,
+      "typical_band_fraction": 0.5059523809523809,
+      "unusual_fraction": 0.18452380952380953,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "crittenden": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 14.5,
+      "mean_absolute_deviation": 23.544642857142858,
+      "typical_band_fraction": 0.6726190476190477,
+      "unusual_fraction": 0.09523809523809523,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "desoto": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 36.5,
+      "mean_absolute_deviation": 53.07440476190476,
+      "typical_band_fraction": 0.35714285714285715,
+      "unusual_fraction": 0.31547619047619047,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "golden-triangle": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 10.5,
+      "mean_absolute_deviation": 16.55952380952381,
+      "typical_band_fraction": 0.49404761904761907,
+      "unusual_fraction": 0.26785714285714285,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "huntingdon": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 11.0,
+      "mean_absolute_deviation": 19.241071428571427,
+      "typical_band_fraction": 0.39880952380952384,
+      "unusual_fraction": 0.2857142857142857,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "memphis": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 35.25,
+      "mean_absolute_deviation": 48.080357142857146,
+      "typical_band_fraction": 0.4107142857142857,
+      "unusual_fraction": 0.2619047619047619,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "nea": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 4.0,
+      "mean_absolute_deviation": 5.4375,
+      "typical_band_fraction": 0.5476190476190477,
+      "unusual_fraction": 0.06547619047619048,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "north-mississippi": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 22.25,
+      "mean_absolute_deviation": 31.288690476190474,
+      "typical_band_fraction": 0.39285714285714285,
+      "unusual_fraction": 0.20238095238095238,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "tipton": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 9.0,
+      "mean_absolute_deviation": 13.985119047619047,
+      "typical_band_fraction": 0.5654761904761905,
+      "unusual_fraction": 0.16071428571428573,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "union-city": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 10.75,
+      "mean_absolute_deviation": 12.660714285714286,
+      "typical_band_fraction": 0.3869047619047619,
+      "unusual_fraction": 0.25595238095238093,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    },
+    "union-county": {
+      "comparisons": 168,
+      "supported": 168,
+      "support_rate": 1.0,
+      "median_absolute_deviation": 8.75,
+      "mean_absolute_deviation": 11.419642857142858,
+      "typical_band_fraction": 0.48214285714285715,
+      "unusual_fraction": 0.25,
+      "groups": {
+        "weekday_weekend": 168
+      }
+    }
+  },
+  "examples": [
+    {
+      "facility": "memphis",
+      "at": "2026-09-10T08:08:54.112047+00:00",
+      "value": 13,
+      "median": 162.0,
+      "low": 99.5,
+      "high": 228.0,
+      "delta": -149.0,
+      "percentile": 0.625,
+      "unusual": "below_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "low_deviation",
+      "trend": {
+        "state": "falling",
+        "delta": -58,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "memphis",
+      "at": "2026-09-09T10:08:54.142033+00:00",
+      "value": 404,
+      "median": 106.0,
+      "low": 38.75,
+      "high": 209.0,
+      "delta": 298.0,
+      "percentile": 99.58333333333333,
+      "unusual": "above_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "high_deviation",
+      "trend": {
+        "state": "rising",
+        "delta": 155,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "desoto",
+      "at": "2026-09-08T18:09:00.370296+00:00",
+      "value": 19,
+      "median": 54.0,
+      "low": 39.0,
+      "high": 64.0,
+      "delta": -35.0,
+      "percentile": 0.0,
+      "unusual": "below_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "low_deviation",
+      "trend": {
+        "state": "falling",
+        "delta": -12,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "desoto",
+      "at": "2026-09-12T13:08:59.976839+00:00",
+      "value": 322,
+      "median": 80.0,
+      "low": 46.75,
+      "high": 111.75,
+      "delta": 242.0,
+      "percentile": 100.0,
+      "unusual": "above_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 8,
+        "eligible_days": 8,
+        "samples": 96,
+        "observed_slots": 96,
+        "expected_slots": 96,
+        "coverage": 1.0
+      },
+      "example": "high_deviation",
+      "trend": {
+        "state": "rising",
+        "delta": 99,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "crittenden",
+      "at": "2026-09-09T22:08:56.013047+00:00",
+      "value": 0,
+      "median": 49.0,
+      "low": 26.75,
+      "high": 77.0,
+      "delta": -49.0,
+      "percentile": 1.0416666666666667,
+      "unusual": "below_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "low_deviation",
+      "trend": {
+        "state": "falling",
+        "delta": -23,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "crittenden",
+      "at": "2026-09-07T07:08:55.938184+00:00",
+      "value": 215,
+      "median": 18.5,
+      "low": 0.0,
+      "high": 58.0,
+      "delta": 196.5,
+      "percentile": 94.58333333333333,
+      "unusual": "above_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "high_deviation",
+      "trend": {
+        "state": "rising",
+        "delta": 215,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "arlington",
+      "at": "2026-09-12T20:08:51.398672+00:00",
+      "value": 11,
+      "median": 52.5,
+      "low": 39.0,
+      "high": 80.0,
+      "delta": -41.5,
+      "percentile": 1.5625,
+      "unusual": "below_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 8,
+        "eligible_days": 8,
+        "samples": 96,
+        "observed_slots": 96,
+        "expected_slots": 96,
+        "coverage": 1.0
+      },
+      "example": "low_deviation",
+      "trend": {
+        "state": "falling",
+        "delta": -20,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "arlington",
+      "at": "2026-09-10T00:08:51.402241+00:00",
+      "value": 122,
+      "median": 39.0,
+      "low": 19.0,
+      "high": 67.0,
+      "delta": 83.0,
+      "percentile": 99.58333333333333,
+      "unusual": "above_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "high_deviation",
+      "trend": {
+        "state": "rising",
+        "delta": 94,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "baptist-medical-center-yazoo",
+      "at": "2026-09-08T02:09:03.439744+00:00",
+      "value": 0,
+      "median": 16.5,
+      "low": 9.0,
+      "high": 32.0,
+      "delta": -16.5,
+      "percentile": 8.541666666666666,
+      "unusual": "below_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "low_deviation",
+      "trend": {
+        "state": "falling",
+        "delta": -14,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "baptist-medical-center-yazoo",
+      "at": "2026-09-10T18:09:03.585783+00:00",
+      "value": 77,
+      "median": 12.0,
+      "low": 2.75,
+      "high": 24.0,
+      "delta": 65.0,
+      "percentile": 96.25,
+      "unusual": "above_usual",
+      "group": "weekday_weekend",
+      "support": {
+        "days": 20,
+        "eligible_days": 20,
+        "samples": 240,
+        "observed_slots": 240,
+        "expected_slots": 240,
+        "coverage": 1.0
+      },
+      "example": "high_deviation",
+      "trend": {
+        "state": "rising",
+        "delta": 66,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "arlington",
+      "at": "2026-08-19T00:08:51.594733+00:00",
+      "value": 74,
+      "median": null,
+      "low": null,
+      "high": null,
+      "delta": null,
+      "percentile": null,
+      "unusual": "insufficient_history",
+      "group": "all_days",
+      "support": {
+        "days": 20,
+        "eligible_days": 28,
+        "samples": 400,
+        "observed_slots": 401,
+        "expected_slots": 560,
+        "coverage": 0.7160714285714286
+      },
+      "example": "sparse_startup",
+      "trend": {
+        "state": "little_change",
+        "delta": -2,
+        "samples": 3
+      }
+    },
+    {
+      "facility": "arlington",
+      "at": "2026-08-22T05:08:51.318002+00:00",
+      "value": 134,
+      "median": 12.0,
+      "low": 2.0,
+      "high": 39.0,
+      "delta": 122.0,
+      "percentile": 97.17573221757323,
+      "unusual": "above_usual",
+      "group": "all_days",
+      "support": {
+        "days": 24,
+        "eligible_days": 28,
+        "samples": 478,
+        "observed_slots": 485,
+        "expected_slots": 560,
+        "coverage": 0.8660714285714286
+      },
+      "example": "broader_fallback",
+      "trend": {
+        "state": "rising",
+        "delta": 134,
+        "samples": 3
+      }
+    }
+  ]
+}

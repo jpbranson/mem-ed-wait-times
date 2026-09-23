@@ -1,0 +1,127 @@
+{
+  "checked_on": "2026-09-14",
+  "artifact_generated_at": "2026-09-14T18:11:24.567087+00:00",
+  "artifact_sha256": "dd7de3bac8af4537266d85907adfed6c2fd3d00589447d86ca00a37a333e62af",
+  "source_start": "2026-08-17T05:00:00+00:00",
+  "source_end_exclusive": "2026-09-14T05:00:00+00:00",
+  "policy": {
+    "lookback_days": 28,
+    "horizons_minutes": [
+      15,
+      30,
+      60,
+      120
+    ],
+    "minimum_days": 8,
+    "minimum_pairs": 64,
+    "minimum_day_coverage": 0.75,
+    "gap_seconds": 1200,
+    "horizon_tolerance_seconds": 450,
+    "quantile": 0.9,
+    "meaningful_minutes": 10,
+    "route_ttl_seconds": 300,
+    "context_ttl_seconds": 7200,
+    "verification_days": 90
+  },
+  "facilities": 20,
+  "eligible_adult": 0,
+  "eligible_child": 0,
+  "supported_horizons": 80,
+  "selected_facilities": [
+    {
+      "slug": "memphis",
+      "movement": [
+        {
+          "horizon_minutes": 15,
+          "pairs": 2686,
+          "days": 28,
+          "absolute_change_p90": 87.0
+        },
+        {
+          "horizon_minutes": 30,
+          "pairs": 2684,
+          "days": 28,
+          "absolute_change_p90": 173.70000000000027
+        },
+        {
+          "horizon_minutes": 60,
+          "pairs": 2680,
+          "days": 28,
+          "absolute_change_p90": 192.29999999999336
+        },
+        {
+          "horizon_minutes": 120,
+          "pairs": 2672,
+          "days": 28,
+          "absolute_change_p90": 106.30000000000427
+        }
+      ]
+    },
+    {
+      "slug": "crittenden",
+      "movement": [
+        {
+          "horizon_minutes": 15,
+          "pairs": 2687,
+          "days": 28,
+          "absolute_change_p90": 3.5999999999994543
+        },
+        {
+          "horizon_minutes": 30,
+          "pairs": 2686,
+          "days": 28,
+          "absolute_change_p90": 11.0
+        },
+        {
+          "horizon_minutes": 60,
+          "pairs": 2684,
+          "days": 28,
+          "absolute_change_p90": 16.0
+        },
+        {
+          "horizon_minutes": 120,
+          "pairs": 2680,
+          "days": 28,
+          "absolute_change_p90": 10.0
+        }
+      ]
+    },
+    {
+      "slug": "desoto",
+      "movement": [
+        {
+          "horizon_minutes": 15,
+          "pairs": 2687,
+          "days": 28,
+          "absolute_change_p90": 5.200000000000273
+        },
+        {
+          "horizon_minutes": 30,
+          "pairs": 2686,
+          "days": 28,
+          "absolute_change_p90": 6.0
+        },
+        {
+          "horizon_minutes": 60,
+          "pairs": 2684,
+          "days": 28,
+          "absolute_change_p90": 15.90000000000191
+        },
+        {
+          "horizon_minutes": 120,
+          "pairs": 2680,
+          "days": 28,
+          "absolute_change_p90": 36.400000000000546
+        }
+      ]
+    }
+  ],
+  "live_provider_probe": {
+    "public_map_coordinates_only": true,
+    "not_emergency_destinations": true,
+    "code": "Ok",
+    "seconds": 171.9,
+    "meters": 2058
+  },
+  "deployment": "not deployed"
+}

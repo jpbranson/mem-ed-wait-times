@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mem-ed-wait-times.example/schemas/comparisons.schema.json",
+  "title": "M1 hospital self-comparison artifact",
+  "description": "Atomic website-owned comparisons.json. Versioned past-local-day reference models, seven days of historical comparisons, coverage, and operator latency. Original raw observation records remain unchanged.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_version",
+    "metric",
+    "generated_at",
+    "local_timezone",
+    "valid_until",
+    "history_start",
+    "policy",
+    "source_range",
+    "coverage",
+    "latency",
+    "facilities"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "method_version": {
+      "const": "self-comparison-v1"
+    },
+    "metric": {
+      "const": "CV_ED_Wait"
+    },
+    "generated_at": {
+      "$ref": "#/$defs/time"
+    },
+    "local_timezone": {
+      "const": "America/Chicago"
+    },
+    "valid_until": {
+      "$ref": "#/$defs/time"
+    },
+    "history_start": {
+      "$ref": "#/$defs/time"
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lookback_days",
+        "hour_radius",
+        "fallback_hour_radius",
+        "minimum_days",
+        "minimum_samples",
+        "minimum_coverage",
+        "minimum_day_coverage",
+        "band_low",
+        "band_high",
+        "unusual_low",
+        "unusual_high",
+        "meaningful_minutes",
+        "trend_minutes",
+        "trend_tolerance_minutes",
+        "trend_minimum_samples",
+        "cadence_seconds",
+        "gap_seconds"
+      ],
+      "properties": {
+        "lookback_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "hour_radius": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fallback_hour_radius": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minimum_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minimum_samples": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "meaningful_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "trend_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "trend_tolerance_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "trend_minimum_samples": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cadence_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "gap_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minimum_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "minimum_day_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "band_low": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "band_high": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unusual_low": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "unusual_high": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "source_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "M0 coverage() output for the complete loaded batch window; not baseline calendar-slot coverage."
+    },
+    "latency": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug",
+          "samples",
+          "median_ms",
+          "p95_ms"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "samples": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "median_ms": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "p95_ms": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "facilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug",
+          "models",
+          "history"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "models": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 24,
+              "maxItems": 24,
+              "items": {
+                "$ref": "#/$defs/model"
+              }
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/point"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "group": {
+      "enum": [
+        "weekday_weekend",
+        "wider_hours",
+        "all_days"
+      ]
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "days",
+        "eligible_days",
+        "samples",
+        "observed_slots",
+        "expected_slots",
+        "coverage"
+      ],
+      "properties": {
+        "days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observed_slots": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_slots": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "group",
+        "hour_radius",
+        "support",
+        "reference_start",
+        "reference_end_exclusive",
+        "median",
+        "low",
+        "high",
+        "distribution"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "supported",
+            "insufficient_history"
+          ]
+        },
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "hour_radius": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "support": {
+          "$ref": "#/$defs/support"
+        },
+        "reference_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "reference_end_exclusive": {
+          "type": "string",
+          "format": "date"
+        },
+        "median": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "low": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "high": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "distribution": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer",
+                "minimum": 1
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      }
+    },
+    "point": {
+      "type": "array",
+      "description": "[observed_at, wait_minutes, median, low, high, delta_minutes, percentile, reference_days, slot_coverage, group]. Reference values are null when unsupported. One representative per 15-minute UTC slot.",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": false,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/time"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "$ref": "#/$defs/group"
+        }
+      ]
+    }
+  }
+}
