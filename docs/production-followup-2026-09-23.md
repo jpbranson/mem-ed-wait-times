@@ -108,3 +108,30 @@ repository. Minute-17 does not demonstrably help. Choosing a reliable trigger
 (for example an AWS EventBridge schedule dispatching the workflow, or building
 the site inside AWS) is an open decision that needs the user's approval because
 it adds credentials or infrastructure. Freshness limits are unchanged.
+
+## M2/M3 release from a validated local build
+
+On the user's request to deploy, commit and push, committed and pushed
+[`fa842c8`](https://github.com/jpbranson/mem-ed-wait-times/commit/fa842c8). A
+workflow dispatch was not possible from this session: the GitHub CLI is not
+installed and the browser was not signed in to GitHub, and no credentials were
+entered. Following the documented direct publication in
+[M1 operations](m1-operations.md), the site built from that revision (58 Python /
+40 JavaScript tests passed; preparation from read-only S3 at 07:17:34 UTC; Quarto
+render) was dry-run and then synced with `--delete --exclude "data/*"` at about
+07:21 UTC. No workflow run was active.
+
+The local Windows toolchain produced different Quarto bootstrap assets and line
+endings for two JSON assets than the GitHub runner; the old bootstrap stylesheet
+was removed by the sync. The next GitHub-hosted build will replace these with the
+runner's output. This deployment is not scheduled-delivery evidence.
+
+The updated `scripts/check_public.mjs --expected-site` passed at **07:21:21 UTC**:
+public HTML, comparisons, travel and four browser modules matched the build;
+context generated 07:17:34 (227 s old); latest generated 07:09:08 by the collector
+and preserved; **20/20 current facilities**; recommendations disabled. HTML SHA-256
+`6808f8eee87699889ccee231e1972d81a392ac4b687562be1a441986ad8b843c`. Local evidence:
+`.cache/release-20260923-m3.json`. Chrome on the public URL showed 20 heatmap rows,
+row selection moved the focus chart, comparisons were current, Compare stayed
+disabled with "Emergency destinations awaiting verification", and no console errors.
+No Lambda, EventBridge, bucket policy, raw/latest/comparison/travel schema changed.
