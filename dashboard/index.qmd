@@ -24,7 +24,7 @@ from pathlib import Path
 from IPython.display import HTML, display
 
 sys.path.insert(0, str(Path.cwd().parent))
-from edwait.data import registry
+from edwait.data import registry, short_name
 facilities = registry()
 context_path = Path("comparisons.json")
 context = json.loads(context_path.read_text(encoding="utf-8")) if context_path.exists() else None
@@ -86,7 +86,8 @@ if context is not None and any(entry["history"] for entry in context["facilities
     display(HTML('<p class="overview-stamp" title="Overview updates with the site build; gaps over 20 minutes stay blank">' +
                  'History · ' + html.escape(prepared.strftime('%b %d, %I:%M %p %Z')) + '</p>'))
 display(HTML('<script type="application/json" id="facility-registry">' +
-             json.dumps([{"slug": f["slug"], "display_name": f["display_name"]} for f in facilities]).replace("<", "\\u003c") +
+             json.dumps([{"slug": f["slug"], "display_name": f["display_name"], "short_name": short_name(f)}
+                         for f in facilities]).replace("<", "\\u003c") +
              '</script>'))
 ```
 
@@ -112,6 +113,16 @@ display(HTML('<div class="focus-toolbar"><label for="hospital-select">Focus</lab
 </div>
 <p id="context-status" role="status" aria-live="polite"></p>
 <details class="data-disclosure"><summary>Data table</summary><div id="history-table" class="table-scroll" tabindex="0" role="region" aria-label="Historical observation table"></div></details>
+</section>
+<section id="heatmap-stage" class="heatmap-stage" aria-labelledby="heatmap-heading">
+  <div class="stage-heading"><h2 id="heatmap-heading">Versus usual</h2><span class="plot-meta">Median minutes from each hospital’s usual median · select a row to focus</span></div>
+  <div class="heatmap-legend" aria-label="Color key"></div>
+  <div class="heatmap-chart" tabindex="-1" role="region" aria-label="Difference from usual for all hospitals"></div>
+  <p class="heatmap-note"></p>
+  <details class="data-disclosure"><summary>Summary table &amp; limits</summary>
+    <p>Each period shows the median difference between published readings and that hospital’s past-only usual median (M1 references). Rows that change together here are not evidence of patients moving between hospitals; shared calendar patterns, reporting changes and collection gaps can align colors.</p>
+    <div class="heatmap-table table-scroll" tabindex="0" role="region" aria-label="Heatmap summary table"></div>
+  </details>
 </section>
 <section id="travel-stage" class="travel-stage" aria-labelledby="travel-heading">
   <div class="travel-heading"><h2 id="travel-heading">Drive + wait</h2><button type="button" class="travel-example" aria-pressed="false">View example</button></div>

@@ -138,7 +138,8 @@ choose Use map center. Map panning alone does not change the selected origin.
 Clear and page exit remove the pin, blank the inputs, reset the view to Memphis,
 and invalidate late location/route callbacks. Origin edits cancel an in-flight
 route comparison; a late GPS response cannot overwrite a newer map/manual choice.
-Compare still requires an origin, age, valid context, and verified destinations.
+Compare still requires an origin, age, valid context, verified destinations, and a
+routing gateway that answers `GET /api/routes/status` with `available: true`.
 
 Map display uses locally bundled **MapLibre GL JS 6.9.1** and a local adaptation
 of **OpenFreeMap's Dark style**. Map code loads when its section nears the viewport,
@@ -163,7 +164,11 @@ transmission. [Service and attribution](https://openfreemap.org/),
 
 ## Destination and privacy contracts
 
-All 20 real destinations currently remain excluded. Enabling one requires
+All 20 real destinations currently remain excluded. Since 2026-09-23 the registry
+records official status, service and age evidence for each facility in
+`destination_evidence` (source URL, address, OpenStreetMap campus reference,
+entrance search result and notes); only the entrance remains unverified, plus
+Leake's active status. [Evidence](m2-destinations-2026-09-23.md). Enabling one requires
 reviewed evidence in [the registry](../edwait/facilities.json):
 
 - `active_status: "active"` and `service_applicability: ["general_emergency"]`.
@@ -178,7 +183,13 @@ Campus `coordinates` alone never enable routing. Keep unverified values null;
 do not copy synthetic test metadata into the registry. These fields describe
 general service applicability, not individual clinical suitability or diversion.
 
-The local endpoint accepts only `POST /api/routes`, with JSON keys `latitude`,
+Before enabling Compare, the page sends `GET /api/routes/status` (no origin or
+body). The local server answers `{"schema_version": 1, "available": <key configured>}`
+with `no-store`; static S3 returns an error, so the public page keeps Compare
+disabled and never posts coordinates there. A future public gateway must answer
+the same probe. The probe runs alongside the travel-context fetch and never delays it.
+
+The local route endpoint accepts only `POST /api/routes`, with JSON keys `latitude`,
 `longitude`, and `age_group`; it selects destinations from the trusted registry.
 Requests must be same-origin, at most 512 bytes, with finite coordinates in range.
 Client-supplied destinations are rejected. No CORS permission is granted.

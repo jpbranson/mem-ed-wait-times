@@ -86,3 +86,25 @@ Local sanitized evidence: `.cache/production-redeploy-20260923.json`.
 This was another manual dispatch; scheduled cadence remains unverified. The
 follow-up commit records deployment evidence only. Public routing and forecasts
 remain gated; no application, Lambda, storage or record contract changed.
+
+## Scheduled delivery observation
+
+Checked the public Actions API at 06:52 and again at 07:11 UTC. The newest
+scheduled run was still [run 35805147090](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35805147090)
+at **01:09:45 UTC**, built from `00bbef4` under the old `0 * * * *` schedule. No
+scheduled run followed the minute-17 publication at about 04:55 UTC: neither the
+05:17 nor the 06:17 slot had started by 07:11. The runs after
+01:09 UTC are the three manual dispatches recorded above. Earlier scheduled spacing
+under the old cron was 2.5–4.6 hours, so this ~6-hour gap is the longest observed.
+
+A read-only public check at 06:52:31 UTC (`.cache/schedule-observation-20260923.json`)
+passed with 20/20 current facilities, but the 05:05:45 context was 107 minutes old;
+the browser pauses comparisons at two hours (about 07:06 UTC) until another build.
+The next deployment in this session refreshes it; that is a manual dispatch, not
+scheduled evidence.
+
+Conclusion: GitHub's schedule is not delivering an hourly cadence for this
+repository. Minute-17 does not demonstrably help. Choosing a reliable trigger
+(for example an AWS EventBridge schedule dispatching the workflow, or building
+the site inside AWS) is an open decision that needs the user's approval because
+it adds credentials or infrastructure. Freshness limits are unchanged.

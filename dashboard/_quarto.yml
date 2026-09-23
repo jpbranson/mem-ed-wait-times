@@ -10,6 +10,7 @@ project:
     - overview.mjs
     - comparisons.json
     - travel.mjs
+    - heatmap.mjs
     - origin.mjs
     - origin-map.mjs
     - origin-map-style.json

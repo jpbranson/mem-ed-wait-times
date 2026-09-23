@@ -95,15 +95,27 @@ class HistoryTests(unittest.TestCase):
         self.assertEqual(summary["missing_facility_observations"], 2)
         self.assertEqual(summary["collection_gaps"][0]["seconds"], 3540)
 
-    def test_registry_preserves_all_twenty_slugs_and_unknown_travel_fields(self):
+    def test_registry_preserves_all_twenty_slugs_and_evidence_backed_travel_fields(self):
+        from edwait.travel import eligibility
         facilities = registry()
         self.assertEqual(len({f["slug"] for f in facilities}), 20)
         self.assertIn("huntingdon", [f["slug"] for f in facilities])
+        now = datetime(2026, 9, 23, 12, tzinfo=timezone.utc)
         for f in facilities:
-            self.assertEqual(f["active_status"], "unknown")
+            self.assertIn(f["active_status"], ("active", "unknown"))
             self.assertIsNone(f["coordinates"])
-            self.assertIsNone(f["travel_verified_on"])
             self.assertTrue(f["official_source_url"].startswith("https://www.baptistonline.org/"))
+            evidence = f["destination_evidence"]
+            self.assertTrue(evidence["status_source_url"].startswith("https://www.baptistonline.org/"))
+            self.assertTrue(evidence["osm_campus_url"].startswith("https://www.openstreetmap.org/"))
+            self.assertTrue(set(f["age_applicability"]) <= {"adult", "child"} and f["age_applicability"])
+            # Campus points or unconfirmed map candidates must never stand in for an entrance.
+            self.assertIsNone(f["emergency_entrance"])
+            for group in ("adult", "child"):
+                self.assertIsNotNone(eligibility(f, group, now))
+        by_slug = {f["slug"]: f for f in facilities}
+        self.assertEqual(by_slug["childrens"]["age_applicability"], ["child"])
+        self.assertEqual(eligibility(by_slug["memphis"], "adult", now), "Emergency entrance coordinates unverified")
 
     def test_corrupt_compressed_object_is_explicitly_rejected(self):
         self.s3.put_object(Bucket="test", Key="compacted/ed_wait/dt=2026-09-13/data.jsonl.gz", Body=b"not gzip")

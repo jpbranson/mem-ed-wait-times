@@ -56,7 +56,27 @@ test("GPS works before age/context/destination validation; changes never send ro
   await travel.refresh(); // Context failure must not disable selecting another origin.
   assert.equal(f.get('.travel-location').disabled,false);
   assert.equal(f.get('[type=submit]').disabled,true);
-  assert.deepEqual(requests,['travel.json']);
+  // The availability probe is a GET without the origin; only Compare may send it.
+  assert.deepEqual(requests.sort(),['/api/routes/status','travel.json']);
+});
+
+test("eligible destinations keep Compare disabled where no routing gateway exists",async()=>{
+  const f=fixture(),at=new Date().toISOString(),posts=[];
+  const facility={slug:'a',display_name:'Synthetic hospital',eligibility:{adult:null,child:null},
+    movement:[15,30,60,120].map(h=>({horizon_minutes:h,pairs:0,days:0,absolute_change_p90:null}))};
+  const context={schema_version:1,method_version:'travel-wait-v1',metric:'CV_ED_Wait',generated_at:at,
+    recommendations_enabled:false,policy:{route_ttl_seconds:300,context_ttl_seconds:7200,meaningful_minutes:10},facilities:[facility]};
+  const travel=mountTravel(f.root,{expected:[facility],getLive:()=>({}),originOptions:f.options,
+    fetcher:async(url,options)=>{
+      if(url==='travel.json') return {ok:true,json:async()=>context};
+      if(options?.method==='POST') posts.push(options);
+      return {ok:false,json:async()=>{throw Error('S3 XML error');}};
+    }});
+  f.get('[name=age_group]').value='adult';await travel.refresh();await settled();
+  f.mapOptions.onSelect({latitude:35,longitude:-90});await settled();
+  assert.equal(f.get('[type=submit]').disabled,true);
+  assert.match(f.get('.travel-status').textContent,/not available on this site/);
+  f.get('form').fire('submit');assert.equal(posts.length,0);
 });
 
 test("map, keyboard center, manual input, and Clear synchronize one origin",async()=>{
@@ -81,6 +101,7 @@ test("only Compare sends the selected origin; editing cancels a pending route",a
   const travel=mountTravel(f.root,{expected:[facility],getLive:()=>({}),originOptions:{...f.options,geolocation:{getCurrentPosition:ok=>{gps=ok;}}},
     fetcher:async(url,options)=>{
       if(url==='travel.json') return {ok:true,json:async()=>context};
+      if(url==='/api/routes/status') return {ok:true,json:async()=>({schema_version:1,available:true})};
       requests.push(options);return new Promise(resolve=>finishRoute=resolve);
     }});
   f.get('[name=age_group]').value='adult';await travel.refresh();await settled();

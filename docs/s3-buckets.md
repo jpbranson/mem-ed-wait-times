@@ -236,6 +236,7 @@ s3://mem-ed-wait-times-dashboard/
   latest.mjs
   comparisons.mjs
   overview.mjs     # shared time controls and visible-line y-axis scaling
+  heatmap.mjs      # M3 difference-from-usual heatmap; reads comparisons.json only
   latest.css
   fonts/
     inter-latin.woff2
@@ -332,8 +333,9 @@ geometry. The ignored local `.cache/tomtom-usage.sqlite3` file stores only a
 this usage counter across restarts; it is outside the served website directory.
 No provider key is included in website files or collector configuration. Future
 public gateway storage remains a separate deployment decision.
-`POST /api/routes` exists only in the local review server; static S3 hosting does
-not supply that endpoint. Public activation and free hosting remain unresolved.
+`POST /api/routes` and its `GET /api/routes/status` availability probe exist only
+in the local review server; static S3 hosting does not supply them, so the public
+page keeps Compare disabled. Public activation and free hosting remain unresolved.
 The raw six-field observation schema, attempts/latest contracts, and compaction
 layout are unchanged by M2. See [M2 operations](m2-operations.md).
 

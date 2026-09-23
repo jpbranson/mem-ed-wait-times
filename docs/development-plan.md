@@ -1,10 +1,12 @@
 # Development plan
 
-Last updated: 2026-09-23 UTC (follow-up began September 22 America/Chicago)
+Last updated: 2026-09-23 07:20 UTC (follow-up began September 22 America/Chicago)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
-remain in progress; M3–M4 remain planned. M5 is now in progress: a frozen offline
+remain in progress; official status/service/age evidence now covers all 20
+destinations, while emergency entrances remain unverified. M3 is in progress with
+a difference-from-usual heatmap; M4 remains planned. M5 is now in progress: a frozen offline
 snapshot, four simple benchmarks, and two ARIMA development pilots are implemented
 and locally validated. Calibration/holdout and public forecasts remain pending.
 
@@ -53,11 +55,11 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Collection | Uses 20 registry slugs; preserves raw observations, writes attempt summaries, and conditionally publishes latest readings and failures | [Collector](../mem-ed-lambda.py), [publisher](../edwait/latest.py) |
 | Compaction | Concatenates raw without rewriting provenance; attaches a fingerprint of copied raw objects | [Compactor](../lambda_function.py) |
 | Shared history | Selects one source per UTC batch-date partition, validates and deduplicates by facility/metric, reports coverage/gaps/rejections | [Reader](../edwait/data.py) |
-| Registry | Stable slugs, verified names/state groupings, timezone/source dates; travel metadata remains explicit unknown | [Registry](../edwait/facilities.json) |
-| Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Destination/metric evidence and public gateway remain pending; all real destinations excluded and recommendations disabled | [M2 operations](m2-operations.md), [readiness follow-up](m2-readiness-2026-09-23.md) |
+| Registry | Stable slugs, verified names/state groupings, timezone/source dates; 2026-09-23 official evidence for active status, general-emergency service and explicit age groups, with per-facility `destination_evidence`; emergency entrances remain null, so no destination is eligible | [Registry](../edwait/facilities.json), [destination evidence](m2-destinations-2026-09-23.md) |
+| Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Compare is enabled only after a `GET /api/routes/status` gateway confirmation, so static hosting never receives coordinates. Entrance/metric evidence and public gateway remain pending; all real destinations excluded and recommendations disabled | [M2 operations](m2-operations.md), [readiness follow-up](m2-readiness-2026-09-23.md) |
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks and ARIMA(1,0,0)/(1,1,0) evaluated on development data only; no public forecasts | [Protocol](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md) |
-| Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [application](../dashboard/app.mjs) |
+| Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; an M3 difference-from-usual heatmap links rows to the focus chart; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [heatmap](../dashboard/heatmap.mjs), [application](../dashboard/app.mjs) |
 | Deployment | M0/M1 and M2 static assets deployed to S3; both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
 | Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json) |
 
@@ -65,8 +67,10 @@ Implementation and production deployment are recorded separately. Public artifac
 and refresh checks passed for the 2026-09-22 AWS release. The first updated
 GitHub-hosted build and public desktop/mobile review passed on 2026-09-23 UTC.
 The approved workflow schedule/verification mitigation is published and its
-manual run passed, including 57 Python/33 JavaScript tests and the public smoke check;
-scheduled delivery still needs observation. [Follow-up evidence](production-followup-2026-09-23.md).
+manual run passed, including 57 Python/33 JavaScript tests and the public smoke check.
+Scheduled delivery was observed on 2026-09-23: no scheduled run started between
+01:09 and at least 07:11 UTC, including both minute-17 slots after publication.
+[Follow-up evidence](production-followup-2026-09-23.md#scheduled-delivery-observation).
 
 A read-only assessment on 2026-09-14 inspected the 47 compacted partitions from
 2026-07-29 through 2026-09-13, inclusive, under
@@ -128,7 +132,7 @@ Deployment status must be recorded separately from implementation status.
 | M0 | Reliable shared data, facility registry, and freshness | First release foundation | Complete | Existing collection and storage |
 | M1 | Hospital self-comparisons and recent trends | First public feature | Complete | M0 reader, baseline inputs, freshness states |
 | M2 | Travel-and-wait comparison | Next public feature | In progress: static prototype published; local fixtures and one live provider probe validated; acceptance work remains | M0, M1, verified destinations, travel-time source, metric interpretation |
-| M3 | Relationships and spillover exploration | Analytical track | Planned | M0, M1; geographic view also needs verified coordinates |
+| M3 | Relationships and spillover exploration | Analytical track | In progress: difference-from-usual heatmap with linked focus implemented and locally validated; relationship analysis remains | M0, M1; geographic view also needs verified coordinates |
 | M4 | Area summaries, stability, and historical alternatives | Follow-on features | Planned | M1; geographic summaries need region metadata; travel scenarios need M2 |
 | M5 | Time-series modeling and short-horizon forecasts | Analytical track; conditional forecast release | In progress: benchmarks and two ARIMA development pilots validated offline; no public forecast | M0 validated history and freshness, M1 benchmarks; M2/M3 integration follows separate validation |
 
@@ -359,6 +363,12 @@ public hosting implementation remain unresolved. A local user-provided key and
 one live nonclinical TomTom v3 request passed on 2026-09-23 UTC. Cloudflare Workers
 Free with a shared SQLite Durable Object is the selected design target, not a
 configured or deployed service. [Readiness evidence](m2-readiness-2026-09-23.md).
+Destination research on 2026-09-23 UTC recorded official active-status, service and
+age evidence for all 20 facilities in the registry, but found no verifiable
+emergency-entrance coordinates; every destination stays excluded with the reason
+"Emergency entrance coordinates unverified" (Leake: active status unverified).
+The page now probes `GET /api/routes/status` and keeps Compare disabled without a
+confirmed gateway. [Destination evidence](m2-destinations-2026-09-23.md).
 M2 is not complete. Its static interface was deployed with M0/M1 on 2026-09-22,
 but routing remains local-only and no preferred hospital recommendations are enabled.
 
@@ -458,6 +468,18 @@ Acceptance criteria:
   are shown. Disable forecast-based claims where performance is inadequate.
 
 ### M3: Relationships and spillover exploration
+
+Started 2026-09-23 UTC. **In progress:** the first deliverable's facility-by-time
+heatmap is implemented in [heatmap.mjs](../dashboard/heatmap.mjs) from existing
+`comparisons.json` history, with no new artifact or contract. Cells show the
+median M1 difference from usual per hour (seven days) or 15 minutes (24 hours)
+in seven discrete diverging steps, neutral within ±10 minutes; blank periods lack
+readings and hatched periods lack a usual range. Rows focus the individual chart
+by click or keyboard; a summary table and limits note sit in a disclosure.
+Validated with five JavaScript tests, a published-module check, live-history
+render and Chrome desktop/390/320 px review. [Evidence](m3-validation.md).
+Geographic placement, replay, neighbor groups, lag analysis and held-out
+predictive checks remain; no relationship finding is claimed.
 
 Deliverables:
 
@@ -641,25 +663,26 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Question | Needed by | Next action |
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
-| What schedules and completion guarantees exist in deployment? | M0/M1 | Updated manual GitHub builds and public freshness passed 2026-09-23 UTC. Earlier scheduled spacing was 2.5–4.6 hours; approved minute-17 cron, serialization/timeout and public artifact smoke check are published and manually validated. Observe subsequent scheduled delivery; local-midnight expiry still applies. [Follow-up](production-followup-2026-09-23.md) |
+| What schedules and completion guarantees exist in deployment? | M0/M1 | Observed 2026-09-23: no scheduled run from 01:09 to at least 07:11 UTC, including both minute-17 slots after publication; earlier spacing was 2.5–4.6 hours. GitHub cron cannot keep two-hour context fresh. **User decision needed** on a reliable trigger (e.g. EventBridge dispatching the workflow with a scoped token, or an AWS-hosted build); do not lengthen freshness limits. [Observation](production-followup-2026-09-23.md#scheduled-delivery-observation) |
 | Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
-| Which facilities are valid alternatives for each supported use case? | M2 | All 20 remain excluded; exact ED entrance, general emergency service, age applicability, active status, and dated evidence are required by implemented gates |
+| Which facilities are valid alternatives for each supported use case? | M2 | 2026-09-23: 19 active general-emergency destinations (Children's child-only; Anderson, DeSoto and Mississippi Baptist adult and child; others adult) and Leake unverified. Official pages and OpenStreetMap give no emergency-entrance coordinates (one unconfirmed OSM candidate at North Mississippi). **User decision needed**: obtain entrance points (provider/facility confirmation or reviewed imagery) or accept labeled campus points; campus points are not substituted today. [Evidence](m2-destinations-2026-09-23.md) |
 | Which travel provider and benefit rule should be used? | M2 | TomTom key supplied locally; one budgeted live v3 contract probe passed. Validate actual hospital routes/coverage and benefit sensitivity after destination verification. Cloudflare Workers Free/shared SQLite Durable Object selected as a design target; account/terms, implementation and deployment pending. Historical movement remains descriptive |
-| Which geographic groups and lag ranges are defensible? | M3 | Begin with verified neighboring facilities and inspect historical episodes |
+| Which geographic groups and lag ranges are defensible? | M3 | Heatmap now exposes co-occurring episodes by row and time. Next: define neighbor groups from campus locations (not entrances) and evaluate same-time and lagged co-deviation with calendar adjustment and later-period stability |
 | Which time-series models add useful forecast skill, for which hospitals and horizons? | M5 | Snapshot/splits frozen and simple benchmarks/two ARIMA pilots evaluated on development only; modest gains and support failures do not justify release. Inspect residual/seasonal structure and cold-start support before expanding candidates and freezing later-period evaluation |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Choose measurable gates on development folds before final holdout; record per-facility/horizon eligibility and unavailable/fallback behavior |
 
-Next checkpoint: observe the published workflow mitigation's scheduled delivery
-without assuming a cron guarantee. Public review and both updated manual builds,
-including the new exact-build/freshness smoke check, are complete. The first
-updated manual build is recorded separately from the mitigation run. M2 now needs exact emergency entrance and
-current metric verification, followed by hospital-route/uncertainty validation and
-the selected free gateway's account, implementation and deployment. The local key
-and one live API contract check are complete. M5's initial benchmark/ARIMA pilot
-checkpoint is complete; the full study remains in progress with calibration and
-holdout unscored. Provider-contract uncertainty still blocks preferred-option
-claims, and no forecast display or public routing service has been released.
+Next checkpoint: the user needs to choose a reliable build trigger, because GitHub
+cron delivered no scheduled run for more than six hours on 2026-09-23. M2's
+destination attributes are recorded; the blocking destination item is now
+emergency-entrance coordinates (or an explicit decision on labeled campus points),
+followed by metric confirmation, hospital-route/uncertainty validation and the free
+gateway's account, implementation and deployment. M3's heatmap is implemented; next
+are neighbor groups and calendar-adjusted co-deviation/lag analysis with later-period
+checks. M5's initial benchmark/ARIMA pilot checkpoint is complete; the full study
+remains in progress with calibration and holdout unscored. Provider-contract
+uncertainty still blocks preferred-option claims, and no forecast display or public
+routing service has been released.
 
 ## Maintenance and completion rules
 
@@ -688,6 +711,9 @@ claims, and no forecast display or public routing service has been released.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-23 UTC | Record official active/service/explicit-age evidence per facility in the registry, keep `emergency_entrance` null, and never substitute campus centers, address geocodes or unconfirmed volunteer map points | Official pages and OpenStreetMap give no emergency arrival coordinates; the 2026-09-14 gate requires exact entrances. Explicit-only age evidence avoids assuming pediatric scope |
+| 2026-09-23 UTC | Enable Compare only after `GET /api/routes/status` confirms a routing gateway | Once any destination qualifies, the static S3 page would otherwise post user coordinates to an endpoint that cannot serve them. The probe carries no origin and does not delay context loading |
+| 2026-09-23 UTC | Begin M3 with a browser-side facility-by-time heatmap of median M1 difference from usual (hourly/15-minute bins, seven discrete diverging steps, neutral within ±10 minutes), linked to the focus chart | Reuses the validated `comparisons.json` history with no new artifact or contract; discrete steps tie colors to M1's meaningful distance; hatching separates unsupported from missing periods; descriptive only |
 | 2026-09-23 UTC | Move hourly website cron to minute 17; serialize deployments, bound runtime, restrict repository-token permissions and check exact public build artifacts/freshness | User explicitly approved workflow edit/publication after a successful manual build. GitHub documents top-of-hour delays; mitigation does not guarantee delivery or remove local-midnight context expiry |
 | 2026-09-23 UTC | Start M5 with frozen development data, explicit slot/availability rules, four benchmarks and two bounded ARIMA pilots | Prevent target leakage and preserve untouched calibration/holdout. Small development gains and support abstentions do not authorize public forecasts |
 | 2026-09-23 UTC | Select Cloudflare Workers Free plus one SQLite Durable Object as the M2 hosting design target | Free quotas support a shared counter design; account/terms, privacy handling, implementation and destination gates must be validated before deployment |
@@ -717,6 +743,9 @@ claims, and no forecast display or public routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-23 UTC | M3 heatmap | Implemented the Versus usual heatmap with shared time control, row-to-focus linking (click/Enter/Space), tooltips, summary table and limits. Five JS tests plus a published-module check; live-history render and Chrome desktop/390/320 px review passed. [Evidence](m3-validation.md) | Included in the release recorded below; M3 remains in progress |
+| 2026-09-23 UTC | M2 destinations and routing gate | Official evidence recorded for all 20 facilities: 19 active general ERs, Leake unverified; child scope explicit only at Children's, Anderson, DeSoto and Mississippi Baptist. No entrance coordinates found, so all remain excluded with specific reasons. Added the `/api/routes/status` probe and tests. 58 Python/40 JS tests passed. [Evidence](m2-destinations-2026-09-23.md) | Included in the release recorded below; no public routing or recommendations |
+| 2026-09-23 UTC | M0/M1 schedule observation | Public Actions API showed no scheduled run from 01:09 to at least 07:11 UTC, including both minute-17 slots after publication; public context would pause about 07:06 UTC. [Observation](production-followup-2026-09-23.md#scheduled-delivery-observation) | Documentation only; reliable-trigger choice awaits user decision |
 | 2026-09-23 UTC | M0/M1 requested redeployment | Redeployed clean, synchronized `main`; both test suites, preparation, rendering, protected sync and exact public build/freshness verification passed. Independent check at 05:07:19 UTC found fresh post-midnight context and 20/20 current facilities. [Evidence](production-followup-2026-09-23.md#requested-redeployment-of-current-main) | Deployed `1a2b16b`; [run 35820920480](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35820920480) succeeded at 05:06:28 UTC. Evidence-only follow-up commit; scheduled cadence, M2 and M5 gates unchanged |
 | 2026-09-23 UTC | M0/M1 operations | Two updated manual GitHub runs passed; public client validation found 20/20 current readings; Chrome desktop/390/320 px review passed. Approved workflow mitigation passed 57 Python/33 JS tests and exact-public-build/freshness verification. [Evidence](production-followup-2026-09-23.md) | Published `de91ac3`; [run 35820272143](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35820272143) passed. Scheduled delivery remains a separate observation follow-up |
 | 2026-09-23 UTC | M2 readiness | User supplied local key; one budgeted TomTom v3 request passed response/endpoint checks. Documented partial official destination/metric evidence and selected free hosting design. [Evidence](m2-readiness-2026-09-23.md) | No public routing or verified hospital destinations; no recommendation gate changes |

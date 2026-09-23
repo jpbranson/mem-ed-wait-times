@@ -5,7 +5,7 @@ from datetime import timedelta
 
 import plotly.graph_objects as go
 
-from edwait.data import LOCAL_TIMEZONE, timestamp
+from edwait.data import LOCAL_TIMEZONE, short_name, timestamp
 from zoneinfo import ZoneInfo
 
 COLORS = ["#70d9cf", "#f1bd72", "#95b5ff", "#ef9cba", "#b2d784",
@@ -19,10 +19,6 @@ def build_overview(context, facilities):
     end = timestamp(context["generated_at"])
     start = end - timedelta(days=7)
     entries = {entry["slug"]: entry for entry in context["facilities"]}
-    short_names = {
-        "arlington": "Arlington", "childrens": "Children's", "nea": "NEA Baptist",
-        "anderson": "Anderson", "baptist-medical-center": "Mississippi Baptist",
-    }
     figure = go.Figure()
     for index, facility in enumerate(facilities):
         x, y, labels = [], [], []
@@ -41,7 +37,7 @@ def build_overview(context, facilities):
             y.append(point[1])
             labels.append(at.astimezone(zone).strftime("%b %d, %Y %I:%M %p %Z"))
             previous = at
-        name = short_names.get(facility["slug"], facility["display_name"].removeprefix("Baptist Memorial Hospital-"))
+        name = short_name(facility)
         figure.add_trace(go.Scatter(
             x=x, y=y, customdata=labels, name=name, uid=facility["slug"],
             mode="lines+markers", marker={"size": 2}, connectgaps=False,

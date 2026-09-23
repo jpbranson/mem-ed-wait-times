@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "notes": "Region is a state-level display grouping, not a clinical service area or routing group. Verification covers names and location grouping only. API slugs retain collection provenance. All travel eligibility fields are unverified; no destination is travel eligible.",
+  "notes": "Region is a state-level display grouping, not a clinical service area or routing group. API slugs retain collection provenance. Destination status, general-emergency service and explicitly supported age groups were checked against official Baptist pages on 2026-09-23 (docs/m2-destinations-2026-09-23.md). No verified emergency-entrance coordinates exist, so no destination is travel eligible; campus centers and unconfirmed map points are not substituted.",
   "facilities": [
     {
       "slug": "arlington",
@@ -11,10 +11,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "5150 Airline Rd, Arlington, TN 38002",
+        "status_source_url": "https://www.baptistonline.org/locations/arlington",
+        "osm_campus_url": "https://www.openstreetmap.org/node/11382331289",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Freestanding ER, department of Baptist Memphis; transfers for higher care"
+      }
     },
     {
       "slug": "childrens",
@@ -25,10 +37,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "child"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "6225 Humphreys Blvd, Memphis, TN 38120",
+        "status_source_url": "https://www.baptistonline.org/locations/childrens",
+        "osm_campus_url": "https://www.openstreetmap.org/node/5464768674",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Pediatric-only ER (10 bays, 24/7); no ER upper age limit published"
+      }
     },
     {
       "slug": "collierville",
@@ -39,10 +63,21 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "1500 W Poplar Ave, Collierville, TN 38017",
+        "status_source_url": "https://www.baptistonline.org/locations/collierville",
+        "osm_campus_url": "https://www.openstreetmap.org/way/635396682",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22); official text: 'Emergency parking is on the north side of the building.'"
+      }
     },
     {
       "slug": "huntingdon",
@@ -53,10 +88,21 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "631 R.B. Wilson Drive, Huntingdon, TN 38344",
+        "status_source_url": "https://www.baptistonline.org/locations/carroll-county",
+        "osm_campus_url": "https://www.openstreetmap.org/way/497053171",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)"
+      }
     },
     {
       "slug": "memphis",
@@ -67,10 +113,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "6019 Walnut Grove Road, Memphis, TN 38120",
+        "status_source_url": "https://www.baptistonline.org/locations/memphis/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/496445813",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Separate Children's pediatric ER and Women's maternity triage on campus"
+      }
     },
     {
       "slug": "tipton",
@@ -81,10 +139,21 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "1995 Highway 51 South, Covington, TN 38019",
+        "status_source_url": "https://www.baptistonline.org/locations/tipton/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/496456919",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)"
+      }
     },
     {
       "slug": "union-city",
@@ -95,10 +164,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "1201 Bishop Street, Union City, TN 38261",
+        "status_source_url": "https://www.baptistonline.org/locations/union-city/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/496550863",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Services page gives the ED as 1202 Bishop Street"
+      }
     },
     {
       "slug": "crittenden",
@@ -109,10 +190,21 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "2100 N 7th St, West Memphis, AR 72301",
+        "status_source_url": "https://www.baptistonline.org/locations/crittenden/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/903252955",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22); official text: ER shares a vestibule with the main outpatient entrance"
+      }
     },
     {
       "slug": "nea",
@@ -123,10 +215,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "4800 East Johnson Ave, Jonesboro, AR 72405",
+        "status_source_url": "https://www.baptistonline.org/locations/nea/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/348360939",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Official ZIP differs between pages (72405/72401)"
+      }
     },
     {
       "slug": "anderson",
@@ -137,10 +241,23 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult",
+        "child"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "2124 14th Street, Meridian, MS 39301",
+        "status_source_url": "https://www.baptistonline.org/locations/anderson/services/emergency-and-trauma",
+        "osm_campus_url": "https://www.openstreetmap.org/way/485544180",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "No OSM emergency entrance; Anderson-South (1102 Constitution Ave) has no ER."
+      }
     },
     {
       "slug": "baptist-medical-center-attala",
@@ -151,10 +268,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "220 Highway 12 West, Kosciusko, MS 39090",
+        "status_source_url": "https://www.baptistonline.org/locations/attala/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/487489045",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "child unclear (PALS credential only)"
+      }
     },
     {
       "slug": "booneville",
@@ -165,10 +294,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "100 Hospital St, Booneville, MS 38829",
+        "status_source_url": "https://www.baptistonline.org/locations/booneville/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/486584444",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Official address inconsistent: Hospital St vs Hospital Drive.; child unclear"
+      }
     },
     {
       "slug": "calhoun",
@@ -179,10 +320,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "140 Burke Calhoun City Rd, Calhoun City, MS 38916",
+        "status_source_url": "https://www.baptistonline.org/locations/calhoun",
+        "osm_campus_url": "https://www.openstreetmap.org/way/590809280",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Official page embedded coordinates ~3 km off OSM polygon.; child unclear"
+      }
     },
     {
       "slug": "desoto",
@@ -193,10 +346,23 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult",
+        "child"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "7601 Southcrest Parkway, Southaven, MS 38671",
+        "status_source_url": "https://www.baptistonline.org/locations/desoto/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/375951854",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Separate obstetrics ER in the Women's Pavilion"
+      }
     },
     {
       "slug": "golden-triangle",
@@ -207,10 +373,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "2520 5th Street North, Columbus, MS 39705",
+        "status_source_url": "https://www.baptistonline.org/locations/golden-triangle/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/486405708",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "child unclear"
+      }
     },
     {
       "slug": "baptist-medical-center-leake",
@@ -221,10 +399,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
       "active_status": "unknown",
-      "travel_verified_on": null
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "1100 MS-16 East, Carthage, MS 39051",
+        "status_source_url": "https://www.baptistonline.org/locations/leake/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/486275366",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Current pages say Level IV ED but not 24/7; 24-hour wording only in 2024 news; absent from /services/emergency list"
+      }
     },
     {
       "slug": "north-mississippi",
@@ -235,10 +425,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "1100 Belk Boulevard, Oxford, MS 38655",
+        "status_source_url": "https://www.baptistonline.org/locations/north-mississippi/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/590587453",
+        "entrance": "Unconfirmed OpenStreetMap candidate only; not used",
+        "entrance_candidate_url": "https://www.openstreetmap.org/node/10027720705"
+      }
     },
     {
       "slug": "union-county",
@@ -249,10 +451,22 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "200 Hwy. 30 West, New Albany, MS 38652",
+        "status_source_url": "https://www.baptistonline.org/locations/union-county/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/486684275",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Separate obstetric ED"
+      }
     },
     {
       "slug": "baptist-medical-center-yazoo",
@@ -263,10 +477,21 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "823 Grand Avenue, Yazoo City, MS 39194",
+        "status_source_url": "https://www.baptistonline.org/locations/yazoo/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/487437455",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)"
+      }
     },
     {
       "slug": "baptist-medical-center",
@@ -277,10 +502,23 @@
       "verified_on": "2026-09-14",
       "coordinates": null,
       "emergency_entrance": null,
-      "service_applicability": null,
-      "age_applicability": null,
-      "active_status": "unknown",
-      "travel_verified_on": null
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "adult",
+        "child"
+      ],
+      "active_status": "active",
+      "travel_verified_on": "2026-09-23",
+      "destination_evidence": {
+        "checked_on": "2026-09-23",
+        "address": "1225 North State Street, Jackson, MS 39202",
+        "status_source_url": "https://www.baptistonline.org/locations/jackson/services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/485669879",
+        "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
+        "notes": "Separate OB ED (OBED) at Baptist for Women"
+      }
     }
   ]
 }

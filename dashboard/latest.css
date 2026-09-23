@@ -167,3 +167,33 @@ pre { background: var(--surface); color: var(--muted); padding: 15px; }
   .travel-heading { gap: 14px; }
   .travel-row-title strong { font-size: 22px; }
 }
+
+/* M3 heatmap: discrete diverging steps, validated for lightness order on --bg. */
+.heatmap-stage { border-top: 1px solid var(--line); padding: 26px 0 20px; }
+.stage-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px; }
+.stage-heading h2 { font-size: 26px; font-weight: 400; margin: 0; padding: 0; }
+.heatmap-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0 12px; color: var(--muted); }
+.heatmap-legend span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.heat-swatch { display: inline-block; width: 18px; height: 14px; border-radius: 2px; }
+.heatmap-chart { overflow-x: auto; }
+.heatmap-chart svg { width: 100%; min-width: 560px; height: auto; display: block; }
+.heatmap-chart text { font: 16px var(--font); fill: var(--muted); }
+.heat-row { cursor: pointer; outline: none; }
+.heat-row-hit { fill: transparent; }
+.heat-row:hover .heat-row-hit, .heat-row:focus-visible .heat-row-hit { fill: var(--surface); }
+.heat-row:focus-visible .heat-row-hit { stroke: var(--accent); stroke-width: 2; }
+.heat-row.selected .heat-label { fill: var(--accent); }
+.heat-tick { stroke: var(--line); }
+.heat-below-3 { fill: #86b6ef; background: #86b6ef; }
+.heat-below-2 { fill: #3987e5; background: #3987e5; }
+.heat-below-1 { fill: #1c5cab; background: #1c5cab; }
+.heat-near { fill: #3a4751; background: #3a4751; }
+.heat-above-1 { fill: #a33b38; background: #a33b38; }
+.heat-above-2 { fill: #d9534f; background: #d9534f; }
+.heat-above-3 { fill: #f4a39a; background: #f4a39a; }
+.heat-hatch-line { stroke: #6f8594; stroke-width: 2; }
+.heat-unsupported-swatch { background: repeating-linear-gradient(45deg, #6f8594 0 2px, transparent 2px 5px); }
+.heat-empty-swatch { border: 1px solid var(--line); }
+.heatmap-note { color: var(--faint); text-align: right; margin: 4px 0 0; }
+.heatmap-stage .data-disclosure > p { max-width: 85ch; line-height: 1.7; }
+@media (forced-colors: active) { .heat-cell { forced-color-adjust: none; } }

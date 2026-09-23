@@ -85,6 +85,10 @@ class ReviewHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = urlsplit(self.path).path
+        if path == "/api/routes/status":
+            # Lets the page keep Compare disabled where no gateway exists (static S3).
+            available = bool(self.router.api_key)
+            return self.send_body(json.dumps({"schema_version": 1, "available": available}).encode())
         if path == "/data/latest.json" and self.live_s3:
             try:
                 return self.send_body(self.recent_readings())

@@ -6,7 +6,8 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 **[Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html).**
 M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
 2026-09-22. M2's map and illustrative travel interface are published; real routing
-and recommendations remain disabled. M3–M4 remain planned; M5's offline benchmark
+and recommendations remain disabled. M3's first view, a difference-from-usual
+heatmap, is in progress; M4 remains planned. M5's offline benchmark
 and ARIMA development study is in progress, with no public forecasts.
 See the [release evidence](docs/aws-deployment-2026-09-22.md) and
 [current plan](docs/development-plan.md).
@@ -14,7 +15,9 @@ See the [release evidence](docs/aws-deployment-2026-09-22.md) and
 The [production follow-up](docs/production-followup-2026-09-23.md) records a
 successful updated GitHub build and public desktop/mobile review. The approved
 workflow mitigation moves the hourly cron to minute 17 and verifies public
-freshness/build artifacts after publication; scheduled delivery remains best effort.
+freshness/build artifacts after publication. Scheduled delivery remains best effort:
+no scheduled run started in the six hours after 01:09 UTC on 2026-09-23, so a more
+reliable trigger is an open decision.
 
 ## Project documentation
 
@@ -38,6 +41,9 @@ freshness/build artifacts after publication; scheduled delivery remains best eff
   routing prototype, local review, privacy, and unresolved activation gates.
 - [M2 readiness follow-up](docs/m2-readiness-2026-09-23.md): live TomTom check,
   remaining destination/metric evidence, and free hosting design.
+- [M2 destination evidence](docs/m2-destinations-2026-09-23.md): official status,
+  service and age evidence for all 20 facilities; emergency entrances unverified.
+- [M3 validation](docs/m3-validation.md): difference-from-usual heatmap and limits.
 - [M5 benchmarks](docs/m5-validation.md) and [ARIMA pilot](docs/m5-arima-validation.md):
   frozen development study, error/support results, and remaining validation.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
@@ -56,6 +62,7 @@ freshness/build artifacts after publication; scheduled delivery remains best eff
 - [Dashboard](dashboard/index.qmd)
 - [All-hospital renderer](dashboard/overview.py), [time/legend controls](dashboard/overview.mjs),
   and [page styles](dashboard/latest.css)
+- [Difference-from-usual heatmap](dashboard/heatmap.mjs) (M3)
 - [Render and deployment workflow](.github/workflows/dashboard.yml)
 - [Travel context](edwait/travel.py), [TomTom Routing adapter](edwait/routing.py),
   [comparison bars](dashboard/travel.mjs), [origin controls](dashboard/origin.mjs),
@@ -69,9 +76,11 @@ current wait versus usual, explicit support and freshness, recent direction,
 and selectable 24-hour/seven-day history. Seven days and all 20 hospitals are
 selected on first visit; the same time control drives both chart sections.
 History in the overview updates with the build, while individual readings refresh
-independently. Explanations, tables, and operator diagnostics are expandable.
+independently. A Versus usual heatmap (M3) colors each hospital's hourly or
+15-minute median difference from its own usual median; selecting a row focuses
+that hospital. It describes readings, not patient movement between hospitals. Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
-Release checks passed 49 Python and 33 JavaScript tests, plus public data/asset
+Release checks passed 58 Python and 40 JavaScript tests on 2026-09-23, plus public data/asset
 and live-refresh checks; earlier desktop/mobile browser evidence remains in the
 dated validation records above. These describe published observations, not an
 individual patient's wait or hospital care quality.
@@ -83,6 +92,8 @@ a persistent request budget bounds usage within the free allowance. A user-provi
 local key passed one live API contract check on 2026-09-23 UTC; real destinations
 still need verification and account/billing settings have not been audited.
 M2 remains in progress; recommendations and public routing are not enabled.
+The page enables Compare only when `GET /api/routes/status` confirms a gateway,
+so the static S3 site never posts coordinates.
 See [M2 setup](docs/m2-operations.md#preparation-and-local-review) for local key
 configuration and preview commands. Representative hospital-route validation remains pending.
 The free origin map and Use my location work independently of routing eligibility

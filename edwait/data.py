@@ -55,6 +55,15 @@ def registry():
     return json.loads(Path(__file__).with_name("facilities.json").read_text(encoding="utf-8"))["facilities"]
 
 
+SHORT_NAMES = {"arlington": "Arlington", "childrens": "Children's", "nea": "NEA Baptist",
+               "anderson": "Anderson", "baptist-medical-center": "Mississippi Baptist"}
+
+
+def short_name(facility):
+    """Compact chart label shared by the overview legend and M3 heatmap rows."""
+    return SHORT_NAMES.get(facility["slug"], facility["display_name"].removeprefix("Baptist Memorial Hospital-"))
+
+
 def list_objects(s3, bucket, prefix):
     pages = s3.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefix)
     return sorted((o for p in pages for o in p.get("Contents", [])), key=lambda o: o["Key"])

@@ -117,6 +117,16 @@ export function exampleComparison() {
   ]};
 }
 
+// Static hosting has no routing gateway; never send an origin until one confirms availability.
+export async function probeRouting(fetcher=globalThis.fetch) {
+  try {
+    const response=await fetcher("/api/routes/status",{cache:"no-store",signal:AbortSignal.timeout(5000)});
+    if(!response.ok) return false;
+    const data=await response.json();
+    return data?.schema_version===1 && data.available===true;
+  } catch { return false; }
+}
+
 export function createRouteFeed({fetcher=globalThis.fetch, onChange=()=>{}}={}) {
   let serial=0,controller=null;
   return {
@@ -153,18 +163,20 @@ export function mountTravel(root,{expected,getLive,fetcher=globalThis.fetch,orig
   const status=root.querySelector(".travel-status"), chart=root.querySelector(".travel-chart");
   const submit=root.querySelector("[type=submit]");
   const exampleButton=root.querySelector(".travel-example"), support=root.querySelector(".travel-support");
-  let context=null,failed=false,routes=null,error="",example=false,busy=false,pending=false;
+  let context=null,failed=false,routes=null,error="",example=false,busy=false,pending=false,routing=null;
   const routeFeed=createRouteFeed({fetcher,onChange:state=>{routes=state.routes;error=state.error;busy=false;render();}});
   function invalidate() { routeFeed.clear();routes=null;error="";busy=false;example=false; }
   const origin=mountOriginPicker(root,{...originOptions,onChange:()=>{invalidate();render();}});
   function render() {
     const candidates=eligible(context,group.value);
     const available=!failed && availableContext(context,Date.now());
-    submit.disabled=!available || !candidates.length || busy || origin.isLocating() || !origin.value();
+    submit.disabled=!available || !candidates.length || routing!==true || busy || origin.isLocating() || !origin.value();
     exampleButton.textContent=example ? "Close example" : "View example";
     exampleButton.setAttribute("aria-pressed",String(example));
     status.textContent=error || (busy ? "Calculating road estimates…" : !available ? "Travel context unavailable" :
-      !group.value ? "Choose adult or child" : !candidates.length ? "Emergency destinations awaiting verification" : `${candidates.length} verified destinations`);
+      !group.value ? "Choose adult or child" : !candidates.length ? "Emergency destinations awaiting verification" :
+      routing===null ? "Checking road estimate availability…" : routing===false ? `${candidates.length} verified destinations · road estimates not available on this site yet` :
+      `${candidates.length} verified destinations`);
     const result=compareTravel({context,routes,live:getLive(),contextFailed:failed});
     chart.innerHTML=renderTravel(example ? exampleComparison() : !routes ? {...result,message:""} : result,example);
     const excluded=(context?.facilities ?? []).filter(f=>f.eligibility[group.value]);
@@ -178,6 +190,8 @@ export function mountTravel(root,{expected,getLive,fetcher=globalThis.fetch,orig
   async function refresh() {
     if(pending) return;
     pending=true;
+    // Independent of the context fetch so a slow gateway never delays travel context.
+    if(routing!==true) probeRouting(fetcher).then(ok=>{routing=ok;render();});
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
     try {
       const response=await fetcher("travel.json",{cache:"no-cache",signal:controller.signal});

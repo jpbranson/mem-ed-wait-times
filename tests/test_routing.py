@@ -231,6 +231,13 @@ class RoutingTests(unittest.TestCase):
             self.assertNotIn("35.15", response.text + output.getvalue())
             self.assertEqual(requests.post(origin + "/api/routes", json=ORIGIN, headers={"Origin": "https://evil.example"}, timeout=3).status_code, 403)
             self.assertEqual(requests.post(origin + "/api/routes", data="x"*513, headers={"Origin": origin,"Content-Type":"application/json"}, timeout=3).status_code, 400)
+            Handler.router = Mock(api_key=KEY)
+            status = requests.get(origin + "/api/routes/status", timeout=3)
+            self.assertEqual(status.json(), {"schema_version": 1, "available": True})
+            self.assertEqual(status.headers["Cache-Control"], "no-store")
+            self.assertNotIn(KEY, status.text)
+            Handler.router = Mock(api_key="")
+            self.assertEqual(requests.get(origin + "/api/routes/status", timeout=3).json()["available"], False)
             Handler.router = Mock()
             for code, status in (("routing_not_configured", 503), ("provider_limit_reached", 429), ("request_budget_exhausted", 429)):
                 Handler.router.matrix.side_effect = RoutingError(code)

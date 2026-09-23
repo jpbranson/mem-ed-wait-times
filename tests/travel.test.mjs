@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate} from "../dashboard/travel.mjs";
+import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate,probeRouting} from "../dashboard/travel.mjs";
 
 const at="2026-09-14T17:00:00Z", now=Date.parse(at);
 const facilities=[{slug:"a",display_name:"Example A"},{slug:"b",display_name:"Example B"}];
@@ -112,4 +112,17 @@ test("routing setup and quota errors remain distinct; raw provider messages neve
     assert.equal(result.routes,null);assert.match(result.error,message);
     assert.ok(!result.error.includes("secret-key"));
   }
+});
+
+test("routing probe enables Compare only for an explicit gateway confirmation",async()=>{
+  const reply=(ok,body)=>async()=>({ok,json:async()=>body});
+  assert.equal(await probeRouting(reply(true,{schema_version:1,available:true})),true);
+  assert.equal(await probeRouting(reply(false,{})),false, "static S3 returns 403/404");
+  assert.equal(await probeRouting(reply(true,{schema_version:1,available:"yes"})),false);
+  assert.equal(await probeRouting(reply(true,null)),false);
+  assert.equal(await probeRouting(async()=>{throw Error("offline");}),false);
+  let requested=null;
+  await probeRouting(async(url,options)=>{requested={url,options};return {ok:false};});
+  assert.equal(requested.url,"/api/routes/status");
+  assert.equal(requested.options.method,undefined, "the probe never posts an origin");
 });
