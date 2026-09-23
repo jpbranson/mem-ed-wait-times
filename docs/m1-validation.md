@@ -1,6 +1,9 @@
 # M1 method and validation
 
-Validated locally on 2026-09-14; not deployed. This is dated evidence about
+The method and local UI checks below were validated on 2026-09-14, before
+deployment. M0/M1 were subsequently deployed on 2026-09-22; the
+[AWS release record](aws-deployment-2026-09-22.md) documents production checks.
+This is dated evidence about
 published observations, not a live report, patient wait prediction, or care-quality
 assessment. The implementation is [analysis.py](../edwait/analysis.py),
 [prepare.py](../edwait/prepare.py), and [the browser comparison module](../dashboard/comparisons.mjs).
@@ -11,11 +14,14 @@ Current M1 presentation: all 20 hospital lines open in a seven-day overview;
 24-hour/seven-day controls also update individual wait/deviation charts below.
 The overview y-axis follows the visible time window and hospital selection.
 Methodology, tables, and diagnostics are expandable. Local Inter and responsive
-chart geometry keep text at least 16 CSS px. The latest completed validation is
-35 Python and 15 JavaScript tests plus the desktop/mobile checks in
+chart geometry keep text at least 16 CSS px. The M1-specific checkpoint below
+passed 35 Python and 15 JavaScript tests plus the desktop/mobile checks in
 [Typography and spacing follow-up](#typography-and-spacing-follow-up).
 Earlier cell counts, layouts, test totals, and browser interruptions below are
-dated development history, not outstanding work in the current M1 presentation.
+dated development history. The full suite later passed 49 Python and 33 JavaScript
+tests at the 2026-09-22 release, with public schema/asset and real-refresh checks.
+A new public visual review remains outstanding; earlier local browser evidence
+does not establish that it has occurred.
 
 ## Selected method: self-comparison-v1
 
@@ -189,8 +195,10 @@ with a 12-minute median, explicitly labeled as a broader fallback.
   missingness have text labels independent of color. Latency is in an operator
   disclosure below the comparison view.
 
-This validates local behavior and the dated replay. Production collector-to-site
-validation remains a release operation; see [M1 operations](m1-operations.md).
+This 2026-09-14 checkpoint validated local behavior and the dated replay.
+Subsequent production collector-to-client verification is recorded in the
+[2026-09-22 release](aws-deployment-2026-09-22.md); the repeatable release checks
+remain in [M1 operations](m1-operations.md).
 
 ## Overview follow-up
 
@@ -297,4 +305,5 @@ Validation:
 
 The previously pending browser review is now complete for this local version.
 No production deployment or analytical, record, or storage-contract changes were
-made. Production rollout checks remain in [M1 operations](m1-operations.md).
+made during this 2026-09-14 follow-up. The later AWS release and its remaining
+operational checks are recorded [separately](aws-deployment-2026-09-22.md).

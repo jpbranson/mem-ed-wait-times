@@ -72,6 +72,28 @@ review. The dated local desktop/mobile evidence remains in the M1/M2 validation
 documents. The next operational checks are the next hourly GitHub build and a
 public browser review. These are distinct from the completed direct deployment.
 
+## Documentation audit follow-up
+
+A read-only check at 2026-09-23 04:17 UTC still found no GitHub-hosted run of
+the new release. The five latest runs returned by the public Actions API were
+successful scheduled runs of the previous revision `00bbef4`:
+
+| Run | Created at (UTC) |
+| --- | --- |
+| [35805147090](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35805147090) | 2026-09-23 01:09:45 |
+| [35793446643](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35793446643) | 2026-09-22 22:38:28 |
+| [35774118112](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35774118112) | 2026-09-22 19:29:25 |
+| [35746710000](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35746710000) | 2026-09-22 15:21:05 |
+| [35717948069](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35717948069) | 2026-09-22 10:47:53 |
+
+These observed starts were about 2.5–4.6 hours apart despite the configured
+hourly cron. This establishes the observed spacing, not its cause. GitHub notes
+that [scheduled jobs can be delayed or dropped](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+Comparison context expires after two hours or at the next Chicago midnight;
+the next successful updated workflow should therefore be checked rather than
+assuming hourly freshness. See [refresh troubleshooting](m1-operations.md#refresh-and-troubleshooting)
+for the existing manual-build path. No schedule or trigger changed in this audit.
+
 ## Rollback and retained evidence
 
 The prior public website assets were downloaded to the ignored local directory

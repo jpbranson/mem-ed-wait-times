@@ -3,6 +3,13 @@
 Collects published emergency department wait observations from configured Baptist
 facilities, stores historical batches in S3, and renders a Quarto dashboard.
 
+**[Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html).**
+M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
+2026-09-22. M2's map and illustrative travel interface are published; real routing
+and recommendations remain disabled. M3–M5, including forecasting, remain planned.
+See the [release evidence](docs/aws-deployment-2026-09-22.md) and
+[current plan](docs/development-plan.md).
+
 ## Project documentation
 
 - [Development plan and design](docs/development-plan.md): priorities, milestone
@@ -13,11 +20,14 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 - [Observation schema](docs/ed-wait.schema.json): the current JSON record contract.
 - [Latest artifact schema](docs/latest.schema.json): live readings, attempts, and freshness.
 - [M0 operations](docs/m0-operations.md): validation, packaging, rollout, and operator checks.
+- [AWS deployment record](docs/aws-deployment-2026-09-22.md): deployed revision,
+  Lambda versions, permissions, production verification, and rollback evidence.
 - [Comparison artifact schema](docs/comparisons.schema.json): historical references,
   support, seven-day history, and operator diagnostics.
 - [M1 method and validation](docs/m1-validation.md): past-only replay, selected
   baseline/trend settings, historical examples, and UI evidence.
-- [M1 operations](docs/m1-operations.md): preparation, local build, and release checks.
+- [M1 operations](docs/m1-operations.md): environment setup, local preview,
+  preparation, website publication, and release checks.
 - [M2 operations](docs/m2-operations.md) and [validation](docs/m2-validation.md): free
   routing prototype, local review, privacy, and unresolved activation gates.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
@@ -41,9 +51,10 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
   [comparison bars](dashboard/travel.mjs), [origin controls](dashboard/origin.mjs),
   [clickable map](dashboard/origin-map.mjs), and [local review server](edwait/serve.py)
 
-M0 and M1 were deployed to AWS on 2026-09-22. [Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html)
-or see the [deployment evidence](docs/aws-deployment-2026-09-22.md). The dashboard opens with a full-width all-hospital plotting canvas, with
-an axis that fits the selected time window and visible hospitals. M1 adds individual
+## Dashboard behavior and limits
+
+The dashboard opens with a full-width all-hospital plotting canvas, with an axis
+that fits the selected time window and visible hospitals. M1 adds individual
 current wait versus usual, explicit support and freshness, recent direction,
 and selectable 24-hour/seven-day history. Seven days and all 20 hospitals are
 selected on first visit; the same time control drives both chart sections.
@@ -52,11 +63,12 @@ independently. Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
 Release checks passed 49 Python and 33 JavaScript tests, plus public data/asset
 and live-refresh checks; earlier desktop/mobile browser evidence remains in the
-dated validation record above. These describe
-published observations, not an individual patient's wait or hospital care quality.
+dated validation records above. These describe published observations, not an
+individual patient's wait or hospital care quality.
 
-M2 has a local Drive + wait prototype with a labeled example and a TomTom Routing
-API v3 adapter that requests live traffic where available. Keys stay server-side;
+M2's published Drive + wait prototype includes a labeled example. Its local
+gateway has a TomTom Routing API v3 adapter that requests live traffic where
+available. Keys stay server-side;
 a persistent request budget bounds usage within the free allowance. No account,
 key, or billing is configured, and real destinations still need verification.
 M2 remains in progress; recommendations and public routing are not enabled.
@@ -65,3 +77,20 @@ configuration and preview commands. Live TomTom validation remains pending.
 The free origin map and Use my location work independently of routing eligibility
 or a TomTom key. Click/tap to place a pin, drag it to adjust, or enter coordinates.
 Map labels use Inter at 16 px minimum. See [map operation and privacy](docs/m2-operations.md#origin-map-and-location-controls).
+
+## Running and maintaining the dashboard
+
+[Local setup and preview](docs/m1-operations.md#environment-setup) require Python
+3.12+, Node 22+, Quarto, and read-only S3 history access. The review server binds
+to `http://127.0.0.1:8765/`; a TomTom key is optional and does not enable
+unverified destinations. Preparation and rendering must be rerun to refresh the
+local historical context.
+
+In production, the existing collector is scheduled every 15 minutes; the browser
+polls its latest artifact every 60 seconds. The website workflow is **configured**
+hourly and can be run manually. It rebuilds history and comparison context; it
+does not deploy Lambda code. A Git push alone does not trigger publication.
+Actual workflow starts can be delayed, so current comparisons pause when their
+context is two hours old or reaches the next Chicago midnight. The page's refresh
+button refetches artifacts; it does not start a build. See
+[refresh and troubleshooting](docs/m1-operations.md#refresh-and-troubleshooting).

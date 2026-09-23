@@ -1,8 +1,11 @@
 # M2 local validation — 2026-09-14
 
-Status: **local prototype validated; M2 acceptance remains incomplete**. No
-production deployment, account creation, billing configuration, or preferred
-hospital recommendation was performed. [Operations and policy](m2-operations.md).
+Status: **local prototype validated; M2 acceptance remains incomplete**. The
+checks below occurred on 2026-09-14, without production deployment, account
+creation, billing configuration, or preferred hospital recommendations.
+The static interface was subsequently published with M0/M1 on 2026-09-22;
+the routing gateway remains local-only and real destinations remain excluded.
+[Release evidence](aws-deployment-2026-09-22.md), [operations and policy](m2-operations.md).
 
 ## Origin selection follow-up — 2026-09-14
 
@@ -11,7 +14,7 @@ Compare's context/destination gate, leaving it disabled for all unverified
 facilities. GPS, manual input and the new map now work independently; only route
 submission requires eligibility. GPS progress and errors have their own status.
 
-**49 Python and 33 JavaScript tests pass.** Eight new checks in
+**49 Python and 33 JavaScript tests passed at this checkpoint.** Eight new checks in
 [origin.test.mjs](../tests/origin.test.mjs) cover the mounted controls before age
 selection/with failed context, successful GPS, permission denial, timeout (including
 a browser that never calls back), insecure context, invalid/partial coordinates,
@@ -159,10 +162,11 @@ disabled real routing. No browser console errors were observed.
 
 ## Outstanding evidence and release work
 
-All 20 real registry entries remain travel-ineligible. The current
+All 20 real registry entries remain travel-ineligible. The pages reviewed on
+2026-09-14 remain dated source evidence: the
 [Baptist emergency page](https://www.baptistonline.org/services/emergency) supports
-the directory and triage guidance but does not establish current `CV_ED_Wait`
-averaging, refresh or sentinel semantics. The current
+the directory and triage guidance but did not establish the API's `CV_ED_Wait`
+averaging, refresh or sentinel semantics. The
 [DeSoto services page](https://www.baptistonline.org/locations/desoto/services)
 describes emergency care across ages; the
 [Crittenden location page](https://www.baptistonline.org/locations/crittenden)

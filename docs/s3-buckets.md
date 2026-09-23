@@ -22,6 +22,10 @@ same six-field observation under each facility's `last_success`.
 M1's [comparison schema](comparisons.schema.json) defines a separate derived
 artifact; it does not change raw, compacted, attempt, or latest records.
 
+Schema `$id` values under `mem-ed-wait-times.example` are identifiers, not hosted
+download endpoints. Use the checked-in schemas and register the observation schema
+when validating latest artifacts, as shown in [contract tests](../tests/test_contracts.py).
+
 ## Data bucket: `mem-ed-wait-times`
 
 ### Object layout and encoding
@@ -182,20 +186,21 @@ raw ETags invalidate reader preference for the compacted snapshot. Legacy compac
 objects without metadata fall back to raw when possible. Raw provenance is retained.
 
 The compactor defaults to the previous UTC day and also accepts an explicit
-`date` value in `YYYY-MM-DD` form. Live schedules were inspected on 2026-09-14:
+`date` value in `YYYY-MM-DD` form. Live schedules were inspected on 2026-09-14
+and their enabled state/targets reconfirmed at the 2026-09-22 deployment:
 
 | EventBridge rule | State | Expression | Verified target |
 | --- | --- | --- | --- |
 | `trigger_15` | Enabled | `rate(15 minutes)` | Lambda `ed-wait-times` |
 | `compact_daily` | Enabled | `cron(30 1 * * ? *)` (01:30 UTC daily) | Lambda `ed-wait-compaction` |
 
-Both targets had no explicit input or retry-policy override. Both Lambdas were
-Python 3.14 with 60-second timeouts. Schedule configuration does not prove execution
+The 2026-09-14 inspection found no explicit target input or retry-policy override.
+The deployed Lambdas remain Python 3.14 with 60-second timeouts. Schedule configuration does not prove execution
 or data completion. M0 reserves time to publish failures when the Lambda deadline
 approaches; unattempted facilities receive `collection_deadline`. A process kill,
 timeout during a request, or storage failure can still prevent a new artifact;
-browser age checks handle that outage. No deployment settings were changed during
-this inspection.
+browser age checks handle that outage. The [2026-09-22 release record](aws-deployment-2026-09-22.md)
+separately records a successful scheduled collector run and a manual compaction check.
 
 ### Collection attempt summaries (new in M0)
 
@@ -252,12 +257,18 @@ The repository's deployment workflow renders `dashboard/` with Quarto and syncs
 `dashboard/_site/` to this bucket with `--delete --exclude "data/*"`. The exclusion
 protects independently published artifacts against both upload and deletion by
 the website job ([AWS sync reference](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html)).
-It is configured to run hourly
-at minute zero and supports manual execution. Its AWS region setting is
+It is configured to run hourly at minute zero and supports manual execution;
+there is no push trigger or Lambda deployment step. The configured cadence does
+not guarantee hourly completion; see [refresh troubleshooting](m1-operations.md#refresh-and-troubleshooting).
+Its AWS region setting is
 `us-east-1`. On 2026-09-14 the website configuration named `index.html` as index
 document, and the bucket policy allowed public `s3:GetObject` on all website
 objects, which includes the new data path. No CORS change is needed for same-origin
-relative fetches. TLS/custom-domain/CDN configuration was not inspected.
+relative fetches. On 2026-09-22, the
+[HTTPS S3 object URL](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html)
+and its same-origin latest data were verified, alongside the HTTP website endpoint.
+No custom domain or CDN was provisioned. The HTTPS object URL requires
+`/index.html`; it does not use S3 website index-document routing.
 
 ### Comparison artifact (new in M1)
 
@@ -277,13 +288,15 @@ wait, past-only median, low/high band, minute difference, percentile, contributi
 days, coverage, and group. Unsupported comparison values are null; raw published
 waits remain visible. Latency describes collected HTTP requests, not patient waits.
 
-Preparation runs hourly before Quarto using the M0 reader and writes an atomic
+Each scheduled/manual build prepares context before Quarto using the M0 reader and writes an atomic
 local replacement. A storage/preparation/render failure stops the workflow before
 sync, preserving the published version. Browser requests use `cache: no-cache`
 every five minutes to revalidate an unchanged object with its ETag, plus manual
 refresh/tab visibility. Requests time out after 10 seconds. Sync infers JSON
-content type and introduces no explicit context Cache-Control override. Verify
-the actual serving path at rollout; the local generated artifact was about 2 MB.
+content type and introduces no explicit context Cache-Control override. The
+2026-09-22 public check verified `application/json`, ETags, and no explicit
+Cache-Control on comparisons/travel; the comparison artifact was about 2 MB.
+Recheck these headers when changing the serving path, particularly when adding a CDN.
 
 Malformed or regressing artifacts fail validation. Current comparisons require
 a successful context refresh, generation age below two hours, and time before
@@ -294,7 +307,7 @@ one observation per cadence slot. Hosting ownership, rollout, and reproduction
 commands are in [M1 operations](m1-operations.md); dated replay findings are in
 [M1 validation](m1-validation.md).
 
-### Travel context artifact (M2 local prototype)
+### Travel context artifact (M2 prototype)
 
 The same preparation read now also produces root `travel.json`, copied by Quarto
 beside `comparisons.json`. The website owns it; it is outside the protected
@@ -303,6 +316,8 @@ collector `data/*` prefix. [Schema version 1](travel.schema.json) records method
 adult/child group, and supported 90th percentile absolute changes in published
 waits at 15/30/60/120-minute horizons. Recommendations are explicitly disabled.
 The two context files have independent atomic replacements and expiry checks.
+This static artifact and the prototype interface were published on 2026-09-22;
+the routing service is still local-only.
 
 No origin, route response, precise location, or routing log is written to S3.
 The TomTom integration uses a transient [v2 route response](routes.schema.json)
@@ -370,7 +385,7 @@ order, checks, and the local-versus-deployed validation record.
 Repository sources:
 
 - [Collector and raw record writer](../mem-ed-lambda.py): `fetch_facility`,
-  `build_key`, `collect`, and `write_s3`.
+  `build_key`, `collect`, `to_jsonl`, and `lambda_handler`.
 - [Daily compactor](../lambda_function.py): `compact` and `lambda_handler`.
 - [Shared data reader](../edwait/data.py), [comparison preparation](../edwait/prepare.py),
   and [dashboard](../dashboard/index.qmd).
@@ -380,9 +395,12 @@ Repository sources:
 Both Lambda scripts take the data bucket from `BUCKET`. The collector also
 requires `LATEST_BUCKET`. Comparison preparation defaults to `mem-ed-wait-times` with a
 `BUCKET` override, and the workflow names `mem-ed-wait-times-dashboard` explicitly.
-Deployed environment values were not inspected or changed.
+At the 2026-09-22 release, both deployed `BUCKET` values were verified as
+`mem-ed-wait-times`; the collector's `LATEST_BUCKET` was set to
+`mem-ed-wait-times-dashboard` and `STALE_AFTER_SECONDS` to `1800`.
+See the [deployment record](aws-deployment-2026-09-22.md) for scoped permissions.
 
-Live record samples, all within `s3://mem-ed-wait-times/`:
+Historical record samples from 2026-09-11, all within `s3://mem-ed-wait-times/`:
 
 | Object key | Parsed records |
 | --- | ---: |
@@ -402,4 +420,5 @@ recent raw and compacted objects with `aws s3api list-objects-v2`, download a fe
 with `aws s3api get-object`, and compare parsed records with
 [ed-wait.schema.json](ed-wait.schema.json). Apply the schema to each JSON line
 after decompression, enabling date-time format validation in your validator.
-Update this verification date and the sample keys when doing so.
+Add a new dated verification with its sample keys; preserve earlier samples and
+their dates instead of relabeling them as current observations.

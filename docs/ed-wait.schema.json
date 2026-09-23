@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ED wait observation",
   "$id": "https://mem-ed-wait-times.example/schemas/ed-wait.schema.json",
-  "description": "One facility/metric observation in a collection batch. Applies to raw and decompressed compacted JSONL and latest.json last_success records. Six-field provenance remains unchanged. Historical samples checked on 2026-09-11; M0 validation and integer conversion tightened on 2026-09-14, not yet deployed. See s3-buckets.md.",
+  "description": "One facility/metric observation in a collection batch. Applies to raw and decompressed compacted JSONL and latest.json last_success records. Six-field provenance remains unchanged. Historical samples checked on 2026-09-11; M0 validation and integer conversion tightened on 2026-09-14 and deployed on 2026-09-22. See s3-buckets.md and aws-deployment-2026-09-22.md for dated production verification.",
   "$comment": "This schema describes the current producer's six-field record, unchanged by M1. M1 derived baseline models and historical display tuples have a separate comparisons.schema.json contract; they are not raw observations. This schema does not validate complete JSONL files, enforce uniqueness, or establish coverage. Facility and metric values remain open. Enable date-time format checking.",
   "type": "object",
   "additionalProperties": false,

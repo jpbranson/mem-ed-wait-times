@@ -7,12 +7,11 @@ identity, preserved schedules, smoke checks, and remaining operational checks.
 
 ## Local validation
 
-Use Python 3.12+ (inspected Lambdas use 3.14) and Node 22+:
+Use Python 3.12+ (deployed Lambdas use 3.14), Node 22+, and the
+[environment setup and platform-specific commands](m1-operations.md#environment-setup).
+With that environment activated:
 
 ```sh
-python -m venv .venv
-# Activate .venv using the command appropriate for your shell.
-python -m pip install -r requirements-dev.txt
 python -m unittest discover -s tests -v
 node --test tests/*.test.mjs
 python -m edwait.prepare
@@ -25,7 +24,7 @@ credential chain; `BUCKET` defaults to `mem-ed-wait-times`. Quarto consumes the
 prepared artifact and embeds the registry independently of history. Live values start
 missing/loading when `data/latest.json` is absent.
 See [M1 operations](m1-operations.md) for comparison preparation and ownership,
-and [M1 validation](m1-validation.md) for the current validation record.
+and the [AWS release record](aws-deployment-2026-09-22.md) for production validation.
 The following M0 evidence predates M1's
 comparison view.
 
@@ -46,12 +45,15 @@ tests passed on 2026-09-14; Quarto 1.10.18 rendered against read-only live histo
 | --- | --- | --- |
 | Collector `ed-wait-times` | Raw, attempts, latest | Put raw/operations in data bucket; Get/Put `data/latest.json` and ListBucket on website bucket for initial missing-object detection |
 | Compactor `ed-wait-compaction` | Compacted gzip and snapshot metadata | List/Get raw, Put compacted |
-| Quarto job | HTML and website assets | List/Get history; website sync with `data/*` exclusion |
+| Quarto job | HTML and website assets | List/Get history; List/Put/Delete website assets through sync with `data/*` exclusion |
 | Browser | No writes | Same-origin public Get of `data/latest.json` |
 
 The website policy allowed public Get on all website objects when inspected
-2026-09-14. Operations summaries belong in the data bucket. No patient or origin
-information is collected. No CORS change is needed for same-origin requests.
+2026-09-14 and was preserved at rollout. Operations summaries belong in the data
+bucket. These collection/storage paths contain no patient records or user origins;
+M2's optional transient origin flow is documented separately in
+[its privacy contract](m2-operations.md#destination-and-privacy-contracts).
+No CORS change is needed for same-origin requests.
 
 Required collector environment (compactor requires only `BUCKET`):
 
@@ -68,22 +70,37 @@ for the schema, cache, merge, and freshness rules.
 Package both entry points with `edwait/`, including `facilities.json`, and
 `requirements.txt` dependencies. Preserve existing handlers
 `mem-ed-lambda.lambda_handler` and `lambda_function.lambda_handler`. Example Linux
-packaging from the repository root, using a clean build directory:
+packaging from the repository root, using a clean build directory and a Python
+runtime/architecture matching Lambda (currently Python 3.14 on x86_64):
 
 ```sh
 python -m pip install -r requirements.txt --target build/lambda
 cp mem-ed-lambda.py lambda_function.py build/lambda/
 cp -r edwait build/lambda/
 cd build/lambda
-zip -r ../ed-wait-lambdas.zip .
+zip -r ../ed-wait-lambdas.zip . -x '*/__pycache__/*' '*.pyc'
 ```
 
 Use a clean build directory to avoid stale dependencies. boto3 must support S3
-PutObject `IfMatch` and `IfNoneMatch`; validation used boto3 1.43.93. No historical
-rewrite is required. Legacy compacted partitions use raw fallback until a later
-compaction adds snapshot metadata.
+PutObject `IfMatch` and `IfNoneMatch`; local M0 validation used boto3 1.43.93 and
+the 2026-09-22 deployed package uses 1.43.100. Dependencies are range-constrained,
+not locked, so record the resolved versions/hash for each release. Do not copy
+Windows-installed native dependencies into Lambda. The Windows release used
+`uv pip install --python .venv/Scripts/python.exe --python-version 3.14 --python-platform x86_64-manylinux2014 --only-binary :all: --target build/<new-release-directory> -r requirements.txt`,
+then copied the two handlers and `edwait/` into that directory. Its archive omitted
+the generated `bin/` launchers, bytecode, and `__pycache__`; no Windows executable
+or DLL was included. Validate archive contents and imports in the unpacked layout.
+
+No historical rewrite is required. Legacy compacted partitions use raw fallback
+until a later compaction adds snapshot metadata. The GitHub dashboard workflow
+publishes website assets only; Lambda code, IAM, and environment changes are
+separate release operations. For the exact existing permissions, environment,
+published versions, and rollback evidence, see the [release record](aws-deployment-2026-09-22.md).
 
 ## Rollout order
+
+This is a repeatable release checklist. The first rollout is complete; follow the
+relevant steps when changing the collector, compactor, or their contracts again.
 
 1. Deploy the workflow's `--exclude "data/*"` protection before independently
    publishing data. Preserve it in manual sync commands and rollback versions.

@@ -123,7 +123,7 @@ Deployment status must be recorded separately from implementation status.
 | --- | --- | --- | --- | --- |
 | M0 | Reliable shared data, facility registry, and freshness | First release foundation | Complete | Existing collection and storage |
 | M1 | Hospital self-comparisons and recent trends | First public feature | Complete | M0 reader, baseline inputs, freshness states |
-| M2 | Travel-and-wait comparison | Next public feature | Local prototype validated; acceptance work remains | M0, M1, verified destinations, travel-time source, metric interpretation |
+| M2 | Travel-and-wait comparison | Next public feature | Static prototype published; local routing validated with fixtures; acceptance work remains | M0, M1, verified destinations, travel-time source, metric interpretation |
 | M3 | Relationships and spillover exploration | Analytical track | Planned | M0, M1; geographic view also needs verified coordinates |
 | M4 | Area summaries, stability, and historical alternatives | Follow-on features | Planned | M1; geographic summaries need region metadata; travel scenarios need M2 |
 | M5 | Time-series modeling and short-horizon forecasts | Analytical track; conditional forecast release | Planned | M0 validated history and freshness, M1 benchmarks; M2/M3 integration follows separate validation |
@@ -583,7 +583,7 @@ M2 prototype adds travel context. Relationship and forecast outputs remain propo
 | Artifact | Update trigger | Contents |
 | --- | --- | --- |
 | `data/latest.json` | Completed collection, including partial/total facility failures | Versioned latest per-facility observation, separate attempt, timestamps, coverage, and freshness policy |
-| `comparisons.json` | Hourly website preparation, before Quarto render | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, and operator latency |
+| `comparisons.json` | Each successful website preparation, before Quarto render (configured hourly/manual) | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, and operator latency |
 | `travel.json` | Same history read as M1 preparation | M2 eligibility reasons, 15/30/60/120-minute historical movement and support, fixed provisional policy, disabled recommendation gate; no origins/routes |
 | `relationships.json` | Validated analytical refresh | Supported pair/lag summaries, evaluation period, and limitations |
 | `forecasts.json` (proposed, M5) | Validated model update cadence, to be selected after benchmarking | Facility/metric, issue time, last observation/training cutoff, future target times, point forecasts and interval levels, model version, support, expiration, and unavailable/fallback states |
@@ -602,7 +602,7 @@ future artifacts into the browser.
 usage persists only UTC date/count reservations in `.cache/tomtom-usage.sqlite3`.
 Preserve this counter across restarts; free public hosting needs durable shared
 accounting. This integration changes no raw/latest/travel artifact schema or S3
-object layout. [Storage reference](s3-buckets.md#travel-context-artifact-m2-local-prototype).
+object layout. [Storage reference](s3-buckets.md#travel-context-artifact-m2-prototype).
 The origin-map follow-up adds static renderer/style assets and direct browser
 requests to OpenFreeMap. It stores no selected points, location history, or map
 tiles in S3 and changes no observation, latest, travel, or route-response schema.
@@ -617,7 +617,7 @@ change. This planning addition does not alter existing record/storage contracts.
 | Question | Needed by | Next action |
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
-| What schedules and completion guarantees exist in deployment? | M0 | Verified enabled 15-minute collector and 01:30 UTC daily compactor rules/targets on 2026-09-14; no execution-completeness guarantee; see [operations](m0-operations.md) |
+| What schedules and completion guarantees exist in deployment? | M0/M1 | EventBridge schedules reconfirmed at 2026-09-22 rollout, including a successful scheduled collector cycle. Website cron is configured hourly, but the five observed prior-version runs were 2.5–4.6 hours apart; verify the next updated build and context freshness. [Dated follow-up](aws-deployment-2026-09-22.md#documentation-audit-follow-up) |
 | Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
 | Which facilities are valid alternatives for each supported use case? | M2 | All 20 remain excluded; exact ED entrance, general emergency service, age applicability, active status, and dated evidence are required by implemented gates |
@@ -631,7 +631,10 @@ configuration, followed by live API, destination and current metric verification
 representative route/uncertainty validation,
 and an explicitly free public hosting decision. M2 remains in progress. M0/M1
 are deployed; the next hourly GitHub build and public visual review remain
-operational follow-ups. M5 remains planned; its first
+operational follow-ups. Observed workflow spacing exceeds the comparison context's
+two-hour lifetime, so diagnose update reliability before treating the configured
+hourly cron as delivered freshness. No schedule change has been made.
+M5 remains planned; its first
 checkpoint is the target policy, frozen data/split manifest, and simple forecast
 benchmarks. Deployment is separate from local completion. Provider-contract
 uncertainty permits collection-age display but blocks M2 preferred-option claims.
@@ -689,6 +692,7 @@ uncertainty permits collection-age display but blocks M2 preferred-option claims
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-22 | Documentation audit | Reconciled the [README](../README.md), operating guides, schemas, validation history, storage reference, and plan with the deployed release and current sources. Checked local links across all 11 Markdown files, all five schemas and 16 schema references, six recorded vendor hashes, and four command help interfaces. Preserved dated evidence; schema validation rules are unchanged. Recorded observed workflow spacing and refresh troubleshooting. | Documentation only; no application, workflow, or AWS changes. M0/M1 remain deployed; M2 routing acceptance, the next updated GitHub build, and public visual review remain open |
 | 2026-09-22 | AWS production release | Published source `17d4e57`, deployed both Lambdas as version 2, configured scoped collector access/latest output, and uploaded the rebuilt site. 49 Python/33 JS tests passed; verified 39 public files, three schemas, 20 successful scheduled readings, 1,920 compacted records with fingerprint metadata, preserved latest ETag across sync, and real client refresh for 20 facilities without rebuilding HTML. [Full evidence and rollback notes](aws-deployment-2026-09-22.md). | M0/M1 deployed; M2 static interface published with routing/recommendations disabled. Existing schedules retained. Browser automation unavailable; public visual review and the next GitHub-hosted run remain follow-ups |
 | 2026-09-22 | AWS rollout preparation | User authorized production deployment. Existing 15-minute collection and daily compaction schedules remain enabled. Preserved both prior Lambda packages as AWS version 1; prepared a Linux x86_64/Python 3.14 package and scoped access for collection attempts and latest data. Local validation passed 49 Python/33 JavaScript tests, rendering, and artifact/asset checks. | In progress: first publish source and the existing hourly/manual workflow with protected `data/*`, then update the Lambdas and website, and verify public artifacts. No new push trigger or routing service |
 | 2026-09-22 | M0/M1/M2 local launch | Refreshed context from read-only S3 history for 20 facilities and 13,439 seven-day points; Quarto rendered successfully. All 49 Python and 33 JavaScript tests passed. HTTP checks confirmed the updated page, 12 required assets, and schema-valid comparisons, travel, and latest artifacts; latest returned 20 reporting facilities with observations through 2026-09-23 03:54 UTC. Browser automation was unavailable, so no new visual review was completed. | [Local review server](../edwait/serve.py) started at `http://127.0.0.1:8765/` with `--live-s3`. Latest readings refresh through the server; historical context remains build-time and needs another preparation/render when it expires. Pre-M0 collection failure metadata cannot be reconstructed. Production rollout remains pending; M2 activation gates are unchanged |

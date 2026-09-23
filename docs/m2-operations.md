@@ -58,28 +58,34 @@ deploy independent public proxies with separate budgets or enable paid fallback.
 
 ## Preparation and local review
 
-Use the environment setup in [M1 operations](m1-operations.md). The existing
+Use the [environment setup and build commands](m1-operations.md#environment-setup)
+in M1 operations. The existing
 `python -m edwait.prepare` command now reads history once and writes both ignored
 `dashboard/comparisons.json` and `dashboard/travel.json`. Each file is replaced
 atomically; there is no cross-file transaction. M1 and M2 validate and expire
 their contexts independently. Quarto copies both artifacts and `travel.mjs`.
 
 ```powershell
-.venv\Scripts\python.exe -m unittest discover -s tests -v
-node --test tests/*.test.mjs
-.venv\Scripts\python.exe -m edwait.prepare
-$env:QUARTO_PYTHON = Join-Path (Get-Location) '.venv\Scripts\python.exe'
-.cache\quarto\bin\quarto.cmd render dashboard/ --to html
-# Enter a free-plan key locally; do not put it in source, command arguments, or chat.
+# Build first using M1 operations. A key is optional for charts/map/example review.
+.venv\Scripts\python.exe -m edwait.serve --live-s3
+```
+
+For local routing validation after verified destinations and a free-plan account
+are available, stop the server and restart it with the key in its environment:
+
+```powershell
+# Enter the key locally; do not put it in source, command arguments, or chat.
 $tomtomSecret = Read-Host 'TomTom API key' -AsSecureString
 $env:TOMTOM_API_KEY = [System.Net.NetworkCredential]::new('', $tomtomSecret).Password
 .venv\Scripts\python.exe -m edwait.serve --live-s3
 ```
 
 Visit `http://127.0.0.1:8765/`. The checked-in review server binds only to loopback.
-`--live-s3` reads recent stored batches using existing AWS read access. Until M0
-rollout it can reconstruct successful observations, but cannot reconstruct
-missing collection failure metadata. Omit the flag to serve local files only.
+`--live-s3` reconstructs successful observations from the newest stored batch
+using existing AWS read access. It does not consume deployed failure metadata or
+retain earlier successes from other batches; this remains true after M0 rollout.
+Omit the flag to serve local files only. See [local-preview behavior](m1-operations.md#local-preview)
+for missing-data behavior and when to rebuild history.
 The server is a local development tool, not a production server.
 The server reads `TOMTOM_API_KEY` at startup; restart it after changing the key.
 `.env` and `.env.local` are ignored by Git but are **not automatically loaded**.
@@ -112,6 +118,12 @@ denial, unavailable positioning, timeout, and insecure HTTP have distinct messag
 Geolocation requires browser permission and HTTPS or localhost. The browser has a
 10-second request timeout, with a 12-second application deadline if it never calls
 back. GPS error messages preserve map/manual entry as alternatives.
+
+For the published site, use the [HTTPS dashboard URL](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html).
+The HTTP S3 website endpoint is not a secure context for browser geolocation.
+Serving over HTTPS permits the browser permission flow; actual device-location
+behavior on the public site has not been newly validated. It does not enable
+real routing or bypass destination verification.
 
 Click or tap the map to place a pin; drag the pin to refine it. Coordinates and
 the pin stay synchronized. GPS and completed manual edits center the map on the
@@ -165,9 +177,10 @@ The local endpoint accepts only `POST /api/routes`, with JSON keys `latitude`,
 Requests must be same-origin, at most 512 bytes, with finite coordinates in range.
 Client-supplied destinations are rejected. No CORS permission is granted.
 
-The [response schema](routes.schema.json) requires `schema_version: 2`,
+The app's [response schema](routes.schema.json) requires `schema_version: 2`,
 `provider: tomtom`, `traffic_mode: live`, `generated_at`, `ttl_seconds: 300`,
-`age_group`, and `routes`. `generated_at` is the comparison request's start time,
+`age_group`, and `routes`. This app schema version is distinct from TomTom's
+upstream API version 3. `generated_at` is the comparison request's start time,
 not a provider traffic-observation timestamp. Routes expire five minutes from
 that time. Each route has `slug`, `status: ok|unavailable`, `seconds`, `meters`,
 and nullable `traffic_delay_seconds`; all three quantities are null when
