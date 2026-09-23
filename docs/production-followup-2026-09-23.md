@@ -46,8 +46,20 @@ The user explicitly approved moving the hourly cron to minute 17, serializing
 deployments without cancellation, a 30-minute timeout, read-only repository-token
 permissions, and a post-publication check of freshness and exact build artifacts.
 The `data/*` exclusion and manual trigger remain. No push trigger is added.
-Local implementation and validation are in this change; publication and run
-evidence will be recorded below after verification.
+Published as [`de91ac3`](https://github.com/jpbranson/mem-ed-wait-times/commit/de91ac3).
+[Run 35820272143](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35820272143)
+completed successfully at **04:56:51 UTC**, including all **57 Python / 33 JavaScript
+tests**, preparation, Quarto, protected sync, and the new public verification step.
+That step compared public HTML/comparisons/travel bytes to the actual build output
+and passed at 04:56:48 UTC. Both runs in this follow-up were manual dispatches.
+
+An independent check at 04:57:06 UTC accepted the public artifacts and **20/20
+current facilities**. Context was generated at 04:56:03 and latest at 04:54:07;
+HTML was published at 04:56:48. Its SHA-256 was
+`01ae0cf7b74d7c57b4b9d25691a5d9220b7d846f29a35e225e7f10976d34aec6`.
+Local evidence: `.cache/production-mitigation.json`. The source/cron mitigation is
+published and its manual execution validated; future scheduled cadence is not yet
+established. No Lambda code, EventBridge rules, bucket policies or raw schemas changed.
 
 This mitigation is not a delivery guarantee. Continue observing scheduled starts
 and context age. The local-midnight expiry still intentionally pauses comparisons

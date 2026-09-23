@@ -58,13 +58,14 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks and ARIMA(1,0,0)/(1,1,0) evaluated on development data only; no public forecasts | [Protocol](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [application](../dashboard/app.mjs) |
-| Deployment | M0/M1 and M2 static assets deployed to S3; both Lambda packages updated; hourly/manual workflow source updated with protected `data/*`; existing schedules retained | [AWS release evidence](aws-deployment-2026-09-22.md), [workflow](../.github/workflows/dashboard.yml) |
+| Deployment | M0/M1 and M2 static assets deployed to S3; both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
 | Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json) |
 
 Implementation and production deployment are recorded separately. Public artifact
 and refresh checks passed for the 2026-09-22 AWS release. The first updated
 GitHub-hosted build and public desktop/mobile review passed on 2026-09-23 UTC.
-An approved workflow schedule/verification mitigation is being published;
+The approved workflow schedule/verification mitigation is published and its
+manual run passed, including 57 Python/33 JavaScript tests and the public smoke check;
 scheduled delivery still needs observation. [Follow-up evidence](production-followup-2026-09-23.md).
 
 A read-only assessment on 2026-09-14 inspected the 47 compacted partitions from
@@ -640,7 +641,7 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Question | Needed by | Next action |
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
-| What schedules and completion guarantees exist in deployment? | M0/M1 | Updated manual GitHub build and public freshness passed 2026-09-23 UTC. Earlier scheduled spacing was 2.5–4.6 hours; approved minute-17 cron, serialization/timeout and public artifact smoke check are being published. Observe subsequent scheduled delivery; local-midnight expiry still applies. [Follow-up](production-followup-2026-09-23.md) |
+| What schedules and completion guarantees exist in deployment? | M0/M1 | Updated manual GitHub builds and public freshness passed 2026-09-23 UTC. Earlier scheduled spacing was 2.5–4.6 hours; approved minute-17 cron, serialization/timeout and public artifact smoke check are published and manually validated. Observe subsequent scheduled delivery; local-midnight expiry still applies. [Follow-up](production-followup-2026-09-23.md) |
 | Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
 | Which facilities are valid alternatives for each supported use case? | M2 | All 20 remain excluded; exact ED entrance, general emergency service, age applicability, active status, and dated evidence are required by implemented gates |
@@ -649,9 +650,10 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Which time-series models add useful forecast skill, for which hospitals and horizons? | M5 | Snapshot/splits frozen and simple benchmarks/two ARIMA pilots evaluated on development only; modest gains and support failures do not justify release. Inspect residual/seasonal structure and cold-start support before expanding candidates and freezing later-period evaluation |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Choose measurable gates on development folds before final holdout; record per-facility/horizon eligibility and unavailable/fallback behavior |
 
-Next checkpoint: publish/verify the approved workflow mitigation and observe its
-scheduled delivery without assuming a cron guarantee. Public review and the first
-updated manual build are complete. M2 now needs exact emergency entrance and
+Next checkpoint: observe the published workflow mitigation's scheduled delivery
+without assuming a cron guarantee. Public review and both updated manual builds,
+including the new exact-build/freshness smoke check, are complete. The first
+updated manual build is recorded separately from the mitigation run. M2 now needs exact emergency entrance and
 current metric verification, followed by hospital-route/uncertainty validation and
 the selected free gateway's account, implementation and deployment. The local key
 and one live API contract check are complete. M5's initial benchmark/ARIMA pilot
@@ -715,7 +717,7 @@ claims, and no forecast display or public routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
-| 2026-09-23 UTC | M0/M1 operations | Updated manual GitHub run passed; public client validation found 20/20 current readings; Chrome desktop/390/320 px review passed. Approved workflow mitigation implemented; publication verification underway. [Evidence](production-followup-2026-09-23.md) | Existing dashboard rebuilt successfully; schedule mitigation tracked separately from observed delivery |
+| 2026-09-23 UTC | M0/M1 operations | Two updated manual GitHub runs passed; public client validation found 20/20 current readings; Chrome desktop/390/320 px review passed. Approved workflow mitigation passed 57 Python/33 JS tests and exact-public-build/freshness verification. [Evidence](production-followup-2026-09-23.md) | Published `de91ac3`; [run 35820272143](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35820272143) passed. Scheduled delivery remains a separate observation follow-up |
 | 2026-09-23 UTC | M2 readiness | User supplied local key; one budgeted TomTom v3 request passed response/endpoint checks. Documented partial official destination/metric evidence and selected free hosting design. [Evidence](m2-readiness-2026-09-23.md) | No public routing or verified hospital destinations; no recommendation gate changes |
 | 2026-09-23 UTC | M5 development study | Frozen 107,257-record snapshot; four baselines, delayed-availability sensitivity and two ARIMA pilots; eight focused tests; dated reports and static figures. [Benchmarks](m5-validation.md), [ARIMA](m5-arima-validation.md) | Offline only; full study remains in progress, calibration/holdout unscored, no public forecasts or storage-contract changes |
 | 2026-09-22 | Documentation audit | Reconciled the [README](../README.md), operating guides, schemas, validation history, storage reference, and plan with the deployed release and current sources. Checked local links across all 11 Markdown files, all five schemas and 16 schema references, six recorded vendor hashes, and four command help interfaces. Preserved dated evidence; schema validation rules are unchanged. Recorded observed workflow spacing and refresh troubleshooting. | Documentation only; no application, workflow, or AWS changes. M0/M1 remain deployed; M2 routing acceptance, the next updated GitHub build, and public visual review remain open |
