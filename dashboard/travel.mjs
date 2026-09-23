@@ -19,6 +19,7 @@ export function validateTravel(data, expected) {
   for(const f of data.facilities) {
     if(seen.has(f.slug) || !expected.some(e=>e.slug===f.slug) || typeof f.display_name!=="string" ||
        ageGroups.some(g=>f.eligibility?.[g]!==null && typeof f.eligibility?.[g]!=="string") ||
+       !["entrance","campus",null].includes(f.arrival) || (f.arrival===null && ageGroups.some(g=>f.eligibility[g]===null)) ||
        !Array.isArray(f.movement) || f.movement.length!==4) throw Error("Invalid travel facility");
     seen.add(f.slug);
     f.movement.forEach((m,i)=>{
@@ -33,6 +34,12 @@ export function validateTravel(data, expected) {
 export function availableContext(context, now) {
   const age=now-time(context?.generated_at);
   return !!context && age>=0 && age<7200000;
+}
+
+// Campus fallbacks are counted in every status line, never hidden behind "verified".
+export function destinations(candidates) {
+  const campus=candidates.filter(f=>f.arrival==="campus").length;
+  return `${candidates.length} eligible destination${candidates.length===1?"":"s"}`+(campus ? ` · ${campus===candidates.length ? "all" : campus} to campus center, ER entrance unconfirmed` : "");
 }
 
 export function eligible(context, group) {
@@ -62,7 +69,7 @@ export function compareTravel({context, routes, live, now=Date.now(), contextFai
   if(routeAge<0 || routeAge>=300) return paused("Road estimates expired · compare again");
   const candidates=eligible(context,routes.age_group);
   try { validateRoutes(routes,candidates,routes.age_group); } catch { return paused("Route coverage changed · compare again"); }
-  if(!candidates.length) return paused("No verified destinations for this age group");
+  if(!candidates.length) return paused("No eligible destinations for this age group");
   const complete=routes.routes.every(r=>r.status==="ok");
   const sorted=[...routes.routes].sort((a,b)=>(a.seconds ?? Infinity)-(b.seconds ?? Infinity) || a.slug.localeCompare(b.slug));
   const closest=complete ? sorted[0].slug : null;
@@ -72,7 +79,7 @@ export function compareTravel({context, routes, live, now=Date.now(), contextFai
     const drive=r.status==="ok" ? r.seconds/60 : null;
     const current=wait.current && number(wait.value);
     const horizon=f.movement.find(m=>m.horizon_minutes>=drive);
-    return {slug:r.slug,name:f.display_name,drive,wait:current ? wait.value : null,
+    return {slug:r.slug,name:f.display_name,arrival:f.arrival,drive,wait:current ? wait.value : null,
       total:drive!==null && current ? drive+wait.value : null,age:wait.age,
       reason:!current ? wait.value<0 ? "Wait interpretation unavailable" : wait.labels.join(" · ") : null,
       movement:drive!==null ? horizon ?? null : null,trafficDelay:r.traffic_delay_seconds};
@@ -99,12 +106,13 @@ export function renderTravel(result, example=false) {
       const delta=r.difference===null ? "Difference unavailable" : r.slug===result.closest ? "Closest by road" :
         `${minutes(Math.abs(r.difference))} min ${r.difference>=0 ? "lower" : "higher"} estimate · +${minutes(r.extraDrive)} min driving`;
       const total=r.total===null ? "Unavailable" : `${minutes(r.total)} min`;
-      const label=`${r.name}: ${r.drive===null ? "route unavailable" : minutes(r.drive)+" minutes driving"}; ${r.wait===null ? "wait unavailable" : r.wait+" minutes published wait"}; combined ${total}. ${delta}.`;
+      const label=`${r.name}: ${r.drive===null ? "route unavailable" : minutes(r.drive)+" minutes driving"+(r.arrival==="campus" ? " to campus center, ER entrance unconfirmed" : "")}; ${r.wait===null ? "wait unavailable" : r.wait+" minutes published wait"}; combined ${total}. ${delta}.`;
       return `<li><div class="travel-row-title"><span>${escape(r.name)}</span><strong>${total}</strong></div>`+
         `<div class="travel-bar" role="img" aria-label="${escape(label)}"><span class="drive-segment" style="width:${(r.drive ?? 0)/max*100}%"></span>`+
         `<span class="wait-segment" style="width:${(r.total!==null ? r.wait : 0)/max*100}%"></span></div>`+
         `<div class="travel-row-detail"><span>${r.drive===null ? "Route unavailable" : minutes(r.drive)+" drive"} + ${r.wait===null ? escape(r.reason ?? "Wait unavailable") : r.wait+" wait"}</span>`+
         `<span>${r.age===null ? "No observation" : `Collected ${Math.max(0,Math.floor(r.age/60))} min ago`}</span></div>`+
+        (r.arrival==="campus" ? '<p class="travel-arrival">Drive to campus center · ER entrance unconfirmed</p>' : "")+
         `<p class="travel-difference">${escape(delta)}</p></li>`;
     }).join("")+"</ol>";
 }
@@ -175,8 +183,8 @@ export function mountTravel(root,{expected,getLive,fetcher=globalThis.fetch,orig
     exampleButton.setAttribute("aria-pressed",String(example));
     status.textContent=error || (busy ? "Calculating road estimates…" : !available ? "Travel context unavailable" :
       !group.value ? "Choose adult or child" : !candidates.length ? "Emergency destinations awaiting verification" :
-      routing===null ? "Checking road estimate availability…" : routing===false ? `${candidates.length} verified destinations · road estimates not available on this site yet` :
-      `${candidates.length} verified destinations`);
+      routing===null ? "Checking road estimate availability…" : routing===false ? `${destinations(candidates)} · road estimates not available on this site yet` :
+      destinations(candidates));
     const result=compareTravel({context,routes,live:getLive(),contextFailed:failed});
     chart.innerHTML=renderTravel(example ? exampleComparison() : !routes ? {...result,message:""} : result,example);
     const excluded=(context?.facilities ?? []).filter(f=>f.eligibility[group.value]);

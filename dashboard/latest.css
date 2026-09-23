@@ -147,6 +147,7 @@ pre { background: var(--surface); color: var(--muted); padding: 15px; }
 .travel-bar span { height: 100%; flex-shrink: 0; }
 .travel-row-detail { margin: 8px 0; }
 .travel-difference { color: var(--muted); margin: 0; }
+.travel-arrival { color: #edbd7d; margin: 4px 0 0; }
 .travel-support li { overflow-wrap: anywhere; }
 .travel-attribution { margin: 20px 0 0; }
 .origin-map-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin: 24px 0 12px; color: var(--muted); }

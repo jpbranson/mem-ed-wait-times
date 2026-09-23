@@ -29,8 +29,11 @@ def destinations():
     for i, f in enumerate(facilities):
         f.update(active_status="active", service_applicability=["general_emergency"],
                  age_applicability=["adult"], travel_verified_on="2026-09-14",
+                 campus_point={"latitude": 35.14, "longitude": -90.04 - i * .01,
+                               "label": "Synthetic campus", "source_url": "https://example.com/campus"},
                  emergency_entrance={"latitude": 35.14, "longitude": -90.04 - i * .01,
-                                     "label": "Synthetic entrance", "source_url": "https://example.com/fixture"})
+                                     "label": "Synthetic entrance", "source_url": "https://example.com/fixture",
+                                     "method": "imagery_review", "reviewed_on": "2026-09-14"})
     return facilities
 
 
@@ -252,3 +255,24 @@ class RoutingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ArrivalToleranceTests(unittest.TestCase):
+    def test_campus_fallback_allows_wider_road_snap_than_a_reviewed_entrance(self):
+        # About 250 m north of the target: plausible for a large campus, not for an entrance.
+        data = payload(destination=[-90.04, 35.14225])
+        self.assertEqual(parse_route(data, "campus", [-90.05, 35.15], [-90.04, 35.14], 300)["status"], "ok")
+        with self.assertRaises(ValueError):
+            parse_route(data, "entrance", [-90.05, 35.15], [-90.04, 35.14])
+
+    def test_router_targets_campus_point_when_no_entrance_is_reviewed(self):
+        requester = Mock(side_effect=responder)
+        with tempfile.TemporaryDirectory() as folder:
+            router = Router(requester=requester, now=lambda: NOW, api_key=KEY, budget=RequestBudget(Path(folder) / "u.sqlite3", limit=5))
+            facilities = destinations()[:1]
+            facilities[0]["emergency_entrance"] = None
+            facilities[0]["campus_point"] = {"latitude": 35.13, "longitude": -90.02, "label": "Synthetic campus", "source_url": "https://example.com/campus"}
+            result = router.matrix(ORIGIN, facilities)
+        self.assertEqual(result["routes"][0]["status"], "ok")
+        body = requester.call_args.kwargs["json"]
+        self.assertEqual(body["routePlanningLocations"]["destination"]["coordinates"], [-90.02, 35.13])

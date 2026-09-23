@@ -1,13 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate,probeRouting} from "../dashboard/travel.mjs";
+import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate,probeRouting,destinations} from "../dashboard/travel.mjs";
 
 const at="2026-09-14T17:00:00Z", now=Date.parse(at);
 const facilities=[{slug:"a",display_name:"Example A"},{slug:"b",display_name:"Example B"}];
 function fixture() {
   const context={schema_version:1,method_version:"travel-wait-v1",metric:"CV_ED_Wait",generated_at:at,
     recommendations_enabled:false,policy:{route_ttl_seconds:300,context_ttl_seconds:7200,meaningful_minutes:10},
-    facilities:facilities.map(f=>({...f,eligibility:{adult:null,child:"Unverified"},movement:[15,30,60,120].map(h=>
+    facilities:facilities.map(f=>({...f,eligibility:{adult:null,child:"Unverified"},arrival:"entrance",movement:[15,30,60,120].map(h=>
       ({horizon_minutes:h,pairs:500,days:10,absolute_change_p90:5}))}))};
   const routes={schema_version:2,provider:"tomtom",traffic_mode:"live",generated_at:at,ttl_seconds:300,age_group:"adult",
     routes:[{slug:"a",status:"ok",seconds:720,meters:4000,traffic_delay_seconds:60},
@@ -125,4 +125,23 @@ test("routing probe enables Compare only for an explicit gateway confirmation",a
   await probeRouting(async(url,options)=>{requested={url,options};return {ok:false};});
   assert.equal(requested.url,"/api/routes/status");
   assert.equal(requested.options.method,undefined, "the probe never posts an origin");
+});
+
+test("campus-center arrivals are labeled everywhere and never called verified entrances",()=>{
+  const input=fixture();input.context.facilities[1].arrival="campus";
+  validateTravel(input.context,facilities);
+  const result=compareTravel(input);
+  assert.deepEqual(result.rows.map(r=>r.arrival),["entrance","campus"]);
+  const html=renderTravel(result);
+  assert.equal((html.match(/ER entrance unconfirmed/g) ?? []).length,2, "visible note and bar label, only for the campus row");
+  assert.match(html,/Drive to campus center/);
+  assert.equal(destinations(input.context.facilities),"2 eligible destinations · 1 to campus center, ER entrance unconfirmed");
+  input.context.facilities[0].arrival="campus";
+  assert.match(destinations(input.context.facilities),/all to campus center/);
+  assert.equal(destinations([{arrival:"entrance"}]),"1 eligible destination");
+  for(const bad of ["unknown",undefined]) {
+    const c=fixture();c.context.facilities[0].arrival=bad;assert.throws(()=>validateTravel(c.context,facilities));
+  }
+  const noPoint=fixture();noPoint.context.facilities[0].arrival=null;
+  assert.throws(()=>validateTravel(noPoint.context,facilities), "an eligible destination needs an arrival point");
 });

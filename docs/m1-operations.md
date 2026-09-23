@@ -178,7 +178,7 @@ while live readings continue updating successfully.
 | Stale / collection failed / live refresh failed | Inspect `data/latest.json` observation and attempt times, collector CloudWatch summaries, S3 access, and the 15-minute EventBridge rule. A website rebuild does not repair collection. |
 | Overview still shows older history | The overview is embedded in HTML. Confirm a fresh site build and reload the page; the independent live feed only refreshes the individual comparisons. |
 | Local latest-data request returns 503 | Confirm AWS history read access; the local `--live-s3` endpoint returns `preview_history_read_failed` on a read failure. |
-| Origin works but Compare is disabled | All real destinations are still unverified; the public site also has no routing gateway. A key alone cannot bypass eligibility gates. |
+| Origin works but Compare is disabled | The public site has no routing gateway (`GET /api/routes/status` fails), so Compare stays off there. Locally, start the review server with `TOMTOM_API_KEY` set; Leake and wrong age groups remain ineligible. A key alone cannot bypass eligibility gates. |
 
 For direct website publication from a validated build, retain the exact protection:
 

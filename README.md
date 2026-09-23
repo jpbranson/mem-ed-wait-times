@@ -42,7 +42,8 @@ reliable trigger is an open decision.
 - [M2 readiness follow-up](docs/m2-readiness-2026-09-23.md): live TomTom check,
   remaining destination/metric evidence, and free hosting design.
 - [M2 destination evidence](docs/m2-destinations-2026-09-23.md): official status,
-  service and age evidence for all 20 facilities; emergency entrances unverified.
+  service and age evidence for all 20 facilities, labeled campus-center fallback,
+  live route validation and the entrance-review tool.
 - [M3 validation](docs/m3-validation.md): difference-from-usual heatmap and limits.
 - [M5 benchmarks](docs/m5-validation.md) and [ARIMA pilot](docs/m5-arima-validation.md):
   frozen development study, error/support results, and remaining validation.
@@ -66,7 +67,8 @@ reliable trigger is an open decision.
 - [Render and deployment workflow](.github/workflows/dashboard.yml)
 - [Travel context](edwait/travel.py), [TomTom Routing adapter](edwait/routing.py),
   [comparison bars](dashboard/travel.mjs), [origin controls](dashboard/origin.mjs),
-  [clickable map](dashboard/origin-map.mjs), and [local review server](edwait/serve.py)
+  [clickable map](dashboard/origin-map.mjs), [local review server](edwait/serve.py),
+  [entrance review tool](edwait/entrances.py), and [live route check](scripts/check_routes.py)
 
 ## Dashboard behavior and limits
 
@@ -80,7 +82,7 @@ independently. A Versus usual heatmap (M3) colors each hospital's hourly or
 15-minute median difference from its own usual median; selecting a row focuses
 that hospital. It describes readings, not patient movement between hospitals. Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
-Release checks passed 58 Python and 40 JavaScript tests on 2026-09-23, plus public data/asset
+Release checks passed 64 Python and 41 JavaScript tests on 2026-09-23, plus public data/asset
 and live-refresh checks; earlier desktop/mobile browser evidence remains in the
 dated validation records above. These describe published observations, not an
 individual patient's wait or hospital care quality.
@@ -89,8 +91,13 @@ M2's published Drive + wait prototype includes a labeled example. Its local
 gateway has a TomTom Routing API v3 adapter that requests live traffic where
 available. Keys stay server-side;
 a persistent request budget bounds usage within the free allowance. A user-provided
-local key passed one live API contract check on 2026-09-23 UTC; real destinations
-still need verification and account/billing settings have not been audited.
+local key passed one live API contract check on 2026-09-23 UTC. Destinations have
+official status/service/age evidence; until emergency entrances are reviewed from
+imagery, 18 adult and 4 child destinations route to OpenStreetMap campus centers
+labeled "ER entrance unconfirmed" (54/54 live validation routes passed). Add
+reviewed entrances with `python -m edwait.entrances` (see
+[M2 operations](docs/m2-operations.md#adding-imagery-reviewed-entrances)).
+Account/billing settings have not been audited.
 M2 remains in progress; recommendations and public routing are not enabled.
 The page enables Compare only when `GET /api/routes/status` confirms a gateway,
 so the static S3 site never posts coordinates.

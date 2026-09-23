@@ -96,7 +96,7 @@ class HistoryTests(unittest.TestCase):
         self.assertEqual(summary["collection_gaps"][0]["seconds"], 3540)
 
     def test_registry_preserves_all_twenty_slugs_and_evidence_backed_travel_fields(self):
-        from edwait.travel import eligibility
+        from edwait.travel import eligibility, point_problem
         facilities = registry()
         self.assertEqual(len({f["slug"] for f in facilities}), 20)
         self.assertIn("huntingdon", [f["slug"] for f in facilities])
@@ -109,13 +109,16 @@ class HistoryTests(unittest.TestCase):
             self.assertTrue(evidence["status_source_url"].startswith("https://www.baptistonline.org/"))
             self.assertTrue(evidence["osm_campus_url"].startswith("https://www.openstreetmap.org/"))
             self.assertTrue(set(f["age_applicability"]) <= {"adult", "child"} and f["age_applicability"])
-            # Campus points or unconfirmed map candidates must never stand in for an entrance.
-            self.assertIsNone(f["emergency_entrance"])
-            for group in ("adult", "child"):
-                self.assertIsNotNone(eligibility(f, group, now))
+            # Campus points are sourced, labeled fallbacks, never recorded as entrances.
+            self.assertIsNone(point_problem(f["campus_point"]))
+            self.assertIn("ER entrance unconfirmed", f["campus_point"]["label"])
+            self.assertTrue(f["campus_point"]["source_url"].startswith("https://www.openstreetmap.org/"))
+            if f["emergency_entrance"] is not None:
+                self.assertIsNone(eligibility(f, f["age_applicability"][0], now))
         by_slug = {f["slug"]: f for f in facilities}
         self.assertEqual(by_slug["childrens"]["age_applicability"], ["child"])
-        self.assertEqual(eligibility(by_slug["memphis"], "adult", now), "Emergency entrance coordinates unverified")
+        self.assertIsNone(eligibility(by_slug["memphis"], "adult", now))
+        self.assertEqual(eligibility(by_slug["memphis"], "child", now), "Age applicability unverified or unsuitable")
 
     def test_corrupt_compressed_object_is_explicitly_rejected(self):
         self.s3.put_object(Bucket="test", Key="compacted/ed_wait/dt=2026-09-13/data.jsonl.gz", Body=b"not gzip")

@@ -318,8 +318,11 @@ The same preparation read now also produces root `travel.json`, copied by Quarto
 beside `comparisons.json`. The website owns it; it is outside the protected
 collector `data/*` prefix. [Schema version 1](travel.schema.json) records method
 `travel-wait-v1`, source/generation times, fixed policy, eligibility reasons by
-adult/child group, and supported 90th percentile absolute changes in published
-waits at 15/30/60/120-minute horizons. Recommendations are explicitly disabled.
+adult/child group, each facility's `arrival` kind (`entrance`, `campus` or `null`;
+required since 2026-09-23, when labeled campus centers became the fallback while
+emergency entrances are unreviewed), and supported 90th percentile absolute changes
+in published waits at 15/30/60/120-minute horizons. Recommendations are explicitly
+disabled. Arrival coordinates stay in the Git registry and are not written to S3.
 The two context files have independent atomic replacements and expiry checks.
 This static artifact and the prototype interface were published on 2026-09-22;
 the routing service is still local-only.

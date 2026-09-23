@@ -12,11 +12,14 @@ import time
 import requests
 
 from edwait.data import registry
-from edwait.travel import POLICY, coordinate, eligibility
+from edwait.travel import POLICY, arrival, coordinate, eligibility
 
 ENDPOINT = "https://api.tomtom.com/maps/orbis/routing/routes/calculate"
 USER_AGENT = "mem-ed-wait-times/0.2 (TomTom Routing integration)"
 DEFAULT_BUDGET_PATH = Path(__file__).resolve().parents[1] / ".cache" / "tomtom-usage.sqlite3"
+# Road endpoints must land near the target. Campus centers can sit inside large
+# grounds, so they get a wider snap distance than a reviewed entrance.
+ARRIVAL_TOLERANCE_METERS = {"entrance": 150, "campus": 300}
 
 
 class RoutingError(Exception):
@@ -117,8 +120,8 @@ class Router:
                 remaining = deadline - self.clock()
                 if remaining <= .1:
                     return unavailable(slug)
-                entrance = facility["emergency_entrance"]
-                destination = [entrance["longitude"], entrance["latitude"]]
+                point, kind = arrival(facility)
+                destination = [point["longitude"], point["latitude"]]
                 body = {"routePlanningLocations": {"origin": {"type": "Point", "coordinates": origin},
                                                    "destination": {"type": "Point", "coordinates": destination}},
                         "traffic": "live", "departureDateTime": now.isoformat(), "routeType": "fast",
@@ -134,7 +137,7 @@ class Router:
                         return unavailable(slug)
                     if response.status_code != 200:
                         return unavailable(slug)
-                    result = parse_route(response.json(), slug, origin, destination)
+                    result = parse_route(response.json(), slug, origin, destination, ARRIVAL_TOLERANCE_METERS[kind])
                     return result if self.clock() <= deadline else unavailable(slug)
                 except (requests.RequestException, ValueError, KeyError, TypeError, IndexError):
                     return unavailable(slug)
@@ -167,7 +170,7 @@ def separation(a, b):
     return 6371000 * 2 * math.asin(math.sqrt(min(1, h)))
 
 
-def parse_route(payload, slug, origin, destination):
+def parse_route(payload, slug, origin, destination, tolerance=ARRIVAL_TOLERANCE_METERS["entrance"]):
     route = payload["routes"][0]
     summary = route["summary"]
     seconds, meters = summary["travelDurationInSeconds"], summary["lengthInMeters"]
@@ -179,8 +182,8 @@ def parse_route(payload, slug, origin, destination):
     path = route["legs"][0]["path"]
     if path["type"] != "LineString" or not isinstance(path["coordinates"], list) or len(path["coordinates"]) < 2:
         raise ValueError("Missing route endpoints")
-    if separation(path["coordinates"][0], origin) > 250 or separation(path["coordinates"][-1], destination) > 150:
-        raise ValueError("Route ends too far from origin or verified entrance")
+    if separation(path["coordinates"][0], origin) > 250 or separation(path["coordinates"][-1], destination) > tolerance:
+        raise ValueError("Route ends too far from origin or arrival point")
     # Keep only timing/distance data; geometry and origin never leave the adapter.
     # Zero/missing delay does not prove live traffic coverage on every road segment.
     return {"slug": slug, "status": "ok", "seconds": seconds, "meters": meters, "traffic_delay_seconds": delay}

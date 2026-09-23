@@ -14,18 +14,23 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from edwait.routing import ENDPOINT, RequestBudget, RoutingError, USER_AGENT, parse_route
 
 
+def read_key(env_file):
+    key = os.environ.get("TOMTOM_API_KEY", "").strip()
+    if not key and env_file.exists():
+        # Read only the requested key; never execute .env content or print values.
+        for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+            name, separator, value = line.partition("=")
+            if separator and name.strip() == "TOMTOM_API_KEY":
+                key = value.strip().strip('"\'')
+    return key
+
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--env-file", type=Path, default=Path(".env.local"))
     parser.add_argument("--output", type=Path, default=Path(".cache/tomtom-live-check.json"))
     args = parser.parse_args()
-    key = os.environ.get("TOMTOM_API_KEY", "").strip()
-    if not key and args.env_file.exists():
-        # Read only the requested key; never execute .env content or print values.
-        for line in args.env_file.read_text(encoding="utf-8-sig").splitlines():
-            name, separator, value = line.partition("=")
-            if separator and name.strip() == "TOMTOM_API_KEY":
-                key = value.strip().strip('"\'')
+    key = read_key(args.env_file)
     if not key:
         print(json.dumps({"status": "routing_not_configured"}))
         return 2

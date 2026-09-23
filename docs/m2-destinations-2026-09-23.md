@@ -1,8 +1,9 @@
 # M2 destination evidence — 2026-09-23 UTC
 
 M2 remains in progress. This record documents the destination research that the
-registry's travel gates require. It changes registry metadata only; **no
-destination became travel eligible** and no recommendation gate was relaxed.
+registry's travel gates require, and the user's later decision the same day to
+route to labeled campus centers until emergency entrances are reviewed. No
+recommendation gate was relaxed and no public routing service exists.
 
 ## Method
 
@@ -56,15 +57,69 @@ facility's source URL, address, OpenStreetMap campus reference and notes in
 
 **Emergency entrances: none verified.** No official page gives entrance
 coordinates, and OpenStreetMap has no emergency-entrance element at any campus.
-Campus centers, address geocodes and the North Mississippi volunteer node were
-not substituted, following the 2026-09-14 gate decision. Every facility therefore
-remains excluded — 19 with "Emergency entrance coordinates unverified" and Leake
-with "Active emergency service unverified".
+The North Mississippi volunteer node was not used as an entrance.
 
-The registry now sets `active_status`, `service_applicability`, `age_applicability`
+The registry sets `active_status`, `service_applicability`, `age_applicability`
 and `travel_verified_on: 2026-09-23` from this research. `travel_verified_on` dates
 the attribute evidence; it starts the existing 90-day re-verification window.
 `emergency_entrance` stays `null` and `coordinates` stays unset.
+
+## Campus-center fallback (user decision, 2026-09-23)
+
+After reviewing the options above, the user chose to proceed with arrival points
+labeled "ER entrance unconfirmed" and to add entrance points from satellite
+imagery later. Implementation:
+
+- Each facility has a `campus_point`: the center of its OpenStreetMap hospital
+  element (Overpass data 2026-09-22T08:45:51Z), with the element URL as source and
+  the label "Hospital campus center · ER entrance unconfirmed". Union City uses its
+  hospital multipolygon relation 21370174; Children's and Arlington use their POI nodes.
+- `edwait.travel.arrival()` routes to a reviewed `emergency_entrance` when present,
+  otherwise to `campus_point`. A defective entrance blocks the destination instead
+  of silently falling back. `travel.json` now reports each facility's `arrival`
+  (`entrance`, `campus` or `null`) and adds the recommendation blocker "Some arrival
+  points are campus locations; ER entrances unconfirmed".
+- The page counts campus arrivals in its status ("18 eligible destinations · all to
+  campus center, ER entrance unconfirmed"), labels each bar and row "Drive to campus
+  center · ER entrance unconfirmed", and explains the fallback in the disclosure.
+- Route endpoints must land within 300 m of a campus point (150 m for a reviewed
+  entrance).
+
+Eligibility on 2026-09-23: **18 adult destinations** (all active general ERs except
+Children's) and **4 child destinations** (Children's, Anderson, DeSoto, Mississippi
+Baptist). Leake stays excluded until its 24/7 status is confirmed.
+
+### Live route validation
+
+`scripts/check_routes.py` sent 54 budgeted TomTom v3 requests at 07:36:56 UTC, one
+from each of three fixed public city-center points (downtown Memphis, Jackson and
+Tupelo; not user locations) to every adult destination. **54/54 returned HTTP 200**
+with parseable summaries. Route ends were a median 26 m and at most 61 m (NEA)
+from the campus points, well inside the 300 m tolerance. Examples: downtown Memphis
+to Crittenden 10 min, Baptist Memphis 17 min, DeSoto 17 min; downtown Jackson to
+Mississippi Baptist 7 min; downtown Tupelo to Union County 27 min. No route reported
+traffic delay at this overnight hour, which does not establish live-traffic coverage.
+Sanitized evidence without geometry: `.cache/route-validation-20260923.json`.
+
+An end-to-end local Compare through the review server from downtown Memphis
+returned 18 labeled rows with drive, published wait and differences, and no
+recommendation.
+
+## Adding reviewed entrances
+
+`python -m edwait.entrances` maintains entrance points:
+
+- `list` prints each facility's arrival kind, address, offset and OpenStreetMap and
+  aerial-imagery links for review.
+- `geojson review.geojson` exports campus/entrance points for any GeoJSON viewer.
+- `set SLUG --lat --lon --label --source-url [--method imagery_review] [--reviewed-on]
+  [--note] [--dry-run]` validates with the same rule eligibility uses (HTTPS source,
+  label, method in `official_source`/`imagery_review`/`site_visit`, non-future review
+  date, within 1,000 m of the campus center) and writes the registry.
+- `clear SLUG` reverts to the campus fallback.
+
+A reviewed entrance immediately replaces the campus point and the "unconfirmed"
+labels for that facility after the next preparation/render.
 
 ## Routing availability gate
 
@@ -74,13 +129,10 @@ cannot cause the public page to post a user's coordinates to S3. The local revie
 server answers from its configured key; a future public gateway must implement the
 same probe. Tests cover the probe, the S3 error case and the local server response.
 
-## Decisions needed
+## Remaining decisions
 
-1. **Entrance evidence.** Options: request vehicle-arrival points from Baptist,
-   add reviewed entrance points from current imagery with a dated reviewer note,
-   or explicitly accept campus points labeled "campus, ER entrance unconfirmed"
-   (which would add a documented distance error to travel times). The current
-   gate requires the first or second.
+1. **Entrance evidence.** Resolved for now by the labeled campus fallback; the user
+   will add imagery-reviewed entrances with `python -m edwait.entrances`.
 2. **Children at general hospitals.** Only Anderson, DeSoto and Mississippi Baptist
    state that their general ER treats children. Others likely treat children (EMTALA obliges screening), but
    the registry records only explicit evidence.

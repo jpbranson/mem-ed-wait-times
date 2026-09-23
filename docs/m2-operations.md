@@ -4,8 +4,9 @@ Updated 2026-09-23 UTC. M2 is implemented as a prototype and remains **in
 progress**. The user supplied a local API key and one live v3 contract probe passed;
 account/billing settings have not been audited and no production routing service
 is configured. M0/M1 and M2's static interface were deployed on 2026-09-22;
-the public routing endpoint remains unavailable, destinations remain excluded,
-and recommendations remain disabled. See the [release record](aws-deployment-2026-09-22.md).
+the public routing endpoint remains unavailable and recommendations remain disabled.
+Since 2026-09-23, 18 adult and 4 child destinations are eligible using labeled
+campus centers (ER entrance unconfirmed); 54/54 live validation routes passed. See the [release record](aws-deployment-2026-09-22.md).
 The [readiness follow-up](m2-readiness-2026-09-23.md) records the live check,
 partial destination evidence, and selected free hosting design.
 
@@ -52,7 +53,8 @@ individual connect/read timeouts are at most 2/5 seconds and the browser gives u
 after 20 seconds. Authentication and provider-limit errors stop the comparison
 and impose a 60-second cooldown. Failed or partial routes never become
 straight-line estimates. Route endpoints must be within 250 meters of the origin
-and 150 meters of the verified entrance; geometry is then discarded.
+and 150 meters of a reviewed entrance or 300 meters of a campus center; geometry
+is then discarded.
 
 The static S3 website cannot run this gateway. Cloudflare Workers Free with one
 SQLite Durable Object is the selected design target; no account or gateway has
@@ -96,8 +98,11 @@ The server reads `TOMTOM_API_KEY` at startup; restart it after changing the key.
 The standalone `python scripts/check_tomtom.py` diagnostic explicitly loads
 `.env.local` for one budgeted nonclinical API probe; it does not configure the server.
 Without a key, the charts and fictional example still work; eligible route
-requests return `routing_not_configured` without contacting TomTom. Verified
-destinations are also required before real comparisons can run.
+requests return `routing_not_configured` without contacting TomTom. For a local
+review with the key from `.env.local`, set `TOMTOM_API_KEY` in the server's
+environment first. `python scripts/check_routes.py` explicitly loads `.env.local`
+and sends 54 budgeted requests from three fixed public city centers to every adult
+destination, recording timing, distance and endpoint offsets without geometry.
 
 For an explicitly dated replay, set both output paths so live preview artifacts
 are not overwritten:
@@ -164,24 +169,54 @@ transmission. [Service and attribution](https://openfreemap.org/),
 
 ## Destination and privacy contracts
 
-All 20 real destinations currently remain excluded. Since 2026-09-23 the registry
-records official status, service and age evidence for each facility in
-`destination_evidence` (source URL, address, OpenStreetMap campus reference,
-entrance search result and notes); only the entrance remains unverified, plus
-Leake's active status. [Evidence](m2-destinations-2026-09-23.md). Enabling one requires
+Since 2026-09-23 the registry records official status, service and age evidence
+for each facility in `destination_evidence` (source URL, address, OpenStreetMap
+campus reference, entrance search result and notes). By user decision the same day,
+18 adult and 4 child destinations are eligible using labeled campus centers; Leake
+stays excluded. [Evidence](m2-destinations-2026-09-23.md). A destination requires
 reviewed evidence in [the registry](../edwait/facilities.json):
 
 - `active_status: "active"` and `service_applicability: ["general_emergency"]`.
 - `age_applicability` containing `"adult"` (18+) and/or `"child"` (under 18), only
   when that entire displayed age group is supported by current evidence.
-- `emergency_entrance` with numeric `latitude`/`longitude`, a descriptive `label`,
-  and an HTTPS `source_url` supporting the exact emergency arrival point.
 - `travel_verified_on` as a nonfuture local ISO date at most 90 days old. This
   provisional recheck interval does not establish real-time operational status.
+- An arrival point, chosen by `edwait.travel.arrival()`:
+  - `emergency_entrance`, when present, always wins. It needs numeric
+    `latitude`/`longitude`, a descriptive `label`, an HTTPS `source_url`, `method`
+    (`official_source`, `imagery_review` or `site_visit`), a nonfuture `reviewed_on`
+    date, and must lie within 1,000 m of the campus center. A defective entrance
+    blocks the destination ("Emergency entrance evidence incomplete" or "too far
+    from campus"); it never silently falls back.
+  - Otherwise `campus_point`: an OpenStreetMap hospital-element center with HTTPS
+    source and the label "Hospital campus center · ER entrance unconfirmed". The
+    page labels these destinations everywhere and `travel.json` reports
+    `arrival: "campus"` plus a recommendation blocker.
 
-Campus `coordinates` alone never enable routing. Keep unverified values null;
-do not copy synthetic test metadata into the registry. These fields describe
+Route ends must land within 150 m of an entrance or 300 m of a campus center, or the
+route is reported unavailable. `coordinates` remains unused. Keep unverified values
+null; do not copy synthetic test metadata into the registry. These fields describe
 general service applicability, not individual clinical suitability or diversion.
+
+### Adding imagery-reviewed entrances
+
+```powershell
+.venv\Scripts\python.exe -m edwait.entrances list            # arrival kind + OSM/aerial links
+.venv\Scripts\python.exe -m edwait.entrances geojson review.geojson
+.venv\Scripts\python.exe -m edwait.entrances set memphis --lat 35.12901 --lon -89.86185 `
+  --label "ER entrance canopy, Walnut Grove Rd side" `
+  --source-url "https://www.openstreetmap.org/?mlat=35.12901&mlon=-89.86185#map=19/35.12901/-89.86185" `
+  --method imagery_review --note "Canopy and ER signage visible" --dry-run
+.venv\Scripts\python.exe -m edwait.entrances clear memphis    # back to the campus fallback
+```
+
+(The Memphis values above are placeholders, not a reviewed entrance.) Place the
+point where a vehicle stops for the general ER, not an ambulance-only bay or a
+separate obstetric/pediatric unit, and describe the evidence in `--label`/`--note`.
+`set` validates with the same rule as eligibility before writing. After editing,
+run the tests, `python -m edwait.prepare`, render, and optionally
+`scripts/check_routes.py` (54 budgeted requests) to confirm road snapping. Commit
+the registry change with the dated evidence.
 
 Before enabling Compare, the page sends `GET /api/routes/status` (no origin or
 body). The local server answers `{"schema_version": 1, "available": <key configured>}`

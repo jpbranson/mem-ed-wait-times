@@ -62,7 +62,7 @@ test("GPS works before age/context/destination validation; changes never send ro
 
 test("eligible destinations keep Compare disabled where no routing gateway exists",async()=>{
   const f=fixture(),at=new Date().toISOString(),posts=[];
-  const facility={slug:'a',display_name:'Synthetic hospital',eligibility:{adult:null,child:null},
+  const facility={slug:'a',display_name:'Synthetic hospital',eligibility:{adult:null,child:null},arrival:'campus',
     movement:[15,30,60,120].map(h=>({horizon_minutes:h,pairs:0,days:0,absolute_change_p90:null}))};
   const context={schema_version:1,method_version:'travel-wait-v1',metric:'CV_ED_Wait',generated_at:at,
     recommendations_enabled:false,policy:{route_ttl_seconds:300,context_ttl_seconds:7200,meaningful_minutes:10},facilities:[facility]};
@@ -94,7 +94,7 @@ test("map, keyboard center, manual input, and Clear synchronize one origin",asyn
 
 test("only Compare sends the selected origin; editing cancels a pending route",async()=>{
   const f=fixture(),at=new Date().toISOString(),requests=[];let finishRoute,gps;
-  const facility={slug:'a',display_name:'Synthetic hospital',eligibility:{adult:null,child:null},
+  const facility={slug:'a',display_name:'Synthetic hospital',eligibility:{adult:null,child:null},arrival:'campus',
     movement:[15,30,60,120].map(h=>({horizon_minutes:h,pairs:0,days:0,absolute_change_p90:null}))};
   const context={schema_version:1,method_version:'travel-wait-v1',metric:'CV_ED_Wait',generated_at:at,
     recommendations_enabled:false,policy:{route_ttl_seconds:300,context_ttl_seconds:7200,meaningful_minutes:10},facilities:[facility]};

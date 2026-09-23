@@ -19,7 +19,7 @@
       "type": "array", "maxItems": 20,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["slug","display_name","eligibility","movement"],
+        "required": ["slug","display_name","eligibility","arrival","movement"],
         "properties": {
           "slug": {"type":"string","minLength":1},
           "display_name": {"type":"string","minLength":1},
@@ -27,6 +27,7 @@
             "type":"object","additionalProperties":false,"required":["adult","child"],
             "properties":{"adult":{"type":["string","null"]},"child":{"type":["string","null"]}}
           },
+          "arrival": {"description":"Routing target kind: a reviewed emergency entrance, or a labeled campus-center fallback (ER entrance unconfirmed)","enum":["entrance","campus",null]},
           "movement": {
             "type":"array","minItems":4,"maxItems":4,
             "items": {
