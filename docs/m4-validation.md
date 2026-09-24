@@ -1,15 +1,16 @@
 # M4 validation: area counts and wait stability
 
-Dated 2026-09-24 UTC. Local implementation and validation only; nothing here was
-deployed. Figures describe published `CV_ED_Wait` readings, not individual patient
+Dated 2026-09-24 UTC. The validation below was local. The feature was deployed later
+that day with `8242ad1` (the 03:17 UTC build); see the
+[release evidence](production-followup-2026-09-23.md#m4-release). Figures describe published `CV_ED_Wait` readings, not individual patient
 waits, occupancy, capacity or care quality.
 
 ## Scope
 
 | M4 feature | Status | Notes |
 | --- | --- | --- |
-| Area-wide elevated waits | Implemented locally | Browser view over existing M1 comparisons; no new artifact |
-| Wait stability | Implemented locally | Additive `stability` summaries in `comparisons.json` |
+| Area-wide elevated waits | Deployed 2026-09-24 | Browser view over existing M1 comparisons; no new artifact |
+| Wait stability | Deployed 2026-09-24 | Additive `stability` summaries in `comparisons.json` |
 | Historical alternative availability | Deferred | Needs M2 travel inputs. Replaying alternatives needs assumed or recorded travel times per origin, and routing is not public or validated for heavy traffic |
 
 ## Area-wide elevated waits
@@ -129,8 +130,8 @@ shape changed, and no new S3 object was introduced.
 
 ## Remaining
 
-- Deploy through the existing workflow when approved. The public check then
-  covers `area.mjs` and the stability summaries.
+- Deployed 2026-09-24 through the existing workflow. Public checks cover
+  `area.mjs` and the stability summaries.
 - Revisit area typical counts and stability with longer history. Around
   2026-10-15, alongside the M3/M5 revisits, check whether counts stay close to
   independence.

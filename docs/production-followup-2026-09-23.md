@@ -189,18 +189,48 @@ labeled "Scheduled" still come from GitHub's cron.
 
 ### Observed dispatches
 
-A read-only check at about 03:05 UTC on 2026-09-24 found the following:
+Read-only checks at about 03:05 and 04:30 UTC on 2026-09-24 found the following:
 
 | Slot (UTC) | Rule `Invocations` / `FailedInvocations` | Workflow run | Result |
 | --- | --- | --- | --- |
 | 01:17 | 1 / 0 | [35942241664](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35942241664), `workflow_dispatch`, `98b3bad` | Success, 01:17:10–01:19:09 |
 | 02:17 | 1 / 0 | [35946597828](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35946597828), `workflow_dispatch`, `2448974` | Success, 02:17:10–02:18:58 |
+| 03:17 | 1 / 0 | [35950813345](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35950813345), `workflow_dispatch`, `8242ad1` | Success, 03:17:10–03:19:17 (first M4 build) |
+| 04:17 | 1 / 0 | [35955001963](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35955001963), `workflow_dispatch`, `8242ad1` | Success, 04:17:10–04:19:08 |
 
-The backup cron also started a run at 01:27:29 UTC, which succeeded. The alarm was
+The backup cron also started a run at 01:27:29 UTC, which succeeded; it did not
+start another by 04:30 UTC. The alarm was
 `OK`, and the email subscription was still `PendingConfirmation`: the user must
 confirm it from the AWS notification email before failed dispatches can notify
 anyone. The remaining steps are about a day of hourly delivery and then removal of
 the cron.
+
+## M4 release
+
+The user approved pushing `8242ad1` (M4 area counts, wait stability and the M2
+movement-percentile correction) at about 02:45 UTC on 2026-09-24. The push has no
+workflow trigger. The next EventBridge dispatch at 03:17 UTC built and published it
+(run 35950813345), and the 04:17 dispatch rebuilt it (run 35955001963). Both runs
+passed their tests and the workflow's exact public build and freshness checks,
+which now include `area.mjs`.
+
+An independent `node scripts/check_public.mjs` run at 04:26:08 UTC passed:
+
+- Latest data was 121 seconds old and context 467 seconds old (generated 04:18:22
+  UTC, valid until 05:00 UTC), with 20/20 current facilities and recommendations
+  still disabled.
+- The public `area.mjs`, the page's `area-stage` and `area-groups` elements, and
+  `comparisons.json` stability were present. Stability used method
+  `wait-stability-v1` over 2026-08-26 to 2026-09-23 local days, with all 80
+  facility-horizons supported.
+- `travel.json` carried the corrected percentiles (Memphis 15/30/60/120 min: 44.4,
+  63, 89, 98).
+
+A Chrome review of the public page after a reload showed "Live feed loaded". The
+area view showed 2 above and 3 below usual with 20 of 20 compared, 168 hourly
+columns and a typical count of 2. The stability graphic was present, there was no
+horizontal overflow and no console errors. Phone-width layout was verified locally
+before release ([M4 validation](m4-validation.md)).
 
 The workflow's `schedule:` trigger is retained as a backup until EventBridge has
 delivered hourly for about a day; the workflow's concurrency group queues any

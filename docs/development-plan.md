@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-24 03:10 UTC (evening of September 23 America/Chicago)
+Last updated: 2026-09-24 04:35 UTC (evening of September 23 America/Chicago)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -9,15 +9,15 @@ destinations, and by user decision 18 adult/4 child destinations route to labele
 campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are added. M3 is in progress with
 a difference-from-usual heatmap and an offline relationship study that found no
 confirmed pair association. M4 is in progress: area counts and wait-stability
-summaries are implemented and validated locally but not deployed; the historical
+summaries were deployed on 2026-09-24 (`8242ad1`, 03:17 UTC build); the historical
 alternatives replay is deferred until M2 routing is validated. M5 is in progress offline: after benchmarks and
 ARIMA pilots, a v2 candidate study scored development, froze its selections and
 gates, then scored calibration. Only Collierville at 60 minutes remains eligible for
 the final holdout, which the user chose to keep reserved while more data is
 collected; no public forecasts exist.
 Website builds are now also dispatched hourly by a user-configured AWS EventBridge
-rule because GitHub cron proved unreliable. Its first two dispatches (01:17 and 02:17
-UTC on 2026-09-24) produced successful builds; about a day of hourly delivery is
+rule because GitHub cron proved unreliable. Its first four dispatches (01:17–04:17
+UTC on 2026-09-24) all produced successful builds; about a day of hourly delivery is
 still to be observed before the backup cron is removed.
 
 Local preview rebuilt and started on 2026-09-22 at `http://127.0.0.1:8765/`
@@ -69,10 +69,10 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Compare is enabled only after a `GET /api/routes/status` gateway confirmation, so static hosting never receives coordinates. 18 adult/4 child destinations route to labeled campus centers; 54/54 live validation routes passed. Metric evidence, reviewed entrances and public gateway remain pending; recommendations disabled | [M2 operations](m2-operations.md), [readiness follow-up](m2-readiness-2026-09-23.md) |
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Relationship study | Geography-only neighbor groups (campus centers ≤50 km) and a frozen discovery/confirmation test of same-time co-deviation, same-time changes and 1–3 h lagged changes for all 190 pairs, with autocorrelation-adjusted p-values, BH, system-wide and residual-hour checks. One discovery candidate, none confirmed; offline only | [Protocol](m3-relationship-protocol.md), [results](m3-validation.md#relationship-study--2026-09-24-utc) |
-| Area counts and stability (M4) | Local only. An Across an area view counts hospitals above or below their own usual (M1 rule) for all hospitals, registry states or M3's ≥3-member 50 km neighbor groups: live now, plus 24-hour/seven-day columns beside a typical count. A per-hospital typical-change graphic shows 28-day median/90th percentile movement and the 10+ minute share at 15–120 minutes, from additive `comparisons.json` fields. This week's area counts were close to independent chance | [Area view](../dashboard/area.mjs), [areas](../edwait/areas.py), [stability](../edwait/stability.py), [validation](m4-validation.md) |
+| Area counts and stability (M4) | Deployed 2026-09-24 (`8242ad1`). An Across an area view counts hospitals above or below their own usual (M1 rule) for all hospitals, registry states or M3's ≥3-member 50 km neighbor groups: live now, plus 24-hour/seven-day columns beside a typical count. A per-hospital typical-change graphic shows 28-day median/90th percentile movement and the 10+ minute share at 15–120 minutes, from additive `comparisons.json` fields. This week's area counts were close to independent chance | [Area view](../dashboard/area.mjs), [areas](../edwait/areas.py), [stability](../edwait/stability.py), [validation](m4-validation.md) |
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks, ARIMA(1,0,0)/(1,1,0), Fourier-regressor ARIMA and a profile-persistence model with trailing empirical 80/95% intervals. Development and calibration scored under a frozen selection; one pair (Collierville 60 min) is holdout-eligible; holdout unscored; no public forecasts | [Protocol and amendment](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md), [candidate study](m5-candidates-validation.md), [freeze](m5-freeze.json) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; an M3 difference-from-usual heatmap links rows to the focus chart; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [heatmap](../dashboard/heatmap.mjs), [application](../dashboard/app.mjs) |
-| Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged. EventBridge rule `dashboard_hourly` dispatches the workflow at minute 17 (user-configured 2026-09-24 UTC; dispatched runs at 01:17 and 02:17 UTC succeeded); GitHub cron retained as a backup until about a day of hourly delivery is observed | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
+| Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged. EventBridge rule `dashboard_hourly` dispatches the workflow at minute 17 (user-configured 2026-09-24 UTC; dispatched runs at 01:17–04:17 UTC all succeeded). M4 (`8242ad1`) was first published by the 03:17 UTC dispatch (run 35950813345), and an independent public check passed at 04:26 UTC; GitHub cron retained as a backup until about a day of hourly delivery is observed | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
 | Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json) |
 
 Implementation and production deployment are recorded separately. Public artifact
@@ -85,9 +85,9 @@ Scheduled delivery was observed on 2026-09-23: no scheduled run started between
 [Follow-up evidence](production-followup-2026-09-23.md#scheduled-delivery-observation).
 Later scheduled runs that day were 3–5 hours apart. On 2026-09-24 UTC the user
 configured an EventBridge rule that dispatches the workflow hourly; its resources
-were verified read-only at 00:33 UTC, before any dispatch. Its first two dispatches,
-at 01:17 and 02:17 UTC, each started a `workflow_dispatch` run that succeeded in
-about two minutes, with no failed invocations.
+were verified read-only at 00:33 UTC, before any dispatch. Its first four
+dispatches, at 01:17–04:17 UTC, each started a `workflow_dispatch` run that
+succeeded in about two minutes, with no failed invocations.
 [Trigger evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge).
 
 A read-only assessment on 2026-09-14 inspected the 47 compacted partitions from
@@ -151,7 +151,7 @@ Deployment status must be recorded separately from implementation status.
 | M1 | Hospital self-comparisons and recent trends | First public feature | Complete | M0 reader, baseline inputs, freshness states |
 | M2 | Travel-and-wait comparison | Next public feature | In progress: static prototype published; local fixtures and one live provider probe validated; acceptance work remains | M0, M1, verified destinations, travel-time source, metric interpretation |
 | M3 | Relationships and spillover exploration | Analytical track | In progress: heatmap deployed; offline relationship study run (no confirmed pair association); predictive check, episode inspection, geographic view and replay remain | M0, M1; geographic view also needs verified coordinates |
-| M4 | Area summaries, stability, and historical alternatives | Follow-on features | In progress: area counts and stability implemented and validated locally, not deployed; historical alternatives deferred to M2 | M1; geographic summaries need region metadata; travel scenarios need M2 |
+| M4 | Area summaries, stability, and historical alternatives | Follow-on features | In progress: area counts and stability validated and deployed 2026-09-24; historical alternatives deferred to M2 | M1; geographic summaries need region metadata; travel scenarios need M2 |
 | M5 | Time-series modeling and short-horizon forecasts | Analytical track; conditional forecast release | In progress: v2 candidates scored on development and calibration under a frozen selection; one pair holdout-eligible; holdout unscored; no public forecast | M0 validated history and freshness, M1 benchmarks; M2/M3 integration follows separate validation |
 
 M0 and M1 acceptance criteria are satisfied by local validation described below;
@@ -397,7 +397,7 @@ Correction (2026-09-24 UTC, found during M4): `travel.json` 90th percentile move
 was read from unsorted changes, so published values were not percentiles (Memphis
 15 minutes: 5.2 versus a sorted 44.4). The screen only appears beside routes and
 never reached public users. Preparation now sorts first, with a regression test and
-an unchanged schema; values change on the next deployment. [Evidence](m4-validation.md#m2-movement-correction).
+an unchanged schema; corrected values were published with M4 on 2026-09-24. [Evidence](m4-validation.md#m2-movement-correction).
 
 Implemented locally:
 
@@ -553,13 +553,13 @@ Acceptance criteria:
 ### M4: Follow-on opportunities
 
 Started 2026-09-24 UTC at the user's request. **In progress:** area counts and wait
-stability are implemented and validated locally, with no deployment yet. Historical
+stability are implemented, validated, and deployed (2026-09-24). Historical
 alternative availability is deferred.
 
 | Feature | Intended behavior | Validation or dependency | Status |
 | --- | --- | --- | --- |
-| Area-wide elevated waits | Count reporting facilities above their own usual range in a selected region; display reporting coverage | M1 baselines and region metadata; describe facility counts, not occupancy or patient-weighted load | Implemented locally |
-| Wait stability | Summarize the frequency and magnitude of changes alongside the latest reading | Horizon-specific history, adequate coverage, and clear distinction from patient wait uncertainty | Implemented locally |
+| Area-wide elevated waits | Count reporting facilities above their own usual range in a selected region; display reporting coverage | M1 baselines and region metadata; describe facility counts, not occupancy or patient-weighted load | Deployed 2026-09-24 |
+| Wait stability | Summarize the frequency and magnitude of changes alongside the latest reading | Horizon-specific history, adequate coverage, and clear distinction from patient wait uncertainty | Deployed 2026-09-24 |
 | Historical alternative availability | Replay how often an alternative had a lower travel-plus-published-wait estimate during elevated episodes | M2 inputs; identify assumed travel times and distinguish scenarios from observed historical traffic | Deferred: needs validated travel times per origin, and M2 routing is neither public nor validated at traffic hours |
 
 Deliverables (defined 2026-09-24):
@@ -605,8 +605,15 @@ The shared stability code exposed an M2 defect: `travel.json` percentiles came f
 unsorted changes. Both features now use sorted values; the M2 section records the
 correction. [Evidence](m4-validation.md).
 
-Deployment: not deployed. The next approved workflow run would publish it. The
-public check now requires `area.mjs` and the stability fields.
+Deployment: **deployed 2026-09-24** after the user approved the push. The 03:17
+UTC EventBridge dispatch built `8242ad1` (run [35950813345](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35950813345)), and the 04:17 dispatch
+rebuilt it (run [35955001963](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35955001963)). Both workflow public checks passed. An independent check
+at 04:26 UTC passed as well: 20/20 current facilities, `area.mjs` and the area
+section published, stability for all 80 facility-horizons, and corrected
+`travel.json` percentiles (Memphis 15 min: 44.4). A Chrome check of the public page
+showed live area counts, 168 hourly columns, the stability graphic, no page
+overflow and no console errors after a reload.
+[Release evidence](production-followup-2026-09-23.md#m4-release).
 
 New provider coverage and stronger causal analysis remain optional extensions
 requiring separate evidence and scope decisions before implementation.
@@ -737,7 +744,7 @@ M2 prototype adds travel context. Relationship and forecast outputs remain propo
 | Artifact | Update trigger | Contents |
 | --- | --- | --- |
 | `data/latest.json` | Completed collection, including partial/total facility failures | Versioned latest per-facility observation, separate attempt, timestamps, coverage, and freshness policy |
-| `comparisons.json` | Each successful website preparation, before Quarto render (configured hourly/manual) | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, M4 28-day wait-stability summaries (added 2026-09-24, local), and operator latency |
+| `comparisons.json` | Each successful website preparation, before Quarto render (configured hourly/manual) | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, M4 28-day wait-stability summaries (added and deployed 2026-09-24), and operator latency |
 | `travel.json` | Same history read as M1 preparation | M2 eligibility reasons, 15/30/60/120-minute historical movement and support, fixed provisional policy, disabled recommendation gate; no origins/routes |
 | `relationships.json` | Validated analytical refresh | Supported pair/lag summaries, evaluation period, and limitations |
 | `forecasts.json` (proposed, M5) | Validated model update cadence, to be selected after benchmarking | Facility/metric, issue time, last observation/training cutoff, future target times, point forecasts and interval levels, model version, support, expiration, and unavailable/fallback states |
@@ -771,7 +778,7 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Question | Needed by | Next action |
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
-| What schedules and completion guarantees exist in deployment? | M0/M1 | Decided 2026-09-24 UTC: the user configured EventBridge rule `dashboard_hourly` to dispatch the workflow at minute 17 with a repository-scoped token, plus a failed-invocation alarm. GitHub cron ran 3–9 hours apart on 2026-09-23. Dispatches at 01:17 and 02:17 UTC on 2026-09-24 succeeded (2 invocations, 0 failed; alarm `OK`). Next: observe about a day of hourly `workflow_dispatch` runs, have the user confirm the alert email subscription (still `PendingConfirmation` at 03:05 UTC), then remove the workflow's `schedule:` trigger; do not lengthen freshness limits. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) |
+| What schedules and completion guarantees exist in deployment? | M0/M1 | Decided 2026-09-24 UTC: the user configured EventBridge rule `dashboard_hourly` to dispatch the workflow at minute 17 with a repository-scoped token, plus a failed-invocation alarm. GitHub cron ran 3–9 hours apart on 2026-09-23. Dispatches at 01:17–04:17 UTC on 2026-09-24 succeeded (4 invocations, 0 failed; alarm `OK`). Next: observe about a day of hourly `workflow_dispatch` runs, have the user confirm the alert email subscription (still `PendingConfirmation` at 04:30 UTC), then remove the workflow's `schedule:` trigger; do not lengthen freshness limits. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) |
 | Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
 | Which facilities are valid alternatives for each supported use case? | M2 | 2026-09-23: 19 active general-emergency destinations (Children's child-only; Anderson, DeSoto and Mississippi Baptist adult and child; others adult) and Leake unverified. Official pages and OpenStreetMap give no emergency-entrance coordinates (one unconfirmed OSM candidate at North Mississippi). User decided 2026-09-23: route to labeled campus centers now; add imagery-reviewed entrances later with `python -m edwait.entrances`. Next: the user's entrance reviews, then Leake's status and child scope at other general ERs. [Evidence](m2-destinations-2026-09-23.md) |
@@ -781,10 +788,10 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | When do area counts indicate something beyond chance? | M4 | 2026-09-24: one week of counts matched an independence reference (all hospitals: 3+ above usual in 33% of hours versus 30% expected), so counts are shown descriptively beside a typical count. Revisit around 2026-10-15 with M3/M5 on longer history before adding any area-wide label. [Evidence](m4-validation.md) |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Frozen 2026-09-24 in the [protocol amendment](m5-study-protocol.md#amendment--2026-09-24-utc-before-calibration-scoring) and [freeze](m5-freeze.json): ≥1 min and 5% MAE gain, RMSE no worse, bootstrap gain interval above zero, ≥150 targets/6 days, ≥95% availability, ≤1% fit failure, coverage within 5 points, ≤10 min daily fitting; pass on calibration and holdout. Unavailable/fallback display behavior remains to be defined with the artifact contract if a pair qualifies |
 
-Next checkpoint: the EventBridge rule's first two dispatches (01:17 and 02:17 UTC on
+Next checkpoint: the EventBridge rule's first four dispatches (01:17–04:17 UTC on
 2026-09-24) succeeded. After about a day of hourly delivery, remove the unreliable
 GitHub `schedule:` trigger; the user still needs to confirm the alert email
-subscription. The 03:17 UTC dispatch is expected to publish M4 (`8242ad1`). M2's
+subscription. M2's
 destinations route to labeled campus centers with live routes validated; next are
 the user's imagery-reviewed entrances, metric confirmation, traffic-hour route and
 uncertainty validation, and the free gateway's account, implementation and deployment. M3's heatmap is deployed and its
@@ -792,7 +799,7 @@ offline relationship study found no confirmed association; by user decision it i
 revisited around 2026-10-15 with more history (rerun, predictive check, presentation). M5's development and calibration are scored under a frozen selection; only
 Collierville 60 min remains eligible. By user decision the one-time holdout stays
 reserved while more data is collected. M4's area counts and wait stability are
-validated locally and await review and an approved deployment. Historical
+deployed; revisit area counts against chance around 2026-10-15. Historical
 alternatives wait on M2. Provider-contract
 uncertainty still blocks preferred-option claims, and no forecast display or public
 routing service has been released.
@@ -863,6 +870,7 @@ routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-24 UTC | M4 release | The user approved the push of `8242ad1`. The EventBridge dispatch at 03:17 UTC built and published it (run [35950813345](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35950813345)), and the 04:17 dispatch rebuilt it (run [35955001963](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35955001963)); both public checks passed. An independent public check and a Chrome review passed at 04:26 UTC. [Evidence](production-followup-2026-09-23.md#m4-release) | Deployed. Dispatches 01:17–04:17 all succeeded (4 invocations, 0 failed); the backup cron has not run since 01:27 |
 | 2026-09-24 UTC | M0/M1 hourly dispatch observation | EventBridge rule `dashboard_hourly` recorded one invocation each at 01:17 and 02:17 UTC and no failed invocations; alarm `OK`. Resulting `workflow_dispatch` runs [35942241664](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35942241664) and [35946597828](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35946597828) succeeded in about two minutes each, including the public freshness checks. The backup cron also ran at 01:27. Alert email subscription still `PendingConfirmation`. [Evidence](production-followup-2026-09-23.md#observed-dispatches) | Hourly builds delivered by EventBridge; about a day of delivery still to observe before removing the cron |
 | 2026-09-24 UTC | M4 area counts and wait stability | Added `edwait/stability.py`, `edwait/areas.py`, `dashboard/area.mjs`, stability rendering, schema/storage docs and [validation](m4-validation.md). Corrected M2 movement percentiles. Tests: 84 Python and 46 JavaScript passed. Real-data preparation and render passed, as did the Chrome desktop/390/320 px review after an overflow fix. Area counts were close to independence | Local only; not deployed. `comparisons.json` gains additive stability fields when next published |
 | 2026-09-24 UTC | M5 candidate study (v2) | Added `edwait/forecast_models.py`, diagnostics/runner/freeze/report scripts, seven tests, protocol amendment, freeze record, aggregate results and three figures. Development: 1,120 fits, no abstentions/failures, exact v1 reproduction, 5/80 shortlisted. Calibration (frozen): 1 shortlisted pair passed (Collierville 60 min); 18 selected candidates missed coverage at one or both levels; max daily fit 13 s. 79 Python/41 JS tests passed. [Evidence](m5-candidates-validation.md) | Offline only; holdout deliberately left unscored (user decision below); no artifact, schema, S3 or dashboard change |

@@ -2,7 +2,7 @@
 
 Contract updated: 2026-09-14 for M0 and M1; deployed 2026-09-22 with the M2 static
 interface. M4 added stability fields to `comparisons.json` on 2026-09-24 (pushed as
-`8242ad1`, pending its first deployed build). [Production verification](aws-deployment-2026-09-22.md) confirms latest,
+`8242ad1`, deployed by the 03:17 UTC build). [Production verification](aws-deployment-2026-09-22.md) confirms latest,
 comparisons, travel, static assets, and compaction metadata. No record schema
 changed during rollout. Earlier record sampling below remains dated 2026-09-11
 (three objects, 1,960 records); the 2026-09-14 schedule/policy checks remain
@@ -297,7 +297,7 @@ wait, past-only median, low/high band, minute difference, percentile, contributi
 days, coverage, and group. Unsupported comparison values are null; raw published
 waits remain visible. Latency describes collected HTTP requests, not patient waits.
 
-M4 (contract change dated 2026-09-24 UTC, local only until the next deployment)
+M4 (contract change dated 2026-09-24 UTC, deployed the same day with `8242ad1`)
 adds a required top-level `stability` object (method `wait-stability-v1`, policy,
 and the complete previous-28-local-day source window) and a four-row `stability`
 array per facility. Each row gives a 15/30/60/120-minute horizon's overlapping pair

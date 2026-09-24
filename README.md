@@ -8,7 +8,8 @@ M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
 2026-09-22. M2's map and illustrative travel interface are published; real routing
 and recommendations remain disabled. M3's difference-from-usual heatmap is
 published and an offline relationship study found no confirmed pair association. M4's area counts and
-wait-stability summaries are implemented locally, not yet deployed. M5's offline forecast
+wait-stability summaries were deployed on 2026-09-24; its historical-alternatives
+replay waits on M2. M5's offline forecast
 study has scored development and calibration under a frozen selection; one hospital/horizon
 remains eligible for the unscored final holdout, and there are no public forecasts.
 See the [release evidence](docs/aws-deployment-2026-09-22.md) and
@@ -19,8 +20,8 @@ successful updated GitHub build and public desktop/mobile review. The approved
 workflow mitigation moves the hourly cron to minute 17 and verifies public
 freshness/build artifacts after publication. GitHub's scheduled delivery proved
 unreliable (runs 3–9 hours apart on 2026-09-23), so since 2026-09-24 UTC an AWS
-EventBridge rule dispatches the workflow hourly; its first dispatches (01:17 and
-02:17 UTC) produced successful builds.
+EventBridge rule dispatches the workflow hourly; its first four dispatches
+(01:17–04:17 UTC) all produced successful builds.
 
 ## Project documentation
 
@@ -92,7 +93,7 @@ History in the overview updates with the build, while individual readings refres
 independently. A Versus usual heatmap (M3) colors each hospital's hourly or
 15-minute median difference from its own usual median; selecting a row focuses
 that hospital. It describes readings, not patient movement between hospitals.
-Locally, M4 adds an Across an area view that counts hospitals above or below
+M4 adds an Across an area view that counts hospitals above or below
 their own usual in a chosen area (all, state, or 50 km neighbor group) beside a
 typical count, and a per-hospital typical-change graphic (median and 90th
 percentile movement over 15 minutes to 2 hours across 28 past days).

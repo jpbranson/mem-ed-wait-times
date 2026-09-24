@@ -126,7 +126,7 @@ overview changes only with the rendered page.
 | Object | Owner | Update / consumer behavior |
 | --- | --- | --- |
 | `data/latest.json` | Collector | M0 complete replacements; no-store; browser polls every 60 seconds |
-| `comparisons.json` | Website build | Complete replacement on each successful build (configured hourly/manual), beside `index.html`; browser revalidates every five minutes. Since M4 (2026-09-24, pending deployment) it also carries 28-day wait-stability summaries, and `area.mjs` derives area counts from it; see [M4 validation](m4-validation.md) |
+| `comparisons.json` | Website build | Complete replacement on each successful build (configured hourly/manual), beside `index.html`; browser revalidates every five minutes. Since M4 (deployed 2026-09-24) it also carries 28-day wait-stability summaries, and `area.mjs` derives area counts from it; see [M4 validation](m4-validation.md) |
 | `travel.json`, `travel.mjs` | Website build (M2 prototype) | Separate historical movement/eligibility context and comparison UI; no origins or routes stored; see [M2 operations](m2-operations.md) |
 | HTML, modules, styles, `fonts/*` | Website build | Quarto output and locally served Inter/license, deployed with the context artifact |
 
