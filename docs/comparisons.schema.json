@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mem-ed-wait-times.example/schemas/comparisons.schema.json",
-  "title": "M1 hospital self-comparison artifact",
-  "description": "Atomic website-owned comparisons.json. Versioned past-local-day reference models, seven days of historical comparisons, coverage, and operator latency. Original raw observation records remain unchanged.",
+  "title": "M1 hospital self-comparison and M4 stability artifact",
+  "description": "Atomic website-owned comparisons.json. Versioned past-local-day reference models, seven days of historical comparisons, M4 past-only wait-stability summaries, coverage, and operator latency. Original raw observation records remain unchanged.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,6 +15,7 @@
     "history_start",
     "policy",
     "source_range",
+    "stability",
     "coverage",
     "latency",
     "facilities"
@@ -164,6 +165,81 @@
         }
       }
     },
+    "stability": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "M4 wait-stability method: complete previous local days only; describes movement in published readings, not forecasts or patient-wait intervals.",
+      "required": [
+        "method_version",
+        "policy",
+        "source_start",
+        "source_end"
+      ],
+      "properties": {
+        "method_version": {
+          "const": "wait-stability-v1"
+        },
+        "policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lookback_days",
+            "horizons_minutes",
+            "minimum_days",
+            "minimum_pairs",
+            "minimum_day_coverage",
+            "gap_seconds",
+            "horizon_tolerance_seconds",
+            "meaningful_minutes"
+          ],
+          "properties": {
+            "lookback_days": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "horizons_minutes": {
+              "const": [
+                15,
+                30,
+                60,
+                120
+              ]
+            },
+            "minimum_days": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minimum_pairs": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minimum_day_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "gap_seconds": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "horizon_tolerance_seconds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "meaningful_minutes": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "source_start": {
+          "$ref": "#/$defs/time"
+        },
+        "source_end": {
+          "$ref": "#/$defs/time"
+        }
+      }
+    },
     "coverage": {
       "type": "object",
       "description": "M0 coverage() output for the complete loaded batch window; not baseline calendar-slot coverage."
@@ -212,7 +288,8 @@
         "required": [
           "slug",
           "models",
-          "history"
+          "history",
+          "stability"
         ],
         "properties": {
           "slug": {
@@ -237,6 +314,14 @@
             "type": "array",
             "items": {
               "$ref": "#/$defs/point"
+            }
+          },
+          "stability": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "$ref": "#/$defs/stability"
             }
           }
         }
@@ -430,6 +515,68 @@
           "$ref": "#/$defs/group"
         }
       ]
+    },
+    "stability": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One horizon: overlapping reading pairs and origin days, with median/90th percentile absolute change and shares rising or falling by the meaningful distance. Values are null below minimum support.",
+      "required": [
+        "horizon_minutes",
+        "pairs",
+        "days",
+        "median_abs_change",
+        "p90_abs_change",
+        "rise_share",
+        "fall_share"
+      ],
+      "properties": {
+        "horizon_minutes": {
+          "enum": [
+            15,
+            30,
+            60,
+            120
+          ]
+        },
+        "pairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "median_abs_change": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "p90_abs_change": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "rise_share": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fall_share": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
     }
   }
 }

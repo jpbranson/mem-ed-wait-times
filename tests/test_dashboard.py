@@ -41,6 +41,7 @@ class DashboardTests(unittest.TestCase):
             source = Path("dashboard", module).read_text(encoding="utf-8")
             pending += [m for m in re.findall(r'from\s+"\./([\w-]+\.mjs)"', source) if not m.startswith("vendor")]
         self.assertIn("heatmap.mjs", seen)
+        self.assertIn("area.mjs", seen)
 
 
 if __name__ == "__main__":

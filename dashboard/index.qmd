@@ -25,6 +25,7 @@ from IPython.display import HTML, display
 
 sys.path.insert(0, str(Path.cwd().parent))
 from edwait.data import registry, short_name
+from edwait.areas import areas
 facilities = registry()
 context_path = Path("comparisons.json")
 context = json.loads(context_path.read_text(encoding="utf-8")) if context_path.exists() else None
@@ -89,6 +90,8 @@ display(HTML('<script type="application/json" id="facility-registry">' +
              json.dumps([{"slug": f["slug"], "display_name": f["display_name"], "short_name": short_name(f)}
                          for f in facilities]).replace("<", "\\u003c") +
              '</script>'))
+display(HTML('<script type="application/json" id="area-groups">' +
+             json.dumps(areas(facilities)).replace("<", "\\u003c") + '</script>'))
 ```
 
 ```{=html}
@@ -122,6 +125,17 @@ display(HTML('<div class="focus-toolbar"><label for="hospital-select">Focus</lab
   <details class="data-disclosure"><summary>Summary table &amp; limits</summary>
     <p>Each period shows the median difference between published readings and that hospital’s past-only usual median (M1 references). Rows that change together here are not evidence of patients moving between hospitals; shared calendar patterns, reporting changes and collection gaps can align colors.</p>
     <div class="heatmap-table table-scroll" tabindex="0" role="region" aria-label="Heatmap summary table"></div>
+  </details>
+</section>
+<section id="area-stage" class="area-stage" aria-labelledby="area-heading">
+  <div class="stage-heading"><h2 id="area-heading">Across an area</h2><label class="area-picker"><span>Area</span><select></select></label></div>
+  <div class="area-now" role="status" aria-live="polite"></div>
+  <div class="area-legend" aria-label="Color key"><span><i class="area-swatch area-above-swatch"></i>Above usual ▲</span><span><i class="area-swatch area-below-swatch"></i>Below usual ▼</span><span><i class="area-swatch area-compared-swatch"></i>With a usual range</span></div>
+  <div class="area-chart" role="region" aria-label="Hospitals above and below usual in the selected area"></div>
+  <p class="area-note"></p>
+  <details class="data-disclosure"><summary>Summary table &amp; limits</summary>
+    <p>Counts hospitals whose published reading is above or below its own usual: the outer 10% of its past-only reference plus at least 10 minutes from the median, as in the focus summary. Each column uses the latest reading per hospital in that period. By construction, a hospital sits above usual in roughly a tenth of its readings or fewer, so one or two in a larger area is routine; compare with the typical count. These are facility counts, not occupancy, capacity, or patient-weighted load, and they are not evidence that patients moved between hospitals. Areas are all hospitals, registry states, and groups whose campus centers link within 50 km in a straight line (the M3 neighbor groups), not travel times or service areas.</p>
+    <div class="area-table table-scroll" tabindex="0" role="region" aria-label="Area summary table"></div>
   </details>
 </section>
 <section id="travel-stage" class="travel-stage" aria-labelledby="travel-heading">
@@ -174,7 +188,12 @@ covered days, 64 readings, and 75% of expected 15-minute slots. A contributing d
 also needs 75% coverage. Support and fallbacks appear with the selected hospital.
 
 Above/below usual: the outer 10% of the reference distribution plus at least a
-10-minute difference from its median. Recent direction: the latest reading minus
+10-minute difference from its median. Typical change: across the complete previous
+28 local days, the median and 90th percentile size of changes between readings
+15 minutes to 2 hours apart, and the share that rose or fell by 10+ minutes.
+Pairs overlap and never bridge a gap over 20 minutes; a horizon needs 64 pairs
+from eight adequately covered days. It describes past movement, not a forecast
+or a range for an individual patient. Recent direction: the latest reading minus
 the median of at least two readings 40–80 minutes earlier, with changes under
 10 minutes labeled little change. This describes recent movement, not a forecast.
 Current comparisons pause on unconfirmed freshness, failed reference fetches,

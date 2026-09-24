@@ -198,3 +198,47 @@ pre { background: var(--surface); color: var(--muted); padding: 15px; }
 .heatmap-note { color: var(--faint); text-align: right; margin: 4px 0 0; }
 .heatmap-stage .data-disclosure > p { max-width: 85ch; line-height: 1.7; }
 @media (forced-colors: active) { .heat-cell { forced-color-adjust: none; } }
+/* M4 area counts: reuse the heatmap's above/below hues; direction also carried by position and ▲/▼. */
+.area-stage { border-top: 1px solid var(--line); padding: 26px 0 20px; }
+.area-picker { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); max-width: 100%; min-width: 0; }
+.area-picker select { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font: 16px var(--font); max-width: 100%; min-width: 0; text-overflow: ellipsis; }
+.area-now { margin: 16px 0 4px; }
+.area-count { margin: 0; font-size: 20px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.area-count strong { font-size: 40px; font-weight: 400; line-height: 1; }
+.area-count small, .area-of, .area-detail { color: var(--muted); font-size: 16px; }
+.area-below-count { color: var(--muted); }
+.area-below-count strong { font-size: 28px; color: var(--ink); }
+.area-detail { margin: 6px 0 0; }
+.area-names { margin: 4px 0 0; }
+.area-marker.above { color: #f4a39a; }
+.area-marker.below { color: #86b6ef; }
+.area-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 10px; color: var(--muted); }
+.area-legend span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.area-swatch { display: inline-block; width: 18px; height: 14px; border-radius: 2px; }
+.area-chart { overflow-x: auto; }
+.area-chart svg { width: 100%; min-width: 560px; height: auto; display: block; }
+.area-chart text { font: 16px var(--font); fill: var(--muted); }
+.area-above, .area-above-swatch { fill: #d9534f; background: #d9534f; }
+.area-below, .area-below-swatch { fill: #3987e5; background: #3987e5; }
+.area-compared, .area-compared-swatch { fill: #22323d; background: #22323d; }
+.area-hit { fill: transparent; }
+.area-column:hover .area-hit { fill: rgba(237, 243, 247, .06); }
+.area-grid, .area-tick { stroke: var(--line); }
+.area-zero { stroke: var(--faint); }
+.area-note { color: var(--faint); text-align: right; margin: 4px 0 0; }
+.area-stage .data-disclosure > p { max-width: 85ch; line-height: 1.7; }
+/* M4 stability: median bar and 90th percentile whisker per horizon in the focus summary. */
+.stability { margin: 4px 0 18px; }
+.stability-heading { color: var(--muted); margin: 0 0 4px; }
+.stability-graphic { width: 100%; min-width: 260px; max-width: 340px; display: block; }
+.stability-graphic text { fill: var(--muted); font: 16px var(--font); }
+.stability-graphic .stability-na { fill: var(--faint); }
+.stability-median { fill: var(--accent); }
+.stability-whisker { stroke: var(--ink); stroke-width: 2; }
+.stability-axis { stroke: var(--line); }
+.stability-threshold { stroke: var(--faint); stroke-dasharray: 3 4; }
+.stability-key { color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; margin: 2px 0 0; }
+.key-stability-median { display: inline-block; width: 18px; height: 10px; background: var(--accent); border-radius: 2px; margin-right: 6px; }
+.key-stability-p90 { display: inline-block; width: 18px; height: 2px; background: var(--ink); margin-right: 6px; vertical-align: middle; }
+.stability-empty { color: var(--faint); }
+@media (forced-colors: active) { .area-above, .area-below, .area-compared { forced-color-adjust: none; } }

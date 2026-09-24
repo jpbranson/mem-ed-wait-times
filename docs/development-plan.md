@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-24 01:30 UTC (evening of September 23 America/Chicago)
+Last updated: 2026-09-24 02:30 UTC (evening of September 23 America/Chicago)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -8,7 +8,9 @@ remain in progress; official status/service/age evidence covers all 20
 destinations, and by user decision 18 adult/4 child destinations route to labeled
 campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are added. M3 is in progress with
 a difference-from-usual heatmap and an offline relationship study that found no
-confirmed pair association; M4 remains planned. M5 is in progress offline: after benchmarks and
+confirmed pair association. M4 is in progress: area counts and wait-stability
+summaries are implemented and validated locally but not deployed; the historical
+alternatives replay is deferred until M2 routing is validated. M5 is in progress offline: after benchmarks and
 ARIMA pilots, a v2 candidate study scored development, froze its selections and
 gates, then scored calibration. Only Collierville at 60 minutes remains eligible for
 the final holdout, which the user chose to keep reserved while more data is
@@ -65,6 +67,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Compare is enabled only after a `GET /api/routes/status` gateway confirmation, so static hosting never receives coordinates. 18 adult/4 child destinations route to labeled campus centers; 54/54 live validation routes passed. Metric evidence, reviewed entrances and public gateway remain pending; recommendations disabled | [M2 operations](m2-operations.md), [readiness follow-up](m2-readiness-2026-09-23.md) |
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Relationship study | Geography-only neighbor groups (campus centers ≤50 km) and a frozen discovery/confirmation test of same-time co-deviation, same-time changes and 1–3 h lagged changes for all 190 pairs, with autocorrelation-adjusted p-values, BH, system-wide and residual-hour checks. One discovery candidate, none confirmed; offline only | [Protocol](m3-relationship-protocol.md), [results](m3-validation.md#relationship-study--2026-09-24-utc) |
+| Area counts and stability (M4) | Local only. An Across an area view counts hospitals above or below their own usual (M1 rule) for all hospitals, registry states or M3's ≥3-member 50 km neighbor groups: live now, plus 24-hour/seven-day columns beside a typical count. A per-hospital typical-change graphic shows 28-day median/90th percentile movement and the 10+ minute share at 15–120 minutes, from additive `comparisons.json` fields. This week's area counts were close to independent chance | [Area view](../dashboard/area.mjs), [areas](../edwait/areas.py), [stability](../edwait/stability.py), [validation](m4-validation.md) |
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks, ARIMA(1,0,0)/(1,1,0), Fourier-regressor ARIMA and a profile-persistence model with trailing empirical 80/95% intervals. Development and calibration scored under a frozen selection; one pair (Collierville 60 min) is holdout-eligible; holdout unscored; no public forecasts | [Protocol and amendment](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md), [candidate study](m5-candidates-validation.md), [freeze](m5-freeze.json) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; an M3 difference-from-usual heatmap links rows to the focus chart; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [heatmap](../dashboard/heatmap.mjs), [application](../dashboard/app.mjs) |
 | Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged. EventBridge rule `dashboard_hourly` dispatches the workflow at minute 17 (user-configured 2026-09-24 UTC; first delivery not yet observed); GitHub cron retained as a backup | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
@@ -144,7 +147,7 @@ Deployment status must be recorded separately from implementation status.
 | M1 | Hospital self-comparisons and recent trends | First public feature | Complete | M0 reader, baseline inputs, freshness states |
 | M2 | Travel-and-wait comparison | Next public feature | In progress: static prototype published; local fixtures and one live provider probe validated; acceptance work remains | M0, M1, verified destinations, travel-time source, metric interpretation |
 | M3 | Relationships and spillover exploration | Analytical track | In progress: heatmap deployed; offline relationship study run (no confirmed pair association); predictive check, episode inspection, geographic view and replay remain | M0, M1; geographic view also needs verified coordinates |
-| M4 | Area summaries, stability, and historical alternatives | Follow-on features | Planned | M1; geographic summaries need region metadata; travel scenarios need M2 |
+| M4 | Area summaries, stability, and historical alternatives | Follow-on features | In progress: area counts and stability implemented and validated locally, not deployed; historical alternatives deferred to M2 | M1; geographic summaries need region metadata; travel scenarios need M2 |
 | M5 | Time-series modeling and short-horizon forecasts | Analytical track; conditional forecast release | In progress: v2 candidates scored on development and calibration under a frozen selection; one pair holdout-eligible; holdout unscored; no public forecast | M0 validated history and freshness, M1 benchmarks; M2/M3 integration follows separate validation |
 
 M0 and M1 acceptance criteria are satisfied by local validation described below;
@@ -386,6 +389,11 @@ tolerance). The page probes `GET /api/routes/status` and keeps Compare disabled
 without a confirmed gateway. [Destination evidence](m2-destinations-2026-09-23.md).
 M2 is not complete. Its static interface was deployed with M0/M1 on 2026-09-22,
 but routing remains local-only and no preferred hospital recommendations are enabled.
+Correction (2026-09-24 UTC, found during M4): `travel.json` 90th percentile movement
+was read from unsorted changes, so published values were not percentiles (Memphis
+15 minutes: 5.2 versus a sorted 44.4). The screen only appears beside routes and
+never reached public users. Preparation now sorts first, with a regression test and
+an unchanged schema; values change on the next deployment. [Evidence](m4-validation.md#m2-movement-correction).
 
 Implemented locally:
 
@@ -540,17 +548,64 @@ Acceptance criteria:
 
 ### M4: Follow-on opportunities
 
-Prioritize these after the supporting milestones provide reusable summaries:
+Started 2026-09-24 UTC at the user's request. **In progress:** area counts and wait
+stability are implemented and validated locally, with no deployment yet. Historical
+alternative availability is deferred.
 
-| Feature | Intended behavior | Validation or dependency |
-| --- | --- | --- |
-| Area-wide elevated waits | Count reporting facilities above their own usual range in a selected region; display reporting coverage | M1 baselines and region metadata; describe facility counts, not occupancy or patient-weighted load |
-| Wait stability | Summarize the frequency and magnitude of changes alongside the latest reading | Horizon-specific history, adequate coverage, and clear distinction from patient wait uncertainty |
-| Historical alternative availability | Replay how often an alternative had a lower travel-plus-published-wait estimate during elevated episodes | M2 inputs; identify assumed travel times and distinguish scenarios from observed historical traffic |
+| Feature | Intended behavior | Validation or dependency | Status |
+| --- | --- | --- | --- |
+| Area-wide elevated waits | Count reporting facilities above their own usual range in a selected region; display reporting coverage | M1 baselines and region metadata; describe facility counts, not occupancy or patient-weighted load | Implemented locally |
+| Wait stability | Summarize the frequency and magnitude of changes alongside the latest reading | Horizon-specific history, adequate coverage, and clear distinction from patient wait uncertainty | Implemented locally |
+| Historical alternative availability | Replay how often an alternative had a lower travel-plus-published-wait estimate during elevated episodes | M2 inputs; identify assumed travel times and distinguish scenarios from observed historical traffic | Deferred: needs validated travel times per origin, and M2 routing is neither public nor validated at traffic hours |
 
-Time-series forecasting is now explicitly planned under M5. New provider
-coverage and stronger causal analysis remain optional extensions requiring
-separate evidence and scope decisions before implementation.
+Deliverables (defined 2026-09-24):
+
+- Area counts use M1's above/below-usual rule (outer 10% plus 10 minutes), not the
+  middle-50% band. The band is exceeded about a quarter of the time by construction.
+- Areas are all hospitals, registry states, and M3's pre-registered 50 km
+  campus-center neighbor groups with at least three members. Label the basis:
+  straight-line grouping, not travel time or service area.
+- Show current counts from live readings, and keep compared, unsupported and
+  not-current hospitals distinct. Pause counts when M1 comparisons pause. Show
+  history in the shared 24-hour/seven-day window, with coverage visible and a
+  window-typical count. Do not label any count an area-wide event.
+- Stability uses complete previous local days and M2's support rules. For each
+  horizon it shows the median and 90th percentile absolute change and the shares
+  rising or falling by 10+ minutes. Label it as past movement of published readings,
+  not a forecast or a patient's wait range.
+
+Acceptance criteria:
+
+- Tests cover the classification rule, binning, missing/stale/unsupported states,
+  gaps, sparse history, schema contracts and accessible text.
+- Compare area counts with an independence reference before claiming anything
+  area-wide. Revisit that comparison with longer history.
+- Desktop/mobile review confirms Inter at 16 px minimum and no page overflow.
+  A deployed smoke check covers the new module and fields.
+
+Implementation evidence (2026-09-24 UTC): [area view](../dashboard/area.mjs),
+[area groups](../edwait/areas.py), [stability](../edwait/stability.py), preparation
+and schema changes. Tests: 84 Python and 46 JavaScript passed. Real S3-backed data
+preparation validated both schemas, and Quarto rendered. The Chrome review covered
+desktop plus 390/320 px frames. It found and fixed a phone-width overflow caused
+by the area select, then measured a 16 px text minimum.
+
+Over seven days, hospitals were each above usual in about 10% of compared hours.
+All-hospital counts had a median of 2, and 3+ occurred in 33% of hours against 30%
+expected under independence. Memphis-area counts had a median of 1, and 3+
+occurred in 4.8% of hours against 3.2% expected. Counts are shown descriptively.
+Stability had support for all 20 hospitals at every horizon. Memphis's 1-hour
+median/90th percentile change was 23/89 minutes, against NEA Baptist's 1/6.
+
+The shared stability code exposed an M2 defect: `travel.json` percentiles came from
+unsorted changes. Both features now use sorted values; the M2 section records the
+correction. [Evidence](m4-validation.md).
+
+Deployment: not deployed. The next approved workflow run would publish it. The
+public check now requires `area.mjs` and the stability fields.
+
+New provider coverage and stronger causal analysis remain optional extensions
+requiring separate evidence and scope decisions before implementation.
 
 ### M5: Time-series modeling and short-horizon forecasts
 
@@ -678,7 +733,7 @@ M2 prototype adds travel context. Relationship and forecast outputs remain propo
 | Artifact | Update trigger | Contents |
 | --- | --- | --- |
 | `data/latest.json` | Completed collection, including partial/total facility failures | Versioned latest per-facility observation, separate attempt, timestamps, coverage, and freshness policy |
-| `comparisons.json` | Each successful website preparation, before Quarto render (configured hourly/manual) | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, and operator latency |
+| `comparisons.json` | Each successful website preparation, before Quarto render (configured hourly/manual) | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, M4 28-day wait-stability summaries (added 2026-09-24, local), and operator latency |
 | `travel.json` | Same history read as M1 preparation | M2 eligibility reasons, 15/30/60/120-minute historical movement and support, fixed provisional policy, disabled recommendation gate; no origins/routes |
 | `relationships.json` | Validated analytical refresh | Supported pair/lag summaries, evaluation period, and limitations |
 | `forecasts.json` (proposed, M5) | Validated model update cadence, to be selected after benchmarking | Facility/metric, issue time, last observation/training cutoff, future target times, point forecasts and interval levels, model version, support, expiration, and unavailable/fallback states |
@@ -719,6 +774,7 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Which travel provider and benefit rule should be used? | M2 | TomTom key supplied locally; one budgeted live v3 contract probe passed. Validate actual hospital routes/coverage and benefit sensitivity after destination verification. Cloudflare Workers Free/shared SQLite Durable Object selected as a design target; account/terms, implementation and deployment pending. Historical movement remains descriptive |
 | Which geographic groups and lag ranges are defensible? | M3 | 2026-09-24: 50 km campus-center neighbor groups and 0–3 hour lags tested under a frozen protocol; no pair association confirmed and neighbors match distant pairs. User decided 2026-09-24 to revisit in a few weeks (around 2026-10-15): then consider a rerun on a fresh post-2026-09-23 snapshot (longer window, more power), whether a held-out predictive check is still worthwhile, and whether the negative result belongs in the heatmap disclosure. [Evidence](m3-validation.md#relationship-study--2026-09-24-utc) |
 | Which time-series models add useful forecast skill, for which hospitals and horizons? | M5 | 2026-09-24: diagnostics done; v2 candidates selected on development and frozen; calibration left one eligible pair (Collierville 60 min, Fourier ARIMA). User decided 2026-09-24 to defer the one-time holdout and collect more data first; it stays reserved and unscored. When enough post-2026-09-23 history exists (for example, alongside M3's revisit around 2026-10-15), decide whether to score the reserved holdout and pre-register a new study on the fresh data, including profile persistence at 60–120 min for high-variance hospitals. [Evidence](m5-candidates-validation.md) |
+| When do area counts indicate something beyond chance? | M4 | 2026-09-24: one week of counts matched an independence reference (all hospitals: 3+ above usual in 33% of hours versus 30% expected), so counts are shown descriptively beside a typical count. Revisit around 2026-10-15 with M3/M5 on longer history before adding any area-wide label. [Evidence](m4-validation.md) |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Frozen 2026-09-24 in the [protocol amendment](m5-study-protocol.md#amendment--2026-09-24-utc-before-calibration-scoring) and [freeze](m5-freeze.json): ≥1 min and 5% MAE gain, RMSE no worse, bootstrap gain interval above zero, ≥150 targets/6 days, ≥95% availability, ≤1% fit failure, coverage within 5 points, ≤10 min daily fitting; pass on calibration and holdout. Unavailable/fallback display behavior remains to be defined with the artifact contract if a pair qualifies |
 
 Next checkpoint: confirm that the EventBridge rule dispatches the website workflow
@@ -730,7 +786,9 @@ uncertainty validation, and the free gateway's account, implementation and deplo
 offline relationship study found no confirmed association; by user decision it is
 revisited around 2026-10-15 with more history (rerun, predictive check, presentation). M5's development and calibration are scored under a frozen selection; only
 Collierville 60 min remains eligible. By user decision the one-time holdout stays
-reserved while more data is collected. Provider-contract
+reserved while more data is collected. M4's area counts and wait stability are
+validated locally and await review and an approved deployment. Historical
+alternatives wait on M2. Provider-contract
 uncertainty still blocks preferred-option claims, and no forecast display or public
 routing service has been released.
 
@@ -761,6 +819,8 @@ routing service has been released.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-24 UTC | M4: count hospitals above/below usual under M1's outer-10%-plus-10-minute rule for all hospitals, states and M3's ≥3-member 50 km groups, shown beside a typical count with no area-wide event label. Add 28-day stability summaries to `comparisons.json` (additive, schema version unchanged) and defer the historical alternatives replay | Reuses validated rules and pre-registered groups rather than inventing regions. One week of counts matched independence, and M3 found no confirmed association. Stability shares M2's support rules. Travel replay needs validated routes |
+| 2026-09-24 UTC | Sort changes before M2's movement 90th percentile | `quantile()` interpolates in the order given. Unsorted input made published values arbitrary. Found while sharing the code with M4 |
 | 2026-09-24 UTC | Defer M5's final holdout; keep it reserved and unscored while more data is collected | User decision after the calibration checkpoint. Scoring is irreversible, a pass would support only one modest pair, and the busier-hospital profile hypothesis needs fresh post-2026-09-23 data anyway. Nothing public changes while it waits |
 | 2026-09-24 UTC | M5 v2: add Fourier-regressor ARIMA and profile persistence (no 96-slot SARIMA), trim training through the last long outage, use trailing seven-day empirical intervals, shortlist pairs passing every development gate and release only if they pass again on calibration and holdout; support gate becomes 150 targets on six days | Diagnostics showed weak seasonality and shifting levels. The partial snapshot start caused all v1 abstentions. Empirical intervals are model-agnostic and use only passed targets. Hourly origins cannot reach 200 targets in seven days. Requiring two later passes guards against selection bias across 80 pairs. Frozen before calibration scoring |
 | 2026-09-24 UTC | Test M3 relationships offline on M5's frozen snapshot with a pre-registered discovery (to 09-02) and confirmation (09-02 to 09-16) split, 50 km campus-center neighbor pairs, autocorrelation-adjusted Spearman tests, BH per family and system-wide/residual-hour checks; never read M5's final holdout | Wait histories are highly persistent, so naive tests overstate association. A fixed protocol, later-period confirmation and M5 holdout isolation keep a negative or positive result credible. Distance does not select tests, so neighbors can be compared with distant pairs |
@@ -798,6 +858,7 @@ routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-24 UTC | M4 area counts and wait stability | Added `edwait/stability.py`, `edwait/areas.py`, `dashboard/area.mjs`, stability rendering, schema/storage docs and [validation](m4-validation.md). Corrected M2 movement percentiles. Tests: 84 Python and 46 JavaScript passed. Real-data preparation and render passed, as did the Chrome desktop/390/320 px review after an overflow fix. Area counts were close to independence | Local only; not deployed. `comparisons.json` gains additive stability fields when next published |
 | 2026-09-24 UTC | M5 candidate study (v2) | Added `edwait/forecast_models.py`, diagnostics/runner/freeze/report scripts, seven tests, protocol amendment, freeze record, aggregate results and three figures. Development: 1,120 fits, no abstentions/failures, exact v1 reproduction, 5/80 shortlisted. Calibration (frozen): 1 shortlisted pair passed (Collierville 60 min); 18 selected candidates missed coverage at one or both levels; max daily fit 13 s. 79 Python/41 JS tests passed. [Evidence](m5-candidates-validation.md) | Offline only; holdout deliberately left unscored (user decision below); no artifact, schema, S3 or dashboard change |
 | 2026-09-24 UTC | M3 relationship study | Added protocol, `edwait/relationships.py`, runner, eight tests, aggregate results and two figures. 1,520 tests per period; one discovery candidate, none confirmed; neighbors indistinguishable from distant pairs. Discovery supported only from 2026-08-19 because of M1's coverage rule (recorded as an execution note, no rule changed). 72 Python/41 JS tests passed. [Evidence](m3-validation.md#relationship-study--2026-09-24-utc) | Offline only; no artifact, schema, S3 or dashboard change. `relationships.json` remains proposed |
 | 2026-09-24 UTC | M0/M1 hourly build trigger | User configured connection/API destination `github-dashboard-dispatch`, rule `dashboard_hourly` (`cron(17 * * * ? *)`), role `eventbridge-github-dashboard-dispatch` and alarm `dashboard-dispatch-failed`. Read-only check at 00:31–00:33 UTC confirmed the configuration; no invocation yet (created after the 00:17 slot); alert email pending confirmation. Later 2026-09-23 scheduled runs were 3–5 hours apart. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) | AWS configuration live; hourly delivery not yet observed. Repository workflow unchanged (cron retained as backup) |

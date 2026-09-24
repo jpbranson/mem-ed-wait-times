@@ -2,6 +2,7 @@ import {createFeed, facilityView} from "./latest.mjs";
 import {validateContext, contextAvailable, mergeLiveHistory, renderSummary, renderHistory} from "./comparisons.mjs";
 import {mountTravel} from "./travel.mjs";
 import {mountHeatmap} from "./heatmap.mjs";
+import {mountArea, validateAreas} from "./area.mjs";
 
 export function createContextFeed({expected, url="comparisons.json", fetcher=globalThis.fetch, onChange=()=>{}}) {
   let artifact=null, failed=false, pending=false;
@@ -38,6 +39,9 @@ if(typeof document!=="undefined" && document.getElementById("hospital-select")) 
   let live={artifact:null,refreshFailed:false}, context={artifact:null,failed:false};
   let lastChartKey="";
   const travel=mountTravel(document.getElementById("travel-stage"),{expected,getLive:()=>live});
+  const area=mountArea(document.getElementById("area-stage"),{expected,
+    areas:validateAreas(JSON.parse(document.getElementById("area-groups").textContent),expected)});
+  area.onChange(()=>render());
   const heatmap=mountHeatmap(document.getElementById("heatmap-stage"),{expected,onSelect:slug=>{
     selector.value=slug; render();
     document.querySelector(".focus-stage").scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
@@ -46,6 +50,7 @@ if(typeof document!=="undefined" && document.getElementById("hospital-select")) 
     const now=Date.now();
     travel.render();
     heatmap.render(context.artifact,Number(hours.value),selector.value);
+    area.render({context:context.artifact,live,hours:Number(hours.value),contextFailed:context.failed,now});
     const facility=expected.find(f=>f.slug===selector.value);
     const item=live.artifact?.facilities.find(f=>f.slug===facility.slug);
     const freshness=facilityView(item,live.artifact,now,live.refreshFailed);
@@ -97,7 +102,7 @@ if(typeof document!=="undefined" && document.getElementById("hospital-select")) 
     }
     if(changed) render();
   });
-  resize.observe(graph); resize.observe(summary); resize.observe(document.querySelector(".heatmap-chart"));
+  resize.observe(graph); resize.observe(summary); resize.observe(document.querySelector(".heatmap-chart")); resize.observe(document.querySelector(".area-chart"));
   render();
   async function pollLatest() { await feed.refresh(); setTimeout(pollLatest,(live.artifact?.freshness.refresh_seconds ?? 60)*1000); }
   async function pollContext() { await Promise.all([reference.refresh(),travel.refresh()]); setTimeout(pollContext,300000); }

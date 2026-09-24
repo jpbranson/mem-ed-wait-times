@@ -10,6 +10,7 @@ from pathlib import Path
 from edwait.analysis import BaselineIndex, METHOD_VERSION, ZONE, quantile
 from edwait.data import History, METRIC, coverage, registry, timestamp, utc
 from edwait.snapshot import load_window
+from edwait import stability
 from edwait.travel import build_travel
 
 
@@ -20,6 +21,7 @@ def build_comparisons(history, now, facilities=None, policy=None):
     index = BaselineIndex(rows, policy)
     local_day = now.astimezone(ZONE).date()
     history_start = now - timedelta(days=7)
+    stability_start, stability_end = stability.reference_window(now, stability.POLICY["lookback_days"])
     entries, latency = [], []
     for facility in facilities:
         slug = facility["slug"]
@@ -39,7 +41,8 @@ def build_comparisons(history, now, facilities=None, policy=None):
             # Compact fixed-width tuples; the schema documents the column order.
             points.append([at.isoformat(), value, model["median"], model["low"], model["high"], result["delta"],
                            result["percentile"], model["support"]["days"], model["support"]["coverage"], model["group"]])
-        entries.append({"slug": slug, "models": models, "history": points})
+        entries.append({"slug": slug, "models": models, "history": points,
+                        "stability": stability.summarize(stability.window_points(index, slug, stability_start, stability_end))})
     observed = [timestamp(r["observed_at"]) for r in rows]
     return {"schema_version": 1, "method_version": METHOD_VERSION, "metric": METRIC,
             "generated_at": now.isoformat(), "local_timezone": str(ZONE),
@@ -47,6 +50,8 @@ def build_comparisons(history, now, facilities=None, policy=None):
             "history_start": history_start.isoformat(), "policy": index.policy,
             "source_range": {"start": min(observed).isoformat() if observed else None,
                              "end": max(observed).isoformat() if observed else None},
+            "stability": {"method_version": stability.METHOD_VERSION, "policy": stability.POLICY.copy(),
+                          "source_start": stability_start.isoformat(), "source_end": stability_end.isoformat()},
             "coverage": coverage(replace(history, records=rows), [f["slug"] for f in facilities]), "latency": latency, "facilities": entries}
 
 

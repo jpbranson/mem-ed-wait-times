@@ -16,7 +16,8 @@ export function validateContext(data, expected) {
   if (data?.schema_version !== 1 || data.method_version !== "self-comparison-v1" || data.metric !== "CV_ED_Wait" ||
       data.local_timezone !== "America/Chicago" || !validTime(data.generated_at) ||
       !validTime(data.valid_until) || Date.parse(data.valid_until) <= Date.parse(data.generated_at) ||
-      !Array.isArray(data.facilities) || data.facilities.length !== expected.length) throw Error("Invalid comparison artifact");
+      !Array.isArray(data.facilities) || data.facilities.length !== expected.length ||
+      data.stability !== undefined && data.stability?.method_version !== "wait-stability-v1") throw Error("Invalid comparison artifact");
   for (const key of ["lookback_days", "hour_radius", "fallback_hour_radius", "minimum_days", "minimum_samples", "meaningful_minutes", "trend_minutes", "trend_tolerance_minutes", "trend_minimum_samples", "cadence_seconds", "gap_seconds"]) {
     if (!number(data.policy?.[key]) || data.policy[key] <= 0) throw Error("Invalid comparison policy");
   }
@@ -44,6 +45,7 @@ export function validateContext(data, expected) {
         if(m.state==="insufficient_history" && (m.median!==null || m.low!==null || m.high!==null || m.distribution.length)) throw Error("Unsupported baseline has values");
       }
     }
+    if (f.stability !== undefined) validateStability(f.stability);
     let previous = -Infinity;
     for (const point of f.history) {
       if (!Array.isArray(point) || point.length !== 10 || !validTime(point[0]) || Date.parse(point[0]) <= previous ||
@@ -55,6 +57,18 @@ export function validateContext(data, expected) {
     }
   }
   return data;
+}
+
+// M4 stability is additive: an artifact without it simply shows no movement summary.
+const horizons = [15,30,60,120];
+function validateStability(rows) {
+  if (!Array.isArray(rows) || rows.length !== 4) throw Error("Invalid stability");
+  rows.forEach((r,i) => {
+    const values = [r.median_abs_change,r.p90_abs_change,r.rise_share,r.fall_share];
+    if (r.horizon_minutes !== horizons[i] || !Number.isInteger(r.pairs) || r.pairs < 0 || !Number.isInteger(r.days) || r.days < 0 ||
+        !(values.every(v => v === null) || values.every(number) && values.every(v => v >= 0) &&
+          r.median_abs_change <= r.p90_abs_change && r.rise_share + r.fall_share <= 1 + 1e-9 && r.pairs > 0)) throw Error("Invalid stability horizon");
+  });
 }
 
 export function contextAvailable(context, now, failed=false) {
@@ -121,6 +135,40 @@ function referenceGraphic(model,value,width) {
     `<line class="reference-median" x1="${x(model.median)}" x2="${x(model.median)}" y1="12" y2="38"/>`+
     `<circle class="reference-now" cx="${x(value)}" cy="25" r="5"/><text x="18" y="57">${fmt(low)}</text><text x="${right}" y="57" text-anchor="end">${fmt(high)} min</text></svg>`;
 }
+const horizonLabel = minutes => minutes < 60 ? `${minutes} min` : `${minutes/60} h`;
+// Median bar and 90th percentile whisker per horizon, with the share of pairs moving 10+ minutes.
+export function stabilityGraphic(rows, width=300, meaningful=10) {
+  const supported = rows.filter(r => r.p90_abs_change !== null);
+  if (!supported.length) return '<p class="stability-empty">Typical movement unavailable · insufficient history</p>';
+  const labelWidth=62, shareWidth=56, left=labelWidth, right=width-shareWidth-8, rowHeight=30, top=26;
+  const max=Math.max(meaningful*1.5,...supported.map(r => r.p90_abs_change));
+  const x=v => left+v/max*(right-left);
+  let content=`<text x="${right+shareWidth+8}" y="16" text-anchor="end">${meaningful}+ min</text>`+
+    `<line class="stability-threshold" x1="${x(meaningful)}" x2="${x(meaningful)}" y1="${top-4}" y2="${top+rows.length*rowHeight-6}"/>`;
+  rows.forEach((r,i) => {
+    const y=top+i*rowHeight, mid=y+rowHeight/2-4;
+    content+=`<text x="0" y="${mid+6}">${horizonLabel(r.horizon_minutes)}</text>`;
+    if (r.p90_abs_change === null) { content+=`<text x="${left}" y="${mid+6}" class="stability-na">Insufficient history</text>`; return; }
+    const share=Math.round((r.rise_share+r.fall_share)*100);
+    content+=`<g><title>${horizonLabel(r.horizon_minutes)} apart: median change ${fmt(r.median_abs_change)} min; 1 in 10 changed more than ${fmt(r.p90_abs_change)} min; `+
+      `${Math.round(r.rise_share*100)}% rose and ${Math.round(r.fall_share*100)}% fell by ${meaningful}+ min (${r.pairs} pairs, ${r.days} days)</title>`+
+      `<line class="stability-whisker" x1="${left}" x2="${x(r.p90_abs_change)}" y1="${mid}" y2="${mid}"/>`+
+      `<line class="stability-whisker" x1="${x(r.p90_abs_change)}" x2="${x(r.p90_abs_change)}" y1="${mid-6}" y2="${mid+6}"/>`+
+      `<rect class="stability-median" x="${left}" y="${mid-6}" width="${Math.max(2,x(r.median_abs_change)-left)}" height="12" rx="2"/>`+
+      `<text x="${right+shareWidth+8}" y="${mid+6}" text-anchor="end">${share}%</text></g>`;
+  });
+  // Minute axis: zero, the meaningful distance and the largest whisker, dropped where labels would collide.
+  const axis=top+rows.length*rowHeight+4;
+  content+=`<line class="stability-axis" x1="${left}" x2="${right}" y1="${axis}" y2="${axis}"/>`;
+  const labels=[meaningful,...(x(meaningful)-left>=24 ? [0] : []),...(x(max)-x(meaningful)>=36 ? [Math.round(max)] : [])];
+  for (const value of labels) {
+    content+=`<text x="${x(value)}" y="${axis+18}" text-anchor="${value===0 ? "start" : "middle"}">${value}</text>`;
+  }
+  content+=`<text x="${right+shareWidth+8}" y="${axis+18}" text-anchor="end">min</text>`;
+  const summary = supported.map(r => `${horizonLabel(r.horizon_minutes)}: median ${fmt(r.median_abs_change)}, 90th percentile ${fmt(r.p90_abs_change)} minutes, ${Math.round((r.rise_share+r.fall_share)*100)}% moved ${meaningful} or more`).join("; ");
+  return `<svg class="stability-graphic" viewBox="0 0 ${width} ${top+rows.length*rowHeight+26}" role="img" aria-label="${escape(`Typical change in published wait over past days. ${summary}.`)}">${content}</svg>`;
+}
+
 export function renderSummary(facility, freshness, context, points, now, contextFailed, graphicWidth=300) {
   const entry = context?.facilities.find(f => f.slug === facility.slug);
   const freshContext = contextAvailable(context,now,contextFailed);
@@ -144,6 +192,9 @@ export function renderSummary(facility, freshness, context, points, now, context
     `<div><dt>Typical 50%</dt><dd>${supported ? `${fmt(model.low)}–${fmt(model.high)} min` : "Unavailable"}</dd></div>` +
     `<div><dt>Percentile</dt><dd>${supported ? ordinal(comparison.percentile) : "Unavailable"}</dd></div></dl>` +
     `<p class="recent-direction">${escape(direction)}</p>` +
+    (entry?.stability ? `<div class="stability"><p class="stability-heading" title="${escape(`Readings 15 minutes to 2 hours apart on complete local days from ${context.stability?.source_start ?? "the reference window"} to ${context.stability?.source_end ?? "today"}; describes published readings, not a forecast`)}">Typical change · ${context.stability?.policy?.lookback_days ?? 28} days</p>`+
+      stabilityGraphic(entry.stability,graphicWidth,context.stability?.policy?.meaningful_minutes ?? context.policy.meaningful_minutes)+
+      '<p class="stability-key"><i class="key-stability-median"></i> Median <i class="key-stability-p90"></i> 1 in 10 larger</p></div>' : "") +
     (model ? `<details class="support-details"><summary>${model.support.days} days · ${Math.round(model.support.coverage*100)}% coverage</summary><p>${escape(support)} ${escape(groups[model.group])}</p></details>` : "");
 }
 

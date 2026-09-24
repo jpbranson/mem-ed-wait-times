@@ -30,13 +30,14 @@ if (expectedSite) {
     assert.equal(value.text, await readFile(join(expectedSite, path), 'utf8'), `${path}: public bytes differ from this build`);
   }
   // Browser modules are listed Quarto resources; a missing one breaks the page silently.
-  for (const path of ['app.mjs', 'heatmap.mjs', 'travel.mjs', 'comparisons.mjs']) {
+  for (const path of ['app.mjs', 'heatmap.mjs', 'area.mjs', 'travel.mjs', 'comparisons.mjs']) {
     const module = await get(path, /javascript/);
     assert.equal(module.text, await readFile(join(expectedSite, path), 'utf8'), `${path}: public bytes differ from this build`);
   }
 }
 const feed = validateArtifact(JSON.parse(latest.text), expected);
 const context = validateContext(JSON.parse(comparisons.text), expected);
+assert(context.facilities.every(f => Array.isArray(f.stability)), 'Comparison context lacks M4 stability summaries');
 const routes = validateTravel(JSON.parse(travel.text), expected);
 assert.match(latest.cache ?? '', /no-store/, 'Latest observations must not be cached');
 assert(contextAvailable(context, now), 'Comparison context is expired or future-dated');

@@ -237,6 +237,7 @@ s3://mem-ed-wait-times-dashboard/
   comparisons.mjs
   overview.mjs     # shared time controls and visible-line y-axis scaling
   heatmap.mjs      # M3 difference-from-usual heatmap; reads comparisons.json only
+  area.mjs         # M4 area counts; reads comparisons.json and data/latest.json only
   latest.css
   fonts/
     inter-latin.woff2
@@ -295,6 +296,16 @@ wait, past-only median, low/high band, minute difference, percentile, contributi
 days, coverage, and group. Unsupported comparison values are null; raw published
 waits remain visible. Latency describes collected HTTP requests, not patient waits.
 
+M4 (contract change dated 2026-09-24 UTC, local only until the next deployment)
+adds a required top-level `stability` object (method `wait-stability-v1`, policy,
+and the complete previous-28-local-day source window) and a four-row `stability`
+array per facility. Each row gives a 15/30/60/120-minute horizon's overlapping pair
+and day counts, the median and 90th percentile absolute change, and the shares of
+pairs rising or falling by 10+ minutes. Values are null below support. Schema
+version 1 and method `self-comparison-v1` are unchanged, and the browser tolerates
+an artifact without these fields. The M4 area view derives counts from the existing
+history tuples and adds no S3 object. [M4 validation](m4-validation.md).
+
 Each scheduled/manual build prepares context before Quarto using the M0 reader and writes an atomic
 local replacement. A storage/preparation/render failure stops the workflow before
 sync, preserving the published version. Browser requests use `cache: no-cache`
@@ -326,6 +337,9 @@ emergency entrances are unreviewed), and supported 90th percentile absolute chan
 in published waits at 15/30/60/120-minute horizons. Recommendations are explicitly
 disabled. Arrival coordinates stay in the Git registry and are not written to S3.
 The two context files have independent atomic replacements and expiry checks.
+Correction 2026-09-24 UTC: earlier `absolute_change_p90` values were read from
+unsorted changes and were not true percentiles; preparation now sorts first. The
+shape is unchanged ([details](m4-validation.md#m2-movement-correction)).
 This static artifact and the prototype interface were published on 2026-09-22;
 the routing service is still local-only.
 

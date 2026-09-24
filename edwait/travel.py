@@ -1,11 +1,11 @@
 """M2 destination gates and descriptive movement in published waits, not forecasts."""
 
-from collections import Counter
-from datetime import date, datetime, time, timedelta
+from datetime import date
 import math
 
-from edwait.analysis import BaselineIndex, ZONE, expected_slots, quantile
+from edwait.analysis import BaselineIndex, ZONE, quantile
 from edwait.data import METRIC, registry, utc
+from edwait.stability import horizon_changes, reference_window, window_points
 
 POLICY = {"lookback_days": 28, "horizons_minutes": [15, 30, 60, 120],
           "minimum_days": 8, "minimum_pairs": 64, "minimum_day_coverage": .75,
@@ -90,33 +90,18 @@ def eligibility(facility, age_group, now):
 def build_travel(history, now, facilities=None):
     now = utc(now)
     facilities = registry() if facilities is None else facilities
-    day = now.astimezone(ZONE).date()
-    end = utc(datetime.combine(day, time.min, ZONE))
-    start = utc(datetime.combine(day - timedelta(days=POLICY["lookback_days"]), time.min, ZONE))
+    start, end = reference_window(now, POLICY["lookback_days"])
     # Reuse M1's validated, latest-per-UTC-slot representation.
     index = BaselineIndex(history.records)
     entries = []
     for facility in facilities:
-        points = [p for p in index.by_facility[facility["slug"]] if start <= p[0] < end and p[1] >= 0]
-        counts = Counter(p[2] for p in points)
-        covered = {d for d, count in counts.items() if count >= POLICY["minimum_day_coverage"] * expected_slots(d, 12, 12, 900)}
+        points = window_points(index, facility["slug"], start, end)
         movement = []
         for horizon in POLICY["horizons_minutes"]:
-            steps = horizon // 15
-            changes, days = [], set()
-            for i in range(len(points) - steps):
-                a, b = points[i], points[i + steps]
-                if a[2] not in covered or b[2] not in covered:
-                    continue
-                if abs((b[0] - a[0]).total_seconds() - horizon * 60) > POLICY["horizon_tolerance_seconds"]:
-                    continue
-                if any((points[j + 1][0] - points[j][0]).total_seconds() > POLICY["gap_seconds"] for j in range(i, i + steps)):
-                    continue
-                changes.append(abs(b[1] - a[1]))
-                days.add(a[2])
+            changes, days = horizon_changes(points, horizon, POLICY)
             supported = len(changes) >= POLICY["minimum_pairs"] and len(days) >= POLICY["minimum_days"]
             movement.append({"horizon_minutes": horizon, "pairs": len(changes), "days": len(days),
-                             "absolute_change_p90": quantile(changes, .9) if supported else None})
+                             "absolute_change_p90": quantile(sorted(abs(c) for c in changes), POLICY["quantile"]) if supported else None})
         reasons = {group: eligibility(facility, group, now) for group in ("adult", "child")}
         entries.append({"slug": facility["slug"], "display_name": facility["display_name"],
                         "eligibility": reasons, "arrival": arrival(facility)[1], "movement": movement})

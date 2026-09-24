@@ -7,7 +7,8 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
 2026-09-22. M2's map and illustrative travel interface are published; real routing
 and recommendations remain disabled. M3's difference-from-usual heatmap is
-published and an offline relationship study found no confirmed pair association; M4 remains planned. M5's offline forecast
+published and an offline relationship study found no confirmed pair association. M4's area counts and
+wait-stability summaries are implemented locally, not yet deployed. M5's offline forecast
 study has scored development and calibration under a frozen selection; one hospital/horizon
 remains eligible for the unscored final holdout, and there are no public forecasts.
 See the [release evidence](docs/aws-deployment-2026-09-22.md) and
@@ -48,6 +49,8 @@ observation.
   live route validation and the entrance-review tool.
 - [M3 validation](docs/m3-validation.md) and [relationship protocol](docs/m3-relationship-protocol.md):
   difference-from-usual heatmap, neighbor groups, pair-association study and limits.
+- [M4 validation](docs/m4-validation.md): area counts versus chance, wait-stability
+  summaries, the M2 movement-percentile correction, and the deferred alternatives replay.
 - [M5 benchmarks](docs/m5-validation.md) and [ARIMA pilot](docs/m5-arima-validation.md):
   frozen development study, error/support results, and remaining validation.
 - [M5 candidate study](docs/m5-candidates-validation.md) and [freeze record](docs/m5-freeze.json):
@@ -68,6 +71,8 @@ observation.
 - [Dashboard](dashboard/index.qmd)
 - [All-hospital renderer](dashboard/overview.py), [time/legend controls](dashboard/overview.mjs),
   and [page styles](dashboard/latest.css)
+- [Area counts](dashboard/area.mjs) with [area groups](edwait/areas.py), and
+  [wait stability](edwait/stability.py) (M4)
 - [Difference-from-usual heatmap](dashboard/heatmap.mjs) and offline
   [relationship study](edwait/relationships.py) with its [runner](scripts/m3_relationships.py) (M3)
 - [Render and deployment workflow](.github/workflows/dashboard.yml)
@@ -86,7 +91,12 @@ selected on first visit; the same time control drives both chart sections.
 History in the overview updates with the build, while individual readings refresh
 independently. A Versus usual heatmap (M3) colors each hospital's hourly or
 15-minute median difference from its own usual median; selecting a row focuses
-that hospital. It describes readings, not patient movement between hospitals. Explanations, tables, and operator diagnostics are expandable.
+that hospital. It describes readings, not patient movement between hospitals.
+Locally, M4 adds an Across an area view that counts hospitals above or below
+their own usual in a chosen area (all, state, or 50 km neighbor group) beside a
+typical count, and a per-hospital typical-change graphic (median and 90th
+percentile movement over 15 minutes to 2 hours across 28 past days).
+Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
 Release checks passed 64 Python and 41 JavaScript tests on 2026-09-23, plus public data/asset
 and live-refresh checks; earlier desktop/mobile browser evidence remains in the
