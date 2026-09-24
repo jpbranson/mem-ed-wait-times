@@ -156,3 +156,40 @@ child eligible destinations, and the campus recommendation blocker. Public
 all to campus center, ER entrance unconfirmed · road estimates not available on
 this site yet" for children and keeps Compare disabled; no coordinates are sent.
 This was a manual dispatch, not scheduled-delivery evidence.
+
+## Later scheduled runs on 2026-09-23
+
+GitHub scheduled runs resumed after the observation above, but not hourly. The
+public run list at 00:31 UTC on 2026-09-24 showed successful scheduled runs at
+10:02:49, 15:04:05, 19:05:41 and 22:20:28 UTC, gaps of about 5.0, 4.0 and 3.25
+hours. The two-hour comparison context therefore expired between most of them.
+
+## Hourly dispatch through EventBridge
+
+The user chose an AWS EventBridge schedule that dispatches the existing workflow
+and configured it with the AWS CLI between about 00:16 and 00:30 UTC on 2026-09-24
+(evening of September 23 in America/Chicago). All resources are in `us-east-1`:
+
+| Resource | Configuration |
+| --- | --- |
+| Connection `github-dashboard-dispatch` | API-key authorization sending `Authorization: Bearer <token>`. The token is a fine-grained GitHub personal access token limited to this repository with only Actions read/write; EventBridge keeps it in a Secrets Manager secret it manages. Expiry and rotation are the user's responsibility. |
+| API destination `github-dashboard-dispatch` | `POST https://api.github.com/repos/jpbranson/mem-ed-wait-times/actions/workflows/dashboard.yml/dispatches`, at most 1 invocation per second |
+| Rule `dashboard_hourly` | Default event bus, `cron(17 * * * ? *)`, enabled |
+| Target | Input `{"ref":"main"}`; `Accept: application/vnd.github+json` and `X-GitHub-Api-Version: 2022-11-28` headers; up to 3 retries within 900 seconds; no dead-letter queue |
+| IAM role `eventbridge-github-dashboard-dispatch` | Trusted by `events.amazonaws.com`; inline policy `invoke-github-dispatch` allows only `events:InvokeApiDestination` on this destination |
+| Alarm `dashboard-dispatch-failed` | Sum of the rule's `FailedInvocations` ≥ 1 in an hour notifies SNS topic `dashboard-dispatch-alerts` by email |
+
+A read-only check at 00:31–00:33 UTC found the connection `AUTHORIZED`, the
+destination `ACTIVE`, the rule enabled with that target, the alarm `OK`, and the
+email subscription still `PendingConfirmation`. The rule had no invocations yet:
+the role was created at 00:24:06 UTC, after the 00:17 slot. The first eligible
+slot is 01:17 UTC, so **delivery has not yet been observed**. A dispatched run
+appears in GitHub Actions with event `workflow_dispatch` ("Manually run"); runs
+labeled "Scheduled" still come from GitHub's cron.
+
+The workflow's `schedule:` trigger is retained as a backup until EventBridge has
+delivered hourly for about a day; the workflow's concurrency group queues any
+duplicate. Remove the cron after that observation. The existing collector
+(`trigger_15`) and compaction (`compact_daily`) rules are unchanged. No repository,
+Lambda, bucket policy or record/storage contract changed. Expected cost is
+negligible (about 720 API-destination invocations per month).

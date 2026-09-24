@@ -15,9 +15,10 @@ See the [release evidence](docs/aws-deployment-2026-09-22.md) and
 The [production follow-up](docs/production-followup-2026-09-23.md) records a
 successful updated GitHub build and public desktop/mobile review. The approved
 workflow mitigation moves the hourly cron to minute 17 and verifies public
-freshness/build artifacts after publication. Scheduled delivery remains best effort:
-no scheduled run started in the six hours after 01:09 UTC on 2026-09-23, so a more
-reliable trigger is an open decision.
+freshness/build artifacts after publication. GitHub's scheduled delivery proved
+unreliable (runs 3–9 hours apart on 2026-09-23), so since 2026-09-24 UTC an AWS
+EventBridge rule dispatches the workflow hourly; its first deliveries are awaiting
+observation.
 
 ## Project documentation
 
@@ -116,8 +117,9 @@ unverified destinations. Preparation and rendering must be rerun to refresh the
 local historical context.
 
 In production, the existing collector is scheduled every 15 minutes; the browser
-polls its latest artifact every 60 seconds. The website workflow is **configured**
-hourly at minute 17 and can be run manually. It rebuilds history and comparison context; it
+polls its latest artifact every 60 seconds. The website workflow is dispatched
+hourly at minute 17 by the AWS EventBridge rule `dashboard_hourly`, keeps a backup
+GitHub cron at the same minute, and can be run manually. It rebuilds history and comparison context; it
 does not deploy Lambda code. A Git push alone does not trigger publication.
 Actual workflow starts can be delayed, so current comparisons pause when their
 context is two hours old or reaches the next Chicago midnight. The page's refresh

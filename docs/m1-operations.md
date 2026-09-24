@@ -155,8 +155,10 @@ unchanged. Direction becomes unavailable if the recent reference is too sparse.
 
 ## Refresh and troubleshooting
 
-The [workflow](../.github/workflows/dashboard.yml) runs on the configured cron
-`17 * * * *` and `workflow_dispatch`, using `main`. It has no push trigger.
+The [workflow](../.github/workflows/dashboard.yml) runs on `workflow_dispatch` and a
+backup cron `17 * * * *`, using `main`. It has no push trigger. Since 2026-09-24 UTC
+the hourly start comes from an AWS EventBridge dispatch; see
+[Hourly EventBridge dispatch](#hourly-eventbridge-dispatch).
 It tests, prepares, renders, and uploads the website; it does not package or
 deploy either Lambda. To request a website rebuild, use GitHub Actions →
 **Render dashboard** → **Run workflow** on `main`. Publish source changes to
@@ -174,7 +176,7 @@ while live readings continue updating successfully.
 
 | Symptom | Check or action |
 | --- | --- |
-| Context out of date / comparisons paused | Check the last successful workflow and `comparisons.json` generation/expiry. Run the existing manual workflow, or prepare/render again for local review. The page refresh button only refetches existing artifacts. |
+| Context out of date / comparisons paused | Check the last successful workflow, whether hourly `workflow_dispatch` runs are arriving (alarm `dashboard-dispatch-failed`), and `comparisons.json` generation/expiry. Run the existing manual workflow, or prepare/render again for local review. The page refresh button only refetches existing artifacts. |
 | Stale / collection failed / live refresh failed | Inspect `data/latest.json` observation and attempt times, collector CloudWatch summaries, S3 access, and the 15-minute EventBridge rule. A website rebuild does not repair collection. |
 | Overview still shows older history | The overview is embedded in HTML. Confirm a fresh site build and reload the page; the independent live feed only refreshes the individual comparisons. |
 | Local latest-data request returns 503 | Confirm AWS history read access; the local `--live-s3` endpoint returns `preview_history_read_failed` on a read failure. |
@@ -189,8 +191,33 @@ aws s3 sync dashboard/_site/ s3://mem-ed-wait-times-dashboard/ --delete --exclud
 
 Inspect the dry run first. These commands modify the public website; local preview
 requires neither command. Serialize manual publications with other website jobs,
-retain rollback assets, and complete the checks below. The GitHub workflow has
-no explicit concurrency group, so overlapping runs are an operator concern.
+retain rollback assets, and complete the checks below. The GitHub workflow
+serializes its own runs (concurrency group `dashboard-production`) but cannot see
+manual publications, so overlap with them is an operator concern.
+
+### Hourly EventBridge dispatch
+
+Configured by the user on 2026-09-24 UTC in `us-east-1`. Rule `dashboard_hourly`
+(default bus, `cron(17 * * * ? *)`) calls API destination `github-dashboard-dispatch`,
+which POSTs `{"ref":"main"}` to GitHub's `workflow_dispatch` endpoint for
+`dashboard.yml`. Connection `github-dashboard-dispatch` holds a fine-grained token
+limited to this repository with Actions read/write; role
+`eventbridge-github-dashboard-dispatch` may only invoke that destination. Alarm
+`dashboard-dispatch-failed` emails SNS topic `dashboard-dispatch-alerts` when the rule
+records a failed invocation. [Configuration evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge).
+
+- **Check delivery:** GitHub Actions → **Render dashboard** should show a run labeled
+  "Manually run" (event `workflow_dispatch`) shortly after :17 each hour; runs labeled
+  "Scheduled" come from the backup cron. In the EventBridge console, Buses → Rules →
+  `dashboard_hourly` → Monitoring shows `Invocations` and `FailedInvocations`.
+- **Token expiry or revocation:** GitHub returns 401, EventBridge does not retry, and
+  the alarm fires. Create a replacement token with the same scope, then edit the
+  connection (EventBridge → Integration → API destinations → Connections) and set the
+  API key value to `Bearer <new token>`. Do not edit its Secrets Manager secret directly.
+- **Pause or resume:** `aws events disable-rule --name dashboard_hourly --region us-east-1`
+  (or `enable-rule`). This does not affect the collector's `trigger_15` rule.
+- **Backup cron:** after about a day of observed hourly dispatches, remove the
+  workflow's `schedule:` trigger and update this section.
 
 ## Release and operator checks
 

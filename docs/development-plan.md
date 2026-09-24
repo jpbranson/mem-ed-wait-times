@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-23 07:45 UTC (follow-up began September 22 America/Chicago)
+Last updated: 2026-09-24 00:35 UTC (evening of September 23 America/Chicago)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -10,6 +10,8 @@ campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are ad
 a difference-from-usual heatmap; M4 remains planned. M5 is now in progress: a frozen offline
 snapshot, four simple benchmarks, and two ARIMA development pilots are implemented
 and locally validated. Calibration/holdout and public forecasts remain pending.
+Website builds are now also dispatched hourly by a user-configured AWS EventBridge
+rule because GitHub cron proved unreliable; its first delivery is pending observation.
 
 Local preview rebuilt and started on 2026-09-22 at `http://127.0.0.1:8765/`
 using read-only S3 history and the existing review server. That local launch
@@ -61,7 +63,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks and ARIMA(1,0,0)/(1,1,0) evaluated on development data only; no public forecasts | [Protocol](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; an M3 difference-from-usual heatmap links rows to the focus chart; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [heatmap](../dashboard/heatmap.mjs), [application](../dashboard/app.mjs) |
-| Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
+| Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged. EventBridge rule `dashboard_hourly` dispatches the workflow at minute 17 (user-configured 2026-09-24 UTC; first delivery not yet observed); GitHub cron retained as a backup | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
 | Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json) |
 
 Implementation and production deployment are recorded separately. Public artifact
@@ -72,6 +74,10 @@ manual run passed, including 57 Python/33 JavaScript tests and the public smoke 
 Scheduled delivery was observed on 2026-09-23: no scheduled run started between
 01:09 and at least 07:11 UTC, including both minute-17 slots after publication.
 [Follow-up evidence](production-followup-2026-09-23.md#scheduled-delivery-observation).
+Later scheduled runs that day were 3–5 hours apart. On 2026-09-24 UTC the user
+configured an EventBridge rule that dispatches the workflow hourly; its resources
+were verified read-only, but no dispatch had fired by 00:33 UTC.
+[Trigger evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge).
 
 A read-only assessment on 2026-09-14 inspected the 47 compacted partitions from
 2026-07-29 through 2026-09-13, inclusive, under
@@ -668,7 +674,7 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Question | Needed by | Next action |
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
-| What schedules and completion guarantees exist in deployment? | M0/M1 | Observed 2026-09-23: no scheduled run from 01:09 to at least 07:11 UTC, including both minute-17 slots after publication; earlier spacing was 2.5–4.6 hours. GitHub cron cannot keep two-hour context fresh. **User decision needed** on a reliable trigger (e.g. EventBridge dispatching the workflow with a scoped token, or an AWS-hosted build); do not lengthen freshness limits. [Observation](production-followup-2026-09-23.md#scheduled-delivery-observation) |
+| What schedules and completion guarantees exist in deployment? | M0/M1 | Decided 2026-09-24 UTC: the user configured EventBridge rule `dashboard_hourly` to dispatch the workflow at minute 17 with a repository-scoped token, plus a failed-invocation alarm. GitHub cron ran 3–9 hours apart on 2026-09-23. Next: observe hourly `workflow_dispatch` runs from 01:17 UTC, confirm the alert email subscription, then remove the workflow's `schedule:` trigger; do not lengthen freshness limits. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) |
 | Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
 | Which facilities are valid alternatives for each supported use case? | M2 | 2026-09-23: 19 active general-emergency destinations (Children's child-only; Anderson, DeSoto and Mississippi Baptist adult and child; others adult) and Leake unverified. Official pages and OpenStreetMap give no emergency-entrance coordinates (one unconfirmed OSM candidate at North Mississippi). User decided 2026-09-23: route to labeled campus centers now; add imagery-reviewed entrances later with `python -m edwait.entrances`. Next: the user's entrance reviews, then Leake's status and child scope at other general ERs. [Evidence](m2-destinations-2026-09-23.md) |
@@ -677,8 +683,9 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | Which time-series models add useful forecast skill, for which hospitals and horizons? | M5 | Snapshot/splits frozen and simple benchmarks/two ARIMA pilots evaluated on development only; modest gains and support failures do not justify release. Inspect residual/seasonal structure and cold-start support before expanding candidates and freezing later-period evaluation |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Choose measurable gates on development folds before final holdout; record per-facility/horizon eligibility and unavailable/fallback behavior |
 
-Next checkpoint: the user needs to choose a reliable build trigger, because GitHub
-cron delivered no scheduled run for more than six hours on 2026-09-23. M2's
+Next checkpoint: confirm that the EventBridge rule dispatches the website workflow
+hourly from 01:17 UTC on 2026-09-24, then remove the unreliable GitHub `schedule:`
+trigger and confirm the alert email subscription. M2's
 destinations route to labeled campus centers with live routes validated; next are
 the user's imagery-reviewed entrances, metric confirmation, traffic-hour route and
 uncertainty validation, and the free gateway's account, implementation and deployment. M3's heatmap is implemented; next
@@ -715,6 +722,7 @@ routing service has been released.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-24 UTC | Dispatch the website workflow hourly from an EventBridge rule through an API destination and a repository-scoped fine-grained token (Actions read/write only), with a CloudWatch alarm on failed invocations; keep GitHub cron only until hourly delivery is observed | User decision. GitHub cron ran 3–9 hours apart on 2026-09-23, so two-hour context expired between builds. Reuses the tested workflow, protected sync and public checks without moving the build into AWS; an expired or revoked token fails without retry, hence the alarm |
 | 2026-09-23 UTC | Route eligible destinations to OpenStreetMap campus centers labeled "ER entrance unconfirmed" until entrances are reviewed; reviewed entrances (official, imagery or site visit, within 1 km of campus) always take precedence; 300 m campus snap tolerance | User decision after no entrance evidence was found; supersedes the 2026-09-14 rule that campus points cannot enable routing. Labels, a recommendation blocker and the `arrival` field keep the approximation visible; 54/54 live routes ended ≤61 m from campus points |
 | 2026-09-23 UTC | Record official active/service/explicit-age evidence per facility in the registry, keep `emergency_entrance` null, and never substitute campus centers, address geocodes or unconfirmed volunteer map points | Official pages and OpenStreetMap give no emergency arrival coordinates; the 2026-09-14 gate requires exact entrances. Explicit-only age evidence avoids assuming pediatric scope |
 | 2026-09-23 UTC | Enable Compare only after `GET /api/routes/status` confirms a routing gateway | Once any destination qualifies, the static S3 page would otherwise post user coordinates to an endpoint that cannot serve them. The probe carries no origin and does not delay context loading |
@@ -748,6 +756,7 @@ routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-24 UTC | M0/M1 hourly build trigger | User configured connection/API destination `github-dashboard-dispatch`, rule `dashboard_hourly` (`cron(17 * * * ? *)`), role `eventbridge-github-dashboard-dispatch` and alarm `dashboard-dispatch-failed`. Read-only check at 00:31–00:33 UTC confirmed the configuration; no invocation yet (created after the 00:17 slot); alert email pending confirmation. Later 2026-09-23 scheduled runs were 3–5 hours apart. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) | AWS configuration live; hourly delivery not yet observed. Repository workflow unchanged (cron retained as backup) |
 | 2026-09-23 UTC | M2 campus fallback and entrance tooling | Added `campus_point` for all 20 facilities, `arrival()` precedence, `arrival` in `travel.json`, campus labeling in status/rows/disclosure, `python -m edwait.entrances` (list/geojson/set/clear with eligibility-rule validation) and `scripts/check_routes.py`. 54/54 live routes passed; local end-to-end Compare returned 18 labeled rows. 64 Python/41 JS tests passed. [Evidence](m2-destinations-2026-09-23.md#campus-center-fallback-user-decision-2026-09-23) | Deployed `36d89bf` via [run 35833123203](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35833123203) (07:44 UTC); independent public check passed. Public Compare stays disabled without a gateway. [Evidence](production-followup-2026-09-23.md#campus-fallback-release-through-github-actions) |
 | 2026-09-23 UTC | M3 heatmap | Implemented the Versus usual heatmap with shared time control, row-to-focus linking (click/Enter/Space), tooltips, summary table and limits. Five JS tests plus a published-module check; live-history render and Chrome desktop/390/320 px review passed. [Evidence](m3-validation.md) | Deployed 07:21 UTC with `fa842c8` via documented direct S3 publication; public check passed. M3 remains in progress |
 | 2026-09-23 UTC | M2 destinations and routing gate | Official evidence recorded for all 20 facilities: 19 active general ERs, Leake unverified; child scope explicit only at Children's, Anderson, DeSoto and Mississippi Baptist. No entrance coordinates found, so all remain excluded with specific reasons. Added the `/api/routes/status` probe and tests. 58 Python/40 JS tests passed. [Evidence](m2-destinations-2026-09-23.md) | Deployed 07:21 UTC with `fa842c8`; public Compare remains disabled, no routing or recommendations. [Release evidence](production-followup-2026-09-23.md#m2m3-release-from-a-validated-local-build) |

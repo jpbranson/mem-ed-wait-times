@@ -258,9 +258,11 @@ The repository's deployment workflow renders `dashboard/` with Quarto and syncs
 `dashboard/_site/` to this bucket with `--delete --exclude "data/*"`. The exclusion
 protects independently published artifacts against both upload and deletion by
 the website job ([AWS sync reference](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html)).
-The approved 2026-09-23 UTC workflow update runs hourly at minute 17 and supports manual execution;
-there is no push trigger or Lambda deployment step. The configured cadence does
-not guarantee hourly completion; see [refresh troubleshooting](m1-operations.md#refresh-and-troubleshooting).
+Since 2026-09-24 UTC the AWS EventBridge rule `dashboard_hourly` dispatches the workflow
+hourly at minute 17; it keeps a backup GitHub cron and supports manual execution. There
+is no push trigger or Lambda deployment step, and the trigger changes no bucket or object.
+A dispatch does not guarantee a successful build; see [hourly dispatch](m1-operations.md#hourly-eventbridge-dispatch)
+and [refresh troubleshooting](m1-operations.md#refresh-and-troubleshooting).
 Deployments are serialized and followed by exact public-build/freshness checks.
 [Follow-up evidence](production-followup-2026-09-23.md) distinguishes validation
 and publication. No bucket/object/observation schema changed; M5 outputs remain
