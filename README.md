@@ -7,8 +7,9 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
 2026-09-22. M2's map and illustrative travel interface are published; real routing
 and recommendations remain disabled. M3's difference-from-usual heatmap is
-published and an offline relationship study found no confirmed pair association; M4 remains planned. M5's offline benchmark
-and ARIMA development study is in progress, with no public forecasts.
+published and an offline relationship study found no confirmed pair association; M4 remains planned. M5's offline forecast
+study has scored development and calibration under a frozen selection; one hospital/horizon
+remains eligible for the unscored final holdout, and there are no public forecasts.
 See the [release evidence](docs/aws-deployment-2026-09-22.md) and
 [current plan](docs/development-plan.md).
 
@@ -49,6 +50,8 @@ observation.
   difference-from-usual heatmap, neighbor groups, pair-association study and limits.
 - [M5 benchmarks](docs/m5-validation.md) and [ARIMA pilot](docs/m5-arima-validation.md):
   frozen development study, error/support results, and remaining validation.
+- [M5 candidate study](docs/m5-candidates-validation.md) and [freeze record](docs/m5-freeze.json):
+  diagnostics, calendar/profile candidates, empirical intervals, frozen gates and calibration.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
 - [Route response schema](docs/routes.schema.json): transient TomTom timing and traffic delay.
 - [Development instructions](AGENTS.md): how to keep the plan and data

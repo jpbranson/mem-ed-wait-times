@@ -1,0 +1,651 @@
+{
+  "frozen_at": "2026-09-24T01:13:09+00:00",
+  "spec_sha256": "b7fb1eedfc47d336ab2020fb160a0b7c257956936e54c91ddd14bb73d08924c3",
+  "specification": {
+    "specification": {
+      "version": "m5-candidates-v2",
+      "candidates": [
+        "arima_100",
+        "arima_110",
+        "arima_100_fourier",
+        "profile_ar"
+      ],
+      "orders": {
+        "arima_100": [
+          1,
+          0,
+          0
+        ],
+        "arima_110": [
+          1,
+          1,
+          0
+        ],
+        "arima_100_fourier": [
+          1,
+          0,
+          0
+        ]
+      },
+      "training_slots": 2688,
+      "minimum_training_slots": 1344,
+      "minimum_coverage": 0.95,
+      "maximum_missing_run": 4,
+      "support_trim": "drop slots through the last missing run longer than the limit, then apply the support rule",
+      "fourier": "local America/Chicago time of slot midpoint; daily harmonics k=1,2; constant",
+      "profile_ar": "median by local hour and weekday/weekend over the trimmed window (fallback: window median when a cell has fewer than 8 values); per-step least-squares persistence through zero, clipped to [0, 1]",
+      "refit_seconds": 86400,
+      "origins_seconds": 3600,
+      "max_iterations": 100,
+      "negative_forecasts": "clip to zero",
+      "missing_training": "no imputation",
+      "intervals": {
+        "levels": [
+          80,
+          95
+        ],
+        "method": "empirical quantiles of the same model's own errors for targets observed by the origin, previous 7 days",
+        "window_seconds": 604800,
+        "minimum_errors": 72,
+        "lower_bound": "clip to zero"
+      }
+    },
+    "gates": {
+      "minimum_matched": 150,
+      "minimum_days": 6,
+      "minimum_gain_minutes": 1.0,
+      "minimum_gain_fraction": 0.05,
+      "rmse_no_worse": true,
+      "bootstrap": {
+        "blocks": "UTC origin day",
+        "resamples": 2000,
+        "seed": 20260924,
+        "interval": 0.95,
+        "require_lower_above_zero": true
+      },
+      "minimum_availability": 0.95,
+      "maximum_fit_failure": 0.01,
+      "interval_tolerance": 0.05,
+      "maximum_update_seconds": 600
+    },
+    "snapshot_sha256": "efda699fb411e72c49374024e847834bfd225f580789d6140034e235234588ed",
+    "code_sha256": {
+      "edwait/forecast.py": "41ec66ebed02ba5c644f768686455d7911c63e8a3488e68996e3d98d8033c0e5",
+      "edwait/forecast_models.py": "cf52d15558f7d035d886565eaeffeaae3f7041aeb875db7d0d2407aad9b40779",
+      "scripts/m5_candidates.py": "9c91942ef5971699ce0c79e29406637e6e2d0b0392803897395e8756938ddd9d"
+    }
+  },
+  "selection_source": "development-delay0 (2026-08-26 to 2026-09-09 UTC, matched origins)",
+  "release_rule": "A facility/horizon may display a model forecast only if it was shortlisted by passing every gate on development (no delay), then passes every gate again with the frozen benchmark/candidate on calibration and on the final holdout (no delay), and on the holdout with a one-slot availability delay still meets the minimum MAE gain. Everything else stays disabled. Development scores are selection evidence only.",
+  "calibration_scored": false,
+  "holdout_scored": false,
+  "shortlist": [
+    "arlington@60",
+    "collierville@60",
+    "collierville@120",
+    "north-mississippi@60",
+    "north-mississippi@120"
+  ],
+  "selections": [
+    {
+      "facility": "anderson",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "anderson",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "anderson",
+      "horizon_minutes": 60,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "anderson",
+      "horizon_minutes": 120,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "arlington",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "arlington",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "arlington",
+      "horizon_minutes": 60,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": true
+    },
+    {
+      "facility": "arlington",
+      "horizon_minutes": 120,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center",
+      "horizon_minutes": 120,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-attala",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-attala",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-attala",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-attala",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-leake",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-leake",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-leake",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-leake",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-yazoo",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-yazoo",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-yazoo",
+      "horizon_minutes": 60,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "baptist-medical-center-yazoo",
+      "horizon_minutes": 120,
+      "benchmark": "m1_median",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "booneville",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "booneville",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "booneville",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "booneville",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100",
+      "shortlisted": false
+    },
+    {
+      "facility": "calhoun",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "calhoun",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "calhoun",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "calhoun",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100",
+      "shortlisted": false
+    },
+    {
+      "facility": "childrens",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "childrens",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "childrens",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "childrens",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "collierville",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "collierville",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "collierville",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": true
+    },
+    {
+      "facility": "collierville",
+      "horizon_minutes": 120,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": true
+    },
+    {
+      "facility": "crittenden",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "crittenden",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "crittenden",
+      "horizon_minutes": 60,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "crittenden",
+      "horizon_minutes": 120,
+      "benchmark": "m1_median",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "desoto",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "desoto",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "desoto",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "desoto",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "golden-triangle",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "golden-triangle",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "golden-triangle",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "golden-triangle",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "huntingdon",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "huntingdon",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "huntingdon",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "huntingdon",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "memphis",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "memphis",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "memphis",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "memphis",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "nea",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "nea",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "nea",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "nea",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "north-mississippi",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "north-mississippi",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "north-mississippi",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": true
+    },
+    {
+      "facility": "north-mississippi",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": true
+    },
+    {
+      "facility": "tipton",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "tipton",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "tipton",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "tipton",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-city",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-city",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-city",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-city",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "profile_ar",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-county",
+      "horizon_minutes": 15,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-county",
+      "horizon_minutes": 30,
+      "benchmark": "carry_forward",
+      "candidate": "arima_110",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-county",
+      "horizon_minutes": 60,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    },
+    {
+      "facility": "union-county",
+      "horizon_minutes": 120,
+      "benchmark": "carry_forward",
+      "candidate": "arima_100_fourier",
+      "shortlisted": false
+    }
+  ]
+}
