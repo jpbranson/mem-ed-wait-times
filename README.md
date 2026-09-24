@@ -19,8 +19,8 @@ successful updated GitHub build and public desktop/mobile review. The approved
 workflow mitigation moves the hourly cron to minute 17 and verifies public
 freshness/build artifacts after publication. GitHub's scheduled delivery proved
 unreliable (runs 3–9 hours apart on 2026-09-23), so since 2026-09-24 UTC an AWS
-EventBridge rule dispatches the workflow hourly; its first deliveries are awaiting
-observation.
+EventBridge rule dispatches the workflow hourly; its first dispatches (01:17 and
+02:17 UTC) produced successful builds.
 
 ## Project documentation
 

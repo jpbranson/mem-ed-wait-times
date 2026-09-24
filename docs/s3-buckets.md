@@ -1,7 +1,8 @@
 # S3 bucket reference
 
 Contract updated: 2026-09-14 for M0 and M1; deployed 2026-09-22 with the M2 static
-interface. [Production verification](aws-deployment-2026-09-22.md) confirms latest,
+interface. M4 added stability fields to `comparisons.json` on 2026-09-24 (pushed as
+`8242ad1`, pending its first deployed build). [Production verification](aws-deployment-2026-09-22.md) confirms latest,
 comparisons, travel, static assets, and compaction metadata. No record schema
 changed during rollout. Earlier record sampling below remains dated 2026-09-11
 (three objects, 1,960 records); the 2026-09-14 schedule/policy checks remain

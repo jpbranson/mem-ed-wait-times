@@ -187,6 +187,21 @@ slot is 01:17 UTC, so **delivery has not yet been observed**. A dispatched run
 appears in GitHub Actions with event `workflow_dispatch` ("Manually run"); runs
 labeled "Scheduled" still come from GitHub's cron.
 
+### Observed dispatches
+
+A read-only check at about 03:05 UTC on 2026-09-24 found the following:
+
+| Slot (UTC) | Rule `Invocations` / `FailedInvocations` | Workflow run | Result |
+| --- | --- | --- | --- |
+| 01:17 | 1 / 0 | [35942241664](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35942241664), `workflow_dispatch`, `98b3bad` | Success, 01:17:10–01:19:09 |
+| 02:17 | 1 / 0 | [35946597828](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35946597828), `workflow_dispatch`, `2448974` | Success, 02:17:10–02:18:58 |
+
+The backup cron also started a run at 01:27:29 UTC, which succeeded. The alarm was
+`OK`, and the email subscription was still `PendingConfirmation`: the user must
+confirm it from the AWS notification email before failed dispatches can notify
+anyone. The remaining steps are about a day of hourly delivery and then removal of
+the cron.
+
 The workflow's `schedule:` trigger is retained as a backup until EventBridge has
 delivered hourly for about a day; the workflow's concurrency group queues any
 duplicate. Remove the cron after that observation. The existing collector
