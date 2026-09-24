@@ -1,0 +1,5371 @@
+{
+ "policy": {
+  "version": "m3-relationships-v1",
+  "snapshot_sha256": "efda699fb411e72c49374024e847834bfd225f580789d6140034e235234588ed",
+  "discovery": [
+   "2026-08-12T00:00:00Z",
+   "2026-09-02T00:00:00Z"
+  ],
+  "confirmation": [
+   "2026-09-02T00:00:00Z",
+   "2026-09-16T00:00:00Z"
+  ],
+  "reserved_unread": [
+   "2026-09-16T00:00:00Z",
+   "2026-09-23T00:00:00Z"
+  ],
+  "bin_seconds": 3600,
+  "minimum_slots_per_bin": 2,
+  "neighbor_km": 50,
+  "far_km": 150,
+  "lags_hours": [
+   1,
+   2,
+   3
+  ],
+  "minimum_bins": 168,
+  "minimum_days": 7,
+  "minimum_day_bins": 12,
+  "minimum_others": 5,
+  "fdr_q": 0.1,
+  "robust_p": 0.05,
+  "discovery_effect": 0.2,
+  "confirmation_effect": 0.1,
+  "zero_heavy_share": 0.1,
+  "episode_minutes": 10,
+  "bootstrap_resamples": 1000,
+  "bootstrap_seed": 20260924
+ },
+ "neighbor_groups": [
+  [
+   "arlington",
+   "childrens",
+   "collierville",
+   "memphis",
+   "tipton",
+   "crittenden",
+   "desoto"
+  ],
+  [
+   "baptist-medical-center-attala",
+   "baptist-medical-center-leake"
+  ],
+  [
+   "booneville",
+   "north-mississippi",
+   "union-county"
+  ]
+ ],
+ "support": {
+  "discovery": {
+   "arlington": {
+    "bins": 331,
+    "zero_share": 0.19761668321747766,
+    "lag1_deviation": 0.7399390725045495
+   },
+   "childrens": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9385930264310858
+   },
+   "collierville": {
+    "bins": 331,
+    "zero_share": 0.0858987090367428,
+    "lag1_deviation": 0.7344134377031242
+   },
+   "huntingdon": {
+    "bins": 331,
+    "zero_share": 0.012413108242303872,
+    "lag1_deviation": 0.891707353113795
+   },
+   "memphis": {
+    "bins": 331,
+    "zero_share": 0.007447864945382324,
+    "lag1_deviation": 0.6646500693041335
+   },
+   "tipton": {
+    "bins": 331,
+    "zero_share": 0.003475670307845084,
+    "lag1_deviation": 0.915029266601066
+   },
+   "union-city": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9151335988699075
+   },
+   "crittenden": {
+    "bins": 331,
+    "zero_share": 0.1355511420059583,
+    "lag1_deviation": 0.573186569159362
+   },
+   "nea": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9150367256523557
+   },
+   "anderson": {
+    "bins": 331,
+    "zero_share": 0.09339294585196224,
+    "lag1_deviation": 0.6246908576144582
+   },
+   "baptist-medical-center-attala": {
+    "bins": 331,
+    "zero_share": 0.0029791459781529296,
+    "lag1_deviation": 0.9285492529046933
+   },
+   "booneville": {
+    "bins": 328,
+    "zero_share": 0.012916045702930949,
+    "lag1_deviation": 0.9209370451812251
+   },
+   "calhoun": {
+    "bins": 331,
+    "zero_share": 0.05759682224428997,
+    "lag1_deviation": 0.8689642280527472
+   },
+   "desoto": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9690955357969802
+   },
+   "golden-triangle": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9224184805866124
+   },
+   "baptist-medical-center-leake": {
+    "bins": 331,
+    "zero_share": 0.014895729890764648,
+    "lag1_deviation": 0.8613681345316352
+   },
+   "north-mississippi": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9459698196983163
+   },
+   "union-county": {
+    "bins": 331,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9345887392254532
+   },
+   "baptist-medical-center-yazoo": {
+    "bins": 331,
+    "zero_share": 0.3416087388282026,
+    "lag1_deviation": 0.3512760630604842
+   },
+   "baptist-medical-center": {
+    "bins": 331,
+    "zero_share": 0.014895729890764648,
+    "lag1_deviation": 0.6546821078553925
+   }
+  },
+  "confirmation": {
+   "arlington": {
+    "bins": 336,
+    "zero_share": 0.18526785714285715,
+    "lag1_deviation": 0.6041570437826415
+   },
+   "childrens": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9353478853030985
+   },
+   "collierville": {
+    "bins": 336,
+    "zero_share": 0.09970238095238096,
+    "lag1_deviation": 0.659863646786257
+   },
+   "huntingdon": {
+    "bins": 336,
+    "zero_share": 0.021577380952380952,
+    "lag1_deviation": 0.8408159291778473
+   },
+   "memphis": {
+    "bins": 336,
+    "zero_share": 0.005952380952380952,
+    "lag1_deviation": 0.6762927152742542
+   },
+   "tipton": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9329962137252311
+   },
+   "union-city": {
+    "bins": 336,
+    "zero_share": 0.006696428571428571,
+    "lag1_deviation": 0.8744097327047032
+   },
+   "crittenden": {
+    "bins": 336,
+    "zero_share": 0.15625,
+    "lag1_deviation": 0.41530016517845697
+   },
+   "nea": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.8961220490980385
+   },
+   "anderson": {
+    "bins": 336,
+    "zero_share": 0.07961309523809523,
+    "lag1_deviation": 0.6710457096120407
+   },
+   "baptist-medical-center-attala": {
+    "bins": 336,
+    "zero_share": 0.019345238095238096,
+    "lag1_deviation": 0.9048408455087543
+   },
+   "booneville": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9023092018715353
+   },
+   "calhoun": {
+    "bins": 336,
+    "zero_share": 0.03943452380952381,
+    "lag1_deviation": 0.8912679879020369
+   },
+   "desoto": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9514130735701517
+   },
+   "golden-triangle": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9376174389888495
+   },
+   "baptist-medical-center-leake": {
+    "bins": 336,
+    "zero_share": 0.002232142857142857,
+    "lag1_deviation": 0.8904640253262421
+   },
+   "north-mississippi": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.959334454985853
+   },
+   "union-county": {
+    "bins": 336,
+    "zero_share": 0.0,
+    "lag1_deviation": 0.9465956987698628
+   },
+   "baptist-medical-center-yazoo": {
+    "bins": 336,
+    "zero_share": 0.29017857142857145,
+    "lag1_deviation": 0.3361736004300166
+   },
+   "baptist-medical-center": {
+    "bins": 336,
+    "zero_share": 0.017857142857142856,
+    "lag1_deviation": 0.717691422531052
+   }
+  }
+ },
+ "tests": {
+  "discovery": {
+   "co_deviation": 190,
+   "same_time_change": 190,
+   "lagged_change": 1140
+  },
+  "confirmation": {
+   "co_deviation": 190,
+   "same_time_change": 190,
+   "lagged_change": 1140
+  }
+ },
+ "band_summary": {
+  "discovery": {
+   "co_deviation:neighbor": {
+    "pairs": 21,
+    "median_r": -0.02227565273327728,
+    "positive_share": 0.47619047619047616,
+    "significant": 0
+   },
+   "co_deviation:regional": {
+    "pairs": 61,
+    "median_r": 0.03611541976709097,
+    "positive_share": 0.6065573770491803,
+    "significant": 0
+   },
+   "co_deviation:distant": {
+    "pairs": 108,
+    "median_r": 0.0008908821169386198,
+    "positive_share": 0.5,
+    "significant": 0
+   },
+   "same_time_change:neighbor": {
+    "pairs": 21,
+    "median_r": 0.01501943494535971,
+    "positive_share": 0.5238095238095238,
+    "significant": 0
+   },
+   "same_time_change:regional": {
+    "pairs": 61,
+    "median_r": 0.01303578579113669,
+    "positive_share": 0.6229508196721312,
+    "significant": 0
+   },
+   "same_time_change:distant": {
+    "pairs": 108,
+    "median_r": 0.02631291665982481,
+    "positive_share": 0.6944444444444444,
+    "significant": 1
+   }
+  },
+  "confirmation": {
+   "co_deviation:neighbor": {
+    "pairs": 21,
+    "median_r": -0.006054223442793298,
+    "positive_share": 0.42857142857142855,
+    "significant": 0
+   },
+   "co_deviation:regional": {
+    "pairs": 61,
+    "median_r": 0.03489590662944882,
+    "positive_share": 0.5245901639344263,
+    "significant": 1
+   },
+   "co_deviation:distant": {
+    "pairs": 108,
+    "median_r": 0.027329016695142254,
+    "positive_share": 0.5925925925925926,
+    "significant": 0
+   },
+   "same_time_change:neighbor": {
+    "pairs": 21,
+    "median_r": 0.04093685152798211,
+    "positive_share": 0.8095238095238095,
+    "significant": 0
+   },
+   "same_time_change:regional": {
+    "pairs": 61,
+    "median_r": -0.010705593476151111,
+    "positive_share": 0.4098360655737705,
+    "significant": 0
+   },
+   "same_time_change:distant": {
+    "pairs": 108,
+    "median_r": 0.0016676666925581978,
+    "positive_share": 0.5092592592592593,
+    "significant": 0
+   }
+  }
+ },
+ "candidates": [
+  {
+   "family": "same_time_change",
+   "leader": "tipton",
+   "follower": "baptist-medical-center-leake",
+   "lag_hours": 0,
+   "distance_km": 311.278223160809,
+   "band": "distant",
+   "label": "not_supported",
+   "discovery": {
+    "family": "same_time_change",
+    "leader": "tipton",
+    "follower": "baptist-medical-center-leake",
+    "lag_hours": 0,
+    "n": 330,
+    "days": 14,
+    "state": "tested",
+    "r": 0.21318607243695958,
+    "n_eff": 271.2762030935311,
+    "p": 0.0003908379556311198,
+    "system_wide": {
+     "r": 0.20593437276013926,
+     "p": 0.0006364688215134995,
+     "n": 330
+    },
+    "residual_hour": {
+     "r": 0.19776607558395393,
+     "p": 0.0007253113499445116
+    },
+    "q": 0.07425921156991276
+   },
+   "confirmation": {
+    "family": "same_time_change",
+    "leader": "tipton",
+    "follower": "baptist-medical-center-leake",
+    "lag_hours": 0,
+    "n": 335,
+    "days": 14,
+    "state": "tested",
+    "r": -0.006975628360158769,
+    "n_eff": 283.68698825510864,
+    "p": 0.906963396889735,
+    "system_wide": {
+     "r": -0.006995770799495064,
+     "p": 0.9068615634840904,
+     "n": 335
+    },
+    "residual_hour": {
+     "r": 0.03862187071016124,
+     "p": 0.5169441509390915
+    },
+    "q": 0.9791082125514184
+   },
+   "confirmation_q": 0.906963396889735,
+   "bootstrap_95": {
+    "discovery": [
+     0.03995919696267128,
+     0.3652290715808052
+    ],
+    "confirmation": [
+     -0.0941218083931492,
+     0.07765609304986691
+    ]
+   },
+   "episodes": []
+  }
+ ],
+ "pairs": [
+  {
+   "a": "arlington",
+   "b": "childrens",
+   "distance_km": 23.039669356112494,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.10865600798934998,
+    "q": 0.8038157692165445,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.042166004177357316,
+    "q": 0.8637157385260006,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.01188537176523596,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.07292029425882206,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "collierville",
+   "distance_km": 24.46142652400088,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.09928269626834359,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0771525336604768,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.06567290483173929,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.017526842590094537,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "huntingdon",
+   "distance_km": 141.11003133459792,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.23753248987243333,
+    "q": 0.25777127811572614,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0023713099152019696,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.01742909891650465,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.004512706676597226,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "memphis",
+   "distance_km": 23.42062358153466,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.09242385590417061,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.045698211873543566,
+    "q": 0.856408911925233,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.23380476846252257,
+    "q": 0.4838846422675487,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.07587837184175679,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "tipton",
+   "distance_km": 29.958061977630422,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.13965371960698406,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.025494730932506465,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.035529903551857256,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.10103231979159388,
+    "q": 0.683137977412502,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "union-city",
+   "distance_km": 139.3817409555585,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.04575474730707999,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.019663893373856992,
+    "q": 0.9730655568506785,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.12730258792192875,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0445164436609818,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "crittenden",
+   "distance_km": 47.75780066276418,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.045753396903875275,
+    "q": 0.8961006457897747,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.018371932719701053,
+    "q": 0.9784602009702112,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.005351251988118316,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06640064128605751,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "nea",
+   "distance_km": 110.31806331258149,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.07987896323640857,
+    "q": 0.829890549103344,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.014370273307418633,
+    "q": 0.9936977643444713,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.007212308519248826,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.017353784724775022,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "anderson",
+   "distance_km": 333.9585800114806,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.08007484541851809,
+    "q": 0.8130542937316424,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0008746823084325897,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.027282335319044906,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.03260440304723466,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 244.78153737539273,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.09621213810698383,
+    "q": 0.8177730635607255,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.03639080851082248,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.07623803639929207,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.036991630848426646,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "booneville",
+   "distance_km": 120.99649569299669,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.015072421702812182,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.019061283506877937,
+    "q": 0.9760614372951099,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.04862354110111455,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.09060839725296799,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "calhoun",
+   "distance_km": 158.48212033597926,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.16477224492678091,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.05438319323897998,
+    "q": 0.7438012396196773,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.09831932334700239,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.020537787941159038,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "desoto",
+   "distance_km": 44.63194841642151,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.07991917400581511,
+    "q": 0.8424656993419566,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.03192326610305489,
+    "q": 0.9312025107281514,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.010478827974264596,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.053166035874183136,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "golden-triangle",
+   "distance_km": 224.46507173346913,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.04943744620757483,
+    "q": 0.9476921435616007,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.09855859324041784,
+    "q": 0.445587252174423,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.04420470125599229,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.042865122918125664,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 281.32285809502326,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.0038673365133137317,
+    "q": 0.9822738837410885,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.007580341441913366,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.07211068612596908,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05295098504165019,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "north-mississippi",
+   "distance_km": 102.9134201151183,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.028121466381444325,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.058629908748929746,
+    "q": 0.6851742344165326,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.10182838296275538,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0870951728683953,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "union-county",
+   "distance_km": 103.43545673494737,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.1054715704369046,
+    "q": 0.8130542937316424,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.029612508298724683,
+    "q": 0.9376575474669206,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.024342925046762498,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05707075472191384,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 276.2229491284291,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.03975764575547219,
+    "q": 0.8980486566920441,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.09724379454074931,
+    "q": 0.47324599293682,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.02627539235318075,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06568085677093106,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "arlington",
+   "b": "baptist-medical-center",
+   "distance_km": 331.6378758673958,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.03143125428196912,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06140443106921867,
+    "q": 0.6851742344165326,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1393951157747721,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.09701669183242081,
+    "q": 0.7401978217455745,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "collierville",
+   "distance_km": 15.408729857992405,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.08229208128009079,
+    "q": 0.8546079845515826,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.031997262834628684,
+    "q": 0.9312025107281514,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.18415274056666342,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.015614804793575092,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "huntingdon",
+   "distance_km": 164.07732885471071,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.06411998847170382,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.11392564544246689,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.10518064571260387,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.11127091700271965,
+    "q": 0.7401978217455745,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "memphis",
+   "distance_km": 0.5533208163925565,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.018447486355794424,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07921013837187858,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.2500202483916235,
+    "q": 0.7647163918434533,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04093685152798211,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "tipton",
+   "distance_km": 48.08585094502178,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.1771443355904275,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1526255640323236,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.027299518189344542,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.07863788110409815,
+    "q": 0.8677335726358375,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "union-city",
+   "distance_km": 160.61203910371174,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.2802111271335451,
+    "q": 0.7841616864616957,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.017765520958312877,
+    "q": 0.9936977643444713,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.084387330884828,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08206512443629768,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "crittenden",
+   "distance_km": 29.68569176425422,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.026990484209813054,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.034994135550554105,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.016240605435384445,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08359340189774332,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "nea",
+   "distance_km": 108.46040392432072,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.03526695522210455,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.01303578579113669,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0792641066875081,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.020426847647253884,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "anderson",
+   "distance_km": 324.49542580772203,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.1920932591175542,
+    "q": 0.7091829605976221,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.022956642307151096,
+    "q": 0.9681437852986501,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05966476639631711,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.029549955290632902,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 230.53049575015828,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.048148257343208344,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.015802469308698473,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.11321021448741361,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04401135307256603,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "booneville",
+   "distance_km": 128.69282939334238,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.13671232681563045,
+    "q": 0.8424656993419566,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.004588560980901354,
+    "q": 0.9994732351677305,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.10153777341217883,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.13181727836128762,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "calhoun",
+   "distance_km": 148.26535817048384,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.02161872234998535,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06317151163298572,
+    "q": 0.6851742344165326,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05554373883287385,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.10873474220001078,
+    "q": 0.683137977412502,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "desoto",
+   "distance_km": 21.831254646751255,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.1265806804582989,
+    "q": 0.9047734349505924,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.11801379545916248,
+    "q": 0.5270585642906733,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.07075399213713612,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0343523931117829,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "golden-triangle",
+   "distance_km": 221.19736948136017,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.2628616122247636,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.16951912932972243,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05545721606518741,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.15309361101510793,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 267.42071986972525,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.2588854012670735,
+    "q": 0.7714668537905338,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1492915327173308,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.010260858307979358,
+    "q": 0.9782416652844828,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0018382828813220547,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "north-mississippi",
+   "distance_km": 91.72901062712332,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.396446302481623,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.14671463537943083,
+    "q": 0.4118744682305895,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.29361539354216937,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.009311348176824108,
+    "q": 0.9791082125514184,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "union-county",
+   "distance_km": 103.03981268637823,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.24213990124495094,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.03563603013963695,
+    "q": 0.9376575474669206,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.06594640108546077,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.09240734929419171,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 257.3716955367798,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.12984998009001883,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.04964271967785609,
+    "q": 0.7789024071237923,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.07423587332282305,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.01411781597823695,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "childrens",
+   "b": "baptist-medical-center",
+   "distance_km": 314.2757134548822,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.15628399939618884,
+    "q": 0.7841616864616957,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.007389972745081661,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.06446113220652748,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05033441109792582,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "huntingdon",
+   "distance_km": 159.973533808917,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.18623526618632952,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07590806752192884,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.14203230321061472,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.04141179428909493,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "memphis",
+   "distance_km": 15.894167036977821,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.07407639363018435,
+    "q": 0.829890549103344,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.12528288538666016,
+    "q": 0.3379010976313636,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05327449274226909,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0017747824325105455,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "tipton",
+   "distance_km": 54.10052969726566,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.03611541976709097,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06567887330192372,
+    "q": 0.6691898313710671,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.10276865389876132,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0597761452418614,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "union-city",
+   "distance_km": 163.30284822031246,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.09519044034595814,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.10290638647597526,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.029631537100793102,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.008895455418117669,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "crittenden",
+   "distance_km": 44.08873132076404,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.09640635012121462,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06456525554213566,
+    "q": 0.6778490223205724,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.006054223442793298,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.03350085971523986,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "nea",
+   "distance_km": 123.39189623618518,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.12792040245863248,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.013074986981462967,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1674611445502225,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.008504686750983708,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "anderson",
+   "distance_km": 312.2028146524347,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.06946519117023772,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.08067899552883281,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.11206024386522329,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.02667807932643912,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 220.90662689041878,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.1040281611769066,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0068577408819041645,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.21435883243381823,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06025730458081607,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "booneville",
+   "distance_km": 113.58156645361753,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.18945769181299896,
+    "q": 0.7445025998038951,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.06024801285416277,
+    "q": 0.6851742344165326,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.010941221094765717,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04719695896594262,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "calhoun",
+   "distance_km": 136.14281190692324,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.14086179127716347,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.06855437289165395,
+    "q": 0.6465265824467191,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.008249431406230492,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.03251592171921358,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "desoto",
+   "distance_km": 27.158831887920105,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.02227565273327728,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.01501943494535971,
+    "q": 0.9936977643444713,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.023248303844731283,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.045245286743016866,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "golden-triangle",
+   "distance_km": 206.69411621522005,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.0337576938925614,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0018719991718297035,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.02115588115458264,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.06128820331097315,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 257.57739880404,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.134689779688817,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.03404223726608852,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05664955566614599,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.02607224399223959,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "north-mississippi",
+   "distance_km": 79.91895729732282,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.025325759504318392,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0045360756431482635,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.09707645803731618,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.01766795372125562,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "union-county",
+   "distance_km": 87.82599128067305,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.07095002229180372,
+    "q": 0.8961006457897747,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.018178952577400462,
+    "q": 0.9784602009702112,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.055624576582650374,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.013509701789767004,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 251.82721725150572,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.025049623624108588,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.023359644607047078,
+    "q": 0.9681437852986501,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.018731063315482216,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.10993114082588679,
+    "q": 0.683137977412502,
+    "n": 335
+   }
+  },
+  {
+   "a": "collierville",
+   "b": "baptist-medical-center",
+   "distance_km": 307.1936328844878,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.16499301988318651,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0033463660889483287,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.01954489240616314,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.011447591217808984,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "memphis",
+   "distance_km": 164.48391344105653,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.018732184530893814,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06563414487378036,
+    "q": 0.6691898313710671,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.03999486825984717,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.048502448147213065,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "tipton",
+   "distance_km": 126.37234975566288,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.1407735638546685,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.12240680655696061,
+    "q": 0.4118744682305895,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.1461721994120081,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.09688557799077105,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "union-city",
+   "distance_km": 71.5030339255618,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.16181860116447414,
+    "q": 0.8130542937316424,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.13527138697224078,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.21231682974517493,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.014256431497800105,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "crittenden",
+   "distance_km": 185.80965924657482,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.062057583771051944,
+    "q": 0.8546079845515826,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.018744185213080723,
+    "q": 0.9760614372951099,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.02553645300299166,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0720590016144629,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "nea",
+   "distance_km": 201.02860467406424,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.3121020139680325,
+    "q": 0.643039198757743,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1077599361332881,
+    "q": 0.445587252174423,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.016633421562574358,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.01670932617900615,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "anderson",
+   "distance_km": 406.76127476523646,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.01836024120664703,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.03717537825422121,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1384058139906158,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05039845030919726,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 346.26785372108833,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.051417505123362454,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.002672465768180042,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.15402336076571205,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.04632423152921174,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "booneville",
+   "distance_km": 152.44105873346305,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.20451165759766432,
+    "q": 0.8037838947242748,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.04457090548934892,
+    "q": 0.8732465179963311,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.06275246665368349,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.10066825942545315,
+    "q": 0.7401978217455745,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "calhoun",
+   "distance_km": 253.1491698060462,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.12675379426329106,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.034434985639788765,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.06964493050188461,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.04105241487606444,
+    "q": 0.9482504905443874,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "desoto",
+   "distance_km": 185.15617157489416,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.033297209995690455,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.03926955753623069,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.05917646606885585,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.004285726492841476,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "golden-triangle",
+   "distance_km": 277.67605224923545,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.03169087121450959,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.08980544368547168,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.04987364894745919,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.030866427261959616,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 378.90309346057677,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.046101899332945284,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07254977880281967,
+    "q": 0.6465265824467191,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.2691024989427017,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.03322909808055213,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "north-mississippi",
+   "distance_km": 212.1064566940544,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.15486836376492852,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0386716113876564,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.2614235572160448,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.03569378266920667,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "union-county",
+   "distance_km": 178.53403495711783,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.05486710529916332,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.08294589413093736,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.15044839143197883,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05252122198161366,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 396.4011410446476,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.016139721833564075,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.021829273634872227,
+    "q": 0.9681437852986501,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.0695834868293342,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.06493301505351806,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "huntingdon",
+   "b": "baptist-medical-center",
+   "distance_km": 443.2212853143683,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.023394290676491673,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.11926615970927101,
+    "q": 0.3379010976313636,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.08820080441896515,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.07067468931373755,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "tipton",
+   "distance_km": 48.22665328458542,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.12703552002647892,
+    "q": 0.8054545383129119,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.007733174867959595,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.1239868158050715,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.047151928839111935,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "union-city",
+   "distance_km": 160.81841586331063,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.08707664668371443,
+    "q": 0.8424656993419566,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.059037655133167354,
+    "q": 0.6851742344165326,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.12777765943438302,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.014348527815060281,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "crittenden",
+   "distance_km": 29.133475238324163,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.021874207595589872,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1081426762550943,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.048921009435808904,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.09256288638506902,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "nea",
+   "distance_km": 108.0660317289173,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.17329081647831054,
+    "q": 0.768212204024073,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.020025016593155174,
+    "q": 0.9730655568506785,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.17190302220713313,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.01929265044514943,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "anderson",
+   "distance_km": 324.72593690827733,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.05131338559226359,
+    "q": 0.8961006457897747,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0005147755871918612,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.011158707453656526,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.05073629410332974,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 230.63663881589522,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.02429114007871971,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.007291055928638051,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.10656915369555524,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0034952012474475046,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "booneville",
+   "distance_km": 129.21741678382915,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.07941946739156176,
+    "q": 0.8558026544809616,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.04316536758860595,
+    "q": 0.8571469380378266,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.055483233230366885,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.010906907445276295,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "calhoun",
+   "distance_km": 148.49644751212915,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.03380846756433197,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.1028906076629735,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.08642286852609063,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.10622180818915852,
+    "q": 0.683137977412502,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "desoto",
+   "distance_km": 21.550007150707867,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.20737108317906056,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.009500602536155351,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.04181178220454353,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.029498547319855465,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "golden-triangle",
+   "distance_km": 221.5663854925123,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.07429780359898505,
+    "q": 0.8961006457897747,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.08629980437085248,
+    "q": 0.5324923591116596,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.0532368677059865,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0016405804261910549,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 267.5345626255321,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.008867036637416979,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0333208170081462,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1077583075886224,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04250732563808835,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "north-mississippi",
+   "distance_km": 91.95603374571789,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.19548360558842587,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1051017390342633,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.2021639801782174,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.008156876777334615,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "union-county",
+   "distance_km": 103.47883525756025,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.04958805429475292,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.017073954032359596,
+    "q": 0.9790665458929831,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.11435936652156072,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.029816795366158288,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 257.3099162727642,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.019162678553001262,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.03602016308601791,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1606045758543167,
+    "q": 0.7203656945667155,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.1475352138470777,
+    "q": 0.4550331016427993,
+    "n": 335
+   }
+  },
+  {
+   "a": "memphis",
+   "b": "baptist-medical-center",
+   "distance_km": 314.27085285716504,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.10363849869186698,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0565433344291928,
+    "q": 0.7590746865513298,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.14321284241063933,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.02123666852769862,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "union-city",
+   "distance_km": 113.09396166617074,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.16801952815749915,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.09025277031402472,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.14614054876802543,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.11432512343128226,
+    "q": 0.683137977412502,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "crittenden",
+   "distance_km": 61.07568472484363,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.1097609093362088,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0241454591402231,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.06090460212846333,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.01886740566528969,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "nea",
+   "distance_km": 94.11603579509666,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.15277256116180238,
+    "q": 0.8424656993419566,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.027635222091575838,
+    "q": 0.9659167996205169,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.23352029387910175,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05269092533055674,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "anderson",
+   "distance_km": 363.12766065432305,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.02773281772456062,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.04501476875128427,
+    "q": 0.8485131106715212,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.08310860017000453,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.02955286133437136,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 274.7383981074398,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.020759333197338286,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06987640048711853,
+    "q": 0.6851742344165326,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.023116325863552972,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.036674286481637106,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "booneville",
+   "distance_km": 140.61246548395013,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.015974991489271295,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.000504646043423341,
+    "q": 0.9994732351677305,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.018468204239438676,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04446442330085996,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "calhoun",
+   "distance_km": 188.07995768546363,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.1649526313968311,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07417959415744356,
+    "q": 0.626216700383319,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.002308361841233909,
+    "q": 0.9961991696304624,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.014018190303353549,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "desoto",
+   "distance_km": 69.27683081180953,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.10241062193686325,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.09588509116272718,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.12823934767344458,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.12519225224220173,
+    "q": 0.683137977412502,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "golden-triangle",
+   "distance_km": 251.14566175121902,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.09041282721641891,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0782699364993493,
+    "q": 0.6778490223205724,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.15393202432715009,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.033657635993311126,
+    "q": 0.9700132026174026,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 311.278223160809,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.16633524851394849,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.21318607243695958,
+    "q": 0.07425921156991276,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.020872724276851242,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.006975628360158769,
+    "q": 0.9791082125514184,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "north-mississippi",
+   "distance_km": 132.7832688245575,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.015071401455520132,
+    "q": 0.9752512345490009,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0036524497117679817,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.047622023383750496,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04112508568534778,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "union-county",
+   "distance_km": 129.7193498459365,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.17318901140076387,
+    "q": 0.8424656993419566,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.041047712314170676,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.21608546060243436,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.05332259780384331,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 305.06769065120847,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.204668050169662,
+    "q": 0.2301424549325592,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0263503450192357,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.08646758912726314,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.015032909791048262,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "tipton",
+   "b": "baptist-medical-center",
+   "distance_km": 361.1433832685246,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.013690589069967663,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.005228508839186744,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1365584359216441,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.019068787985352272,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "crittenden",
+   "distance_km": 172.21794576581115,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.11824335429502439,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.08674703529819563,
+    "q": 0.5324923591116596,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.18730746490753528,
+    "q": 0.7203656945667155,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08202677533434576,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "nea",
+   "distance_km": 155.40662602079075,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.017563466328660314,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06126655260841737,
+    "q": 0.7735560444194575,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.04039923940382173,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.10337506931215622,
+    "q": 0.7401978217455745,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "anderson",
+   "distance_km": 450.5404528324446,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.02947380506281954,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07754449139570431,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.17352704565800092,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.03271710448872341,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 375.7430237201753,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.060910868542192825,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.09068139481455585,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.15039553839614278,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.012802937872664724,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "booneville",
+   "distance_km": 200.0756039431658,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.4464274691521096,
+    "q": 0.2301424549325592,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.1426385619371399,
+    "q": 0.296188296040984,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.15939293979539632,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.020165958809726305,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "calhoun",
+   "distance_km": 283.9411543333532,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.005507321484469658,
+    "q": 0.9822738837410885,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.020556890524715543,
+    "q": 0.9730655568506785,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.12080806556344247,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.024627970047027815,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "desoto",
+   "distance_km": 182.1867092619692,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.12433385963606018,
+    "q": 0.9015470786864758,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.02627548830041392,
+    "q": 0.9711084851630817,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.052095102678827374,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06168013767105649,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "golden-triangle",
+   "distance_km": 326.07879690806357,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.07562509563981239,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.11589011346844953,
+    "q": 0.47324599293682,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.0009008808047693257,
+    "q": 0.9961991696304624,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.018483802645873113,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 410.89644896291367,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.1948293387558073,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.02679402154601434,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.07427867385142203,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.03514649054571979,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "north-mississippi",
+   "distance_km": 233.93318119805218,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.22814053070290702,
+    "q": 0.8130542937316424,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.019178589314148762,
+    "q": 0.9936977643444713,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.09241807630374839,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.15021558790532585,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "union-county",
+   "distance_km": 213.09949884787167,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.26267768125632446,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.148800468052102,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.20062513600542747,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.023801500991789768,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 414.4459530544955,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.23009140482374393,
+    "q": 0.20470245732637932,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0003250419499876861,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.027375698071239598,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.06323262288172171,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-city",
+   "b": "baptist-medical-center",
+   "distance_km": 467.5991291553149,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.1696868603855701,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.07128184746239426,
+    "q": 0.626216700383319,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.21146711237522528,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.023139437790566528,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "nea",
+   "distance_km": 88.17093687003418,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.10541134123194805,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.00247253202400093,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.03489590662944882,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0031791309180066616,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "anderson",
+   "distance_km": 339.5154288877732,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.15233990350025584,
+    "q": 0.643039198757743,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.009654643272666318,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.044402226808260316,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.026122384170603453,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 239.7296661511683,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.06091977839010248,
+    "q": 0.8713186019475503,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.13059383682942408,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.11340521654634385,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04025131137502136,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "booneville",
+   "distance_km": 157.55463454280778,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.0170251685600789,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.04049294682580434,
+    "q": 0.8863965733238386,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.10241244800124306,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.12024434679649618,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "calhoun",
+   "distance_km": 164.37794650835352,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.03607624092107735,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.06931468684858788,
+    "q": 0.6465265824467191,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.005580461924148995,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08856287363456042,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "desoto",
+   "distance_km": 27.523163225545247,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.015678957354724063,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07623762052646638,
+    "q": 0.5903642887347275,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.0886033960523497,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0147985383919961,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "golden-triangle",
+   "distance_km": 243.2163095166453,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.12399211129711185,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.022092315512608283,
+    "q": 0.9681437852986501,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.026617199718090248,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.009728814302431263,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 276.7875100739704,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.011375359872021358,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.14493759867974537,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.06709386707092405,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.02872615300895665,
+    "q": 0.9700132026174026,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "north-mississippi",
+   "distance_km": 108.73340142239728,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.035979286854494974,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.05041314790144092,
+    "q": 0.7789024071237923,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.07798640332470279,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.008917310004792916,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "union-county",
+   "distance_km": 128.7252165771168,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.16788346857910189,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.025994726928430082,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0679585258818074,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0028723435399780387,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 257.5884767140339,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.10024478889922182,
+    "q": 0.768212204024073,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.09872512443498525,
+    "q": 0.47324599293682,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.00426826840077235,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0010638917353484121,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "crittenden",
+   "b": "baptist-medical-center",
+   "distance_km": 317.23331379160624,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.08911265680404783,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.09744971876452017,
+    "q": 0.47324599293682,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.08989930802945556,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.08568795701198359,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "anderson",
+   "distance_km": 427.5286179628079,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.11104918119047454,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.06487444139951183,
+    "q": 0.6691898313710671,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.15838874007088483,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.059281263531764654,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 325.7059570118047,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.17721987081838644,
+    "q": 0.8177730635607255,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.12043895022287535,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.22433188459065406,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05393218869019502,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "booneville",
+   "distance_km": 231.186146348371,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.07191605905644496,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.004095943064609448,
+    "q": 0.9994732351677305,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.16600439923637134,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.040725802313009186,
+    "q": 0.9599700302127849,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "calhoun",
+   "distance_km": 252.54167779394862,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.28558349610097866,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.06439025864192958,
+    "q": 0.6784766571201787,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.2801282424727384,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.04443196084994578,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "desoto",
+   "distance_km": 115.44089501381812,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.08681612788881149,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.12824697882254493,
+    "q": 0.445587252174423,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.2770644973654491,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.01238914453311229,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "golden-triangle",
+   "distance_km": 329.4989760658647,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.05415433795555611,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.10917070787018869,
+    "q": 0.541305032961715,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05903165176653801,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.01152976779823851,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 362.6440535706478,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.003720217142321453,
+    "q": 0.9822738837410885,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.04046024873602427,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0670943907903622,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06483382461141071,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "north-mississippi",
+   "distance_km": 196.70228735213576,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.21723096408019263,
+    "q": 0.8177730635607255,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1630789815388948,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.03072720098207544,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.02502866937213917,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "union-county",
+   "distance_km": 211.1223010754988,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.0408333070660731,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.10480269067998786,
+    "q": 0.5017867620306248,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.06282029679622808,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.007525893177733304,
+    "q": 0.9791082125514184,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 335.18197335464254,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.12110998698273494,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.008713799475542608,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.04701766353285847,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.055306275994178325,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "nea",
+   "b": "baptist-medical-center",
+   "distance_km": 397.22394643576416,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.009708883541898226,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.04440769063251564,
+    "q": 0.8522746844519066,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0550757194334445,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.05237120020228922,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "baptist-medical-center-attala",
+   "distance_km": 114.06862903451209,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.05467171254140972,
+    "q": 0.9047734349505924,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.05146418897419003,
+    "q": 0.7768285944225248,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.18116736185415558,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.08390018758412052,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "booneville",
+   "distance_km": 254.40149726863686,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.008771863448451427,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.008805284877624817,
+    "q": 0.9994732351677305,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0023767410665187162,
+    "q": 0.9961991696304624,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0009736506110683835,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "calhoun",
+   "distance_km": 176.23007483192413,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.1580277926334714,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.02404451168151058,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.08444800987904522,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.013013762349300628,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "desoto",
+   "distance_km": 312.73023566192205,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.07910039503346548,
+    "q": 0.8424656993419566,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.027658967346140127,
+    "q": 0.960702088473678,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.10268886084964052,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.07198027879731518,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "golden-triangle",
+   "distance_km": 130.71735574997314,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.0999120584314023,
+    "q": 0.8177730635607255,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.06534352004043222,
+    "q": 0.6691898313710671,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.015831960224799987,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.03522274788272527,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 86.83816162210258,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.004024347741975995,
+    "q": 0.9822738837410885,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.07110530158948554,
+    "q": 0.626216700383319,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.17404865551925197,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.02856122555847427,
+    "q": 0.9700132026174026,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "north-mississippi",
+   "distance_km": 232.7714756260986,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.29550053812367266,
+    "q": 0.20470245732637932,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.04994165327002266,
+    "q": 0.7789024071237923,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.12161472727563519,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.12536132369961225,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "union-county",
+   "distance_km": 238.2851191214683,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.050384354743383306,
+    "q": 0.9476921435616007,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.03145523367363204,
+    "q": 0.932569263017452,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.21158114314342455,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.019639618581105238,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 168.5790632904658,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.1553972031779178,
+    "q": 0.4698605055621954,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.00953206206664733,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.05669126610950042,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.009080706532620449,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "anderson",
+   "b": "baptist-medical-center",
+   "distance_km": 139.26069712831136,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.18164414104672555,
+    "q": 0.4698605055621954,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0578081541039304,
+    "q": 0.7358584435101657,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.15428761580361858,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.07460970833914181,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "booneville",
+   "distance_km": 201.03086033788685,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.18905454662012502,
+    "q": 0.8037838947242748,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.030845290373315692,
+    "q": 0.9625407821497797,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.1698408930310814,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.016877079013845445,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "calhoun",
+   "distance_km": 93.1814367355463,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.16648594411080733,
+    "q": 0.8177730635607255,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.025234240079831737,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.22916892766148306,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.05536810158602623,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "desoto",
+   "distance_km": 214.85021813019927,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.07882852871666884,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.08126294312564797,
+    "q": 0.6691898313710671,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.34865101881318195,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.16285757156143915,
+    "q": 0.4550331016427993,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "golden-triangle",
+   "distance_km": 120.21100123165753,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.28249118036384513,
+    "q": 0.7841616864616957,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.037959054908898185,
+    "q": 0.9376575474669206,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.11475661291648627,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.01776118932541221,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 37.062140492805746,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.20477649496359038,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.10844253082808883,
+    "q": 0.445587252174423,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.04985941801281886,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08965597450971993,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "north-mississippi",
+   "distance_km": 142.69504688817204,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.09647728225777674,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.07125156196306073,
+    "q": 0.7027515960474301,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.11640118453158559,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.1343144605886034,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "union-county",
+   "distance_km": 167.73619797401167,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.1735839975153632,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.010448543310553275,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.09110604975134776,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06421925157473028,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 78.6604901907883,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.05099561551515835,
+    "q": 0.8713186019475503,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.00492504164187697,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05364936515735584,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.031046967333412674,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-attala",
+   "b": "baptist-medical-center",
+   "distance_km": 99.71758379730446,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.04224318461418992,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.009494988739685134,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.050654899490310636,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.07202993952706215,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "calhoun",
+   "distance_km": 111.50135372747201,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.07128598369507835,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.05207774234564808,
+    "q": 0.7789024071237923,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.016462575757565216,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.0424938952003123,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "desoto",
+   "distance_km": 135.14229172558535,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.02927616632367125,
+    "q": 0.9652451709433432,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.009723831370952568,
+    "q": 0.9994732351677305,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.14993078889641825,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.07387814491859994,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "golden-triangle",
+   "distance_km": 126.51053216944159,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.19877454291391916,
+    "q": 0.8130542937316424,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.0599007809096836,
+    "q": 0.7854272506851001,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.08286319936944798,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.009777329486162804,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 230.73402541798794,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.14168494521884994,
+    "q": 0.8215718137722043,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.06781972746423266,
+    "q": 0.6784766571201787,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.022895973592433734,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0550882845214872,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "north-mississippi",
+   "distance_km": 94.7591362101448,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.23301763491898658,
+    "q": 0.8037838947242748,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.040075336289845005,
+    "q": 0.9295560374405974,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0010375724377676247,
+    "q": 0.9961991696304624,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.09191774327715328,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "union-county",
+   "distance_km": 45.858852365715165,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": 0.1456843931594027,
+    "q": 0.8424656993419566,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.14628232782615128,
+    "q": 0.296188296040984,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.2031548205145911,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.014931570092384761,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 262.4743971472329,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.07374037782077346,
+    "q": 0.8177730635607255,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": -0.02111498612102674,
+    "q": 0.9711084851630817,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05287482911835689,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.02042342049023818,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "booneville",
+   "b": "baptist-medical-center",
+   "distance_km": 300.4678037774144,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.13073338285956393,
+    "q": 0.8037838947242748,
+    "n": 328
+   },
+   "discovery_same_time_change": {
+    "r": 0.10356546238676356,
+    "q": 0.432323296134153,
+    "n": 326
+   },
+   "confirmation_co_deviation": {
+    "r": -0.03077941146738997,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.030187100900570096,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "desoto",
+   "distance_km": 137.1760139657942,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.18729890154450599,
+    "q": 0.8177730635607255,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.07071900771251902,
+    "q": 0.6691898313710671,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.07727699284250632,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.006083285437543905,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "golden-triangle",
+   "distance_km": 90.81480426704634,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.05161288431656665,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.0754671923292732,
+    "q": 0.626216700383319,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.08770842250715874,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08939309738104899,
+    "q": 0.7496194797742226,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 127.12150112542504,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.11898143849193689,
+    "q": 0.8424656993419566,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.031676573838533825,
+    "q": 0.9363350261537947,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.047666972516047276,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.04922023636441333,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "north-mississippi",
+   "distance_km": 56.54636525052013,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.1314526466854576,
+    "q": 0.8824206337216652,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.11104139088161934,
+    "q": 0.432323296134153,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.11691645321132546,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.02021934409871486,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "union-county",
+   "distance_km": 74.68455982073239,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.022989341458091315,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 3.784461157998281e-05,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.09741631867864274,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.010705593476151111,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 151.13983504409896,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.06927074802254062,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.06261847838241939,
+    "q": 0.6778490223205724,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0261991762803483,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.06195391061275267,
+    "q": 0.9156314270198759,
+    "n": 335
+   }
+  },
+  {
+   "a": "calhoun",
+   "b": "baptist-medical-center",
+   "distance_km": 190.75045587676206,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.052545611916242144,
+    "q": 0.9476921435616007,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.024920390007148987,
+    "q": 0.9625407821497797,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1049075363458977,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.0022714416497679833,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "desoto",
+   "b": "golden-triangle",
+   "distance_km": 215.8087431732267,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.1625944483521016,
+    "q": 0.8670025289969852,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1182413744537985,
+    "q": 0.5678996436908983,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.0406558611136526,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.09814606685067287,
+    "q": 0.8677335726358375,
+    "n": 335
+   }
+  },
+  {
+   "a": "desoto",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 251.8924201638713,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.02082357453123071,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1109382921680771,
+    "q": 0.47324599293682,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.07411558604650716,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.012255873126499612,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "desoto",
+   "b": "north-mississippi",
+   "distance_km": 81.2864565884608,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.0381819087372561,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.20661541805407857,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.0118611864343354,
+    "q": 0.9878779903540439,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.24743405048538003,
+    "q": 0.16906249632840806,
+    "n": 335
+   }
+  },
+  {
+   "a": "desoto",
+   "b": "union-county",
+   "distance_km": 102.91542965693264,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": -0.20579561066966853,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.059624131115757456,
+    "q": 0.7935876001404312,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.07677156983560159,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.07033317625867946,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "desoto",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 237.71380568717777,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.019297871498055084,
+    "q": 0.9652451709433432,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.011830452136466095,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.016555158960445477,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.017922424956757898,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "desoto",
+   "b": "baptist-medical-center",
+   "distance_km": 295.69824084705954,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.17484358524816923,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.01709154800210892,
+    "q": 0.9790665458929831,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.042491593898309886,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.03308819543010095,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "golden-triangle",
+   "b": "baptist-medical-center-leake",
+   "distance_km": 133.93571859793116,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.16618609266530548,
+    "q": 0.8215718137722043,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1537694830068456,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.014253211046579423,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.005265421700428995,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "golden-triangle",
+   "b": "north-mississippi",
+   "distance_km": 136.6928428507368,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.146236323680111,
+    "q": 0.8980486566920441,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.17321077413045913,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.0723370488104332,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.017282341186551784,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "golden-triangle",
+   "b": "union-county",
+   "distance_km": 121.42705905207909,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.25256296745350154,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0052215999403218425,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.32577370894911106,
+    "q": 0.9505759426478617,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.19972957562843122,
+    "q": 0.4550331016427993,
+    "n": 335
+   }
+  },
+  {
+   "a": "golden-triangle",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 198.32483423933616,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.002085572279436492,
+    "q": 0.9822738837410885,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.01515150888094243,
+    "q": 0.9936977643444713,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.06735446115213838,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.03413813415005486,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "golden-triangle",
+   "b": "baptist-medical-center",
+   "distance_km": 211.88175022080847,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.06677419549888589,
+    "q": 0.8961006457897747,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.09216451375803385,
+    "q": 0.47324599293682,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.14198117587088696,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.04914395281680992,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-leake",
+   "b": "north-mississippi",
+   "distance_km": 178.8421406098696,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.19526757921064955,
+    "q": 0.8153935637038993,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.1513332029066239,
+    "q": 0.296188296040984,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.03086326784511412,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.052467963058593525,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-leake",
+   "b": "union-county",
+   "distance_km": 200.7093052632611,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.21776235358630822,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.031469793198845644,
+    "q": 0.9487474564381605,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.07148256580342484,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.08198271080258622,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-leake",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 83.95812717047933,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.05496347968921106,
+    "q": 0.8529077054776862,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.008491493105858878,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.05261524120838816,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.07593180836420159,
+    "q": 0.840508264717865,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-leake",
+   "b": "baptist-medical-center",
+   "distance_km": 78.06550294665381,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.14199628218355462,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.07378260576690403,
+    "q": 0.6152498574010423,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.13774589499090248,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.04121687386336304,
+    "q": 0.9368260603840893,
+    "n": 335
+   }
+  },
+  {
+   "a": "north-mississippi",
+   "b": "union-county",
+   "distance_km": 48.93575668614275,
+   "band": "neighbor",
+   "discovery_co_deviation": {
+    "r": -0.14195288999079736,
+    "q": 0.9047734349505924,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.005791931273146249,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.027710023148624374,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.009182847576813617,
+    "q": 0.9791082125514184,
+    "n": 335
+   }
+  },
+  {
+   "a": "north-mississippi",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 184.3513421347573,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.2176051810447966,
+    "q": 0.2301424549325592,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0437380319188831,
+    "q": 0.856408911925233,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": -0.013946564001889036,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.031821521307130764,
+    "q": 0.9677258393145292,
+    "n": 335
+   }
+  },
+  {
+   "a": "north-mississippi",
+   "b": "baptist-medical-center",
+   "distance_km": 234.0237224951053,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": 0.240784094025654,
+    "q": 0.5438603465023988,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.011955064311217662,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.2890373199244434,
+    "q": 0.7203656945667155,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.11864829594041679,
+    "q": 0.4771470798031288,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-county",
+   "b": "baptist-medical-center-yazoo",
+   "distance_km": 222.36302689457233,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.08718101826053903,
+    "q": 0.8037838947242748,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.03726933519878708,
+    "q": 0.9295560374405974,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.03826130001034934,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": -0.004315537072420692,
+    "q": 0.985845660749389,
+    "n": 335
+   }
+  },
+  {
+   "a": "union-county",
+   "b": "baptist-medical-center",
+   "distance_km": 265.2822280251938,
+   "band": "distant",
+   "discovery_co_deviation": {
+    "r": -0.1710126340613285,
+    "q": 0.7507495554078308,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": -0.11125877041172551,
+    "q": 0.4118744682305895,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.1655337510183944,
+    "q": 0.9756505128112656,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.02105845449849847,
+    "q": 0.9741329308335388,
+    "n": 335
+   }
+  },
+  {
+   "a": "baptist-medical-center-yazoo",
+   "b": "baptist-medical-center",
+   "distance_km": 64.02860811627059,
+   "band": "regional",
+   "discovery_co_deviation": {
+    "r": 0.11112741338419892,
+    "q": 0.7445025998038951,
+    "n": 331
+   },
+   "discovery_same_time_change": {
+    "r": 0.0009994774213336458,
+    "q": 0.9994732351677305,
+    "n": 330
+   },
+   "confirmation_co_deviation": {
+    "r": 0.24441915904064632,
+    "q": 0.037717395745972125,
+    "n": 336
+   },
+   "confirmation_same_time_change": {
+    "r": 0.14662212989000603,
+    "q": 0.4550331016427993,
+    "n": 335
+   }
+  }
+ ],
+ "snapshot_sha256": "efda699fb411e72c49374024e847834bfd225f580789d6140034e235234588ed",
+ "records": 107257,
+ "protocol_sha256": "6ae8ab3d6b2c36de5e588fb17c30ab9873f5a3e5e3aa11d131261206ba453cef",
+ "code_sha256": "8a41b55ed9a3227784087d0914d764f7cec490c41352cea0ee02114d661d90cd",
+ "python": "3.14.6",
+ "runtime_seconds": 34.03458320000209,
+ "generated_at": "2026-09-24T00:49:59.375051+00:00"
+}

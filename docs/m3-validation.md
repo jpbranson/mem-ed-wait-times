@@ -2,8 +2,9 @@
 
 M3 is **in progress**. The first deliverable, a facility-by-time heatmap of
 difference from usual with linked facility histories, is implemented. Neighbor
-groups, lag analysis, held-out predictive checks, geographic placement and replay
-remain planned. Nothing in this view claims patient movement or causal spillover.
+groups and a same-time/lagged relationship study are now run offline (below),
+with a negative result. Held-out predictive checks, geographic placement and
+replay remain planned. Nothing here claims patient movement or causal spillover.
 
 ## Heatmap — 2026-09-23 UTC
 
@@ -62,3 +63,92 @@ reference but not modeled; collection gaps, reporting changes and zero readings
 of unconfirmed meaning can align across rows. The M3 acceptance criteria
 (episode inspection, calendar/serial-dependence checks, stability in later periods)
 are not yet met.
+
+## Relationship study — 2026-09-24 UTC
+
+Protocol fixed before any pair statistic: [m3-relationship-protocol.md](m3-relationship-protocol.md).
+Implementation: [relationships.py](../edwait/relationships.py), runner
+[m3_relationships.py](../scripts/m3_relationships.py), tests
+[test_relationships.py](../tests/test_relationships.py), aggregate output
+[m3-relationship-results.json](m3-relationship-results.json). Input is M5's frozen
+snapshot (SHA-256 `efda699f…88ed`, 107,257 records); M5's final holdout
+(2026-09-16 onward) was not read. Runtime 34 s. Offline only: no artifact, schema,
+S3 object or dashboard change.
+
+Reproduce with `.venv/Scripts/python.exe scripts/m3_relationships.py .cache/m5-history-20260923.json`;
+the script refuses any other snapshot.
+
+### Neighbor groups (geography only)
+
+Campus centers within 50 km form 21 neighbor pairs and three groups: Memphis
+metro (Memphis, Children's, Collierville, Arlington, DeSoto, Crittenden, Tipton),
+Attala–Leake, and Booneville–North Mississippi–Union County. The other eight
+facilities have no campus within 50 km. Distance is straight-line between
+unreviewed campus centers, not travel time.
+
+### Results
+
+All 190 pairs met support in both periods (1,520 tests each). Every facility had
+331 supported hourly bins in discovery (14 days from 2026-08-19; see the
+protocol's execution note) and 336 in confirmation.
+
+| Family | Discovery BH q ≤ 0.10 | Robust with ρ ≥ 0.20 | Confirmed |
+| --- | --- | --- | --- |
+| Same-time co-deviation (190) | 0 | 0 | — |
+| Same-time change (190) | 1 | 1 | 0 |
+| Lagged change, 1–3 h both ways (1,140) | 0 | 0 | — |
+
+The only candidate, Tipton–Leake same-time change (311 km apart; discovery
+ρ = 0.21, bootstrap 95% 0.04–0.37), vanished in confirmation (ρ = −0.01,
+−0.09–0.08) and is **not supported**. No pair is labeled confirmed, so no
+episode lists are produced and no "rises together" or "preceded" language is
+supported by this data.
+
+Neighbors look no different from distant pairs:
+
+| Same-time median ρ | Neighbor (21) | 50–150 km (61) | Over 150 km (108) |
+| --- | --- | --- | --- |
+| Co-deviation, discovery / confirmation | −0.02 / −0.01 | 0.04 / 0.03 | 0.00 / 0.03 |
+| Hourly change, discovery / confirmation | 0.02 / 0.04 | 0.01 / −0.01 | 0.03 / 0.00 |
+
+Memphis–Children's, 0.6 km apart, had co-deviation ρ = 0.02 then 0.25 and change
+ρ = 0.08 then 0.04. The one confirmation-period co-deviation pair significant
+on its own (Yazoo–Mississippi Baptist, ρ = 0.24, q = 0.04) was not a discovery
+candidate and involves Yazoo's zero-heavy feed, so it is noted, not reported as a finding.
+
+![Pair co-deviation matrices](figures/m3-co-deviation.png)
+
+![Association by campus distance](figures/m3-distance.png)
+
+### Serial dependence and power
+
+Hourly deviations are strongly persistent (lag-one autocorrelation 0.34–0.97;
+median effective sample about 84 of 331 bins for co-deviation). Without the
+correction, 85 of 190 discovery co-deviation pairs would have looked significant
+at p < 0.05; with it, 12, close to the ~10 expected by chance. Changes are much
+less persistent (effective sample about 314), and there too only 20 of 190 had
+p < 0.05 before multiple-testing correction.
+
+The co-deviation screen is weak: at an effective sample near 84, a single test
+needs |ρ| ≈ 0.21 for p < 0.05, and surviving BH across 190 tests needs roughly
+|ρ| ≥ 0.37. Moderate shared elevation could therefore go undetected. The change
+screens detect |ρ| ≈ 0.11 nominally and about 0.2 after correction, so hour-to-hour
+co-movement larger than that among these facilities is unlikely in this window.
+
+### Interpretation and limits
+
+- Over these four weeks, departures from usual at Baptist facilities, including
+  close Memphis-metro neighbors, did not measurably move together, at the same
+  time or with one- to three-hour lags, beyond what chance and each hospital's
+  own persistence explain. This is a validated negative result, not proof of
+  independence: the window is short, the metric's meaning is unconfirmed, and
+  hourly medians can hide sub-hour or multi-day effects.
+- Arlington (19–20%), Crittenden (14–16%) and Yazoo (29–34%) exceed 10% zero
+  readings; their pairs would be labeled exploratory regardless of score.
+  Collierville (9–10%) and Anderson (8–9%) are close to that limit.
+- Wait histories cannot show patient transfers, diversion or capacity. A later
+  positive result would still be an association of published readings.
+
+Acceptance status: the explorer does not yet support episode inspection beyond
+the heatmap; calendar, serial-dependence and later-period checks are implemented
+and found no stable relationship. M3 remains in progress.

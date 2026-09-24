@@ -1,13 +1,14 @@
 # Development plan
 
-Last updated: 2026-09-24 00:35 UTC (evening of September 23 America/Chicago)
+Last updated: 2026-09-24 01:05 UTC (evening of September 23 America/Chicago)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
 remain in progress; official status/service/age evidence covers all 20
 destinations, and by user decision 18 adult/4 child destinations route to labeled
 campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are added. M3 is in progress with
-a difference-from-usual heatmap; M4 remains planned. M5 is now in progress: a frozen offline
+a difference-from-usual heatmap and an offline relationship study that found no
+confirmed pair association; M4 remains planned. M5 is now in progress: a frozen offline
 snapshot, four simple benchmarks, and two ARIMA development pilots are implemented
 and locally validated. Calibration/holdout and public forecasts remain pending.
 Website builds are now also dispatched hourly by a user-configured AWS EventBridge
@@ -61,6 +62,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Registry | Stable slugs, verified names/state groupings, timezone/source dates; 2026-09-23 official evidence for active status, general-emergency service and explicit age groups, with per-facility `destination_evidence`; OpenStreetMap `campus_point` fallbacks labeled "ER entrance unconfirmed"; `emergency_entrance` null until reviewed via `python -m edwait.entrances` | [Registry](../edwait/facilities.json), [destination evidence](m2-destinations-2026-09-23.md) |
 | Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Compare is enabled only after a `GET /api/routes/status` gateway confirmation, so static hosting never receives coordinates. 18 adult/4 child destinations route to labeled campus centers; 54/54 live validation routes passed. Metric evidence, reviewed entrances and public gateway remain pending; recommendations disabled | [M2 operations](m2-operations.md), [readiness follow-up](m2-readiness-2026-09-23.md) |
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
+| Relationship study | Geography-only neighbor groups (campus centers ≤50 km) and a frozen discovery/confirmation test of same-time co-deviation, same-time changes and 1–3 h lagged changes for all 190 pairs, with autocorrelation-adjusted p-values, BH, system-wide and residual-hour checks. One discovery candidate, none confirmed; offline only | [Protocol](m3-relationship-protocol.md), [results](m3-validation.md#relationship-study--2026-09-24-utc) |
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks and ARIMA(1,0,0)/(1,1,0) evaluated on development data only; no public forecasts | [Protocol](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; an M3 difference-from-usual heatmap links rows to the focus chart; locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [heatmap](../dashboard/heatmap.mjs), [application](../dashboard/app.mjs) |
 | Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged. EventBridge rule `dashboard_hourly` dispatches the workflow at minute 17 (user-configured 2026-09-24 UTC; first delivery not yet observed); GitHub cron retained as a backup | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
@@ -139,7 +141,7 @@ Deployment status must be recorded separately from implementation status.
 | M0 | Reliable shared data, facility registry, and freshness | First release foundation | Complete | Existing collection and storage |
 | M1 | Hospital self-comparisons and recent trends | First public feature | Complete | M0 reader, baseline inputs, freshness states |
 | M2 | Travel-and-wait comparison | Next public feature | In progress: static prototype published; local fixtures and one live provider probe validated; acceptance work remains | M0, M1, verified destinations, travel-time source, metric interpretation |
-| M3 | Relationships and spillover exploration | Analytical track | In progress: difference-from-usual heatmap with linked focus implemented and locally validated; relationship analysis remains | M0, M1; geographic view also needs verified coordinates |
+| M3 | Relationships and spillover exploration | Analytical track | In progress: heatmap deployed; offline relationship study run (no confirmed pair association); predictive check, episode inspection, geographic view and replay remain | M0, M1; geographic view also needs verified coordinates |
 | M4 | Area summaries, stability, and historical alternatives | Follow-on features | Planned | M1; geographic summaries need region metadata; travel scenarios need M2 |
 | M5 | Time-series modeling and short-horizon forecasts | Analytical track; conditional forecast release | In progress: benchmarks and two ARIMA development pilots validated offline; no public forecast | M0 validated history and freshness, M1 benchmarks; M2/M3 integration follows separate validation |
 
@@ -489,8 +491,22 @@ readings and hatched periods lack a usual range. Rows focus the individual chart
 by click or keyboard; a summary table and limits note sit in a disclosure.
 Validated with five JavaScript tests, a published-module check, live-history
 render and Chrome desktop/390/320 px review. [Evidence](m3-validation.md).
-Geographic placement, replay, neighbor groups, lag analysis and held-out
-predictive checks remain; no relationship finding is claimed.
+Relationship study (2026-09-24 UTC, offline): a [protocol](m3-relationship-protocol.md)
+fixed before scoring defines neighbor pairs as campus centers within 50 km (21
+pairs; Memphis metro, Attala–Leake and Booneville–North Mississippi–Union County
+groups) and tests all 190 pairs on M5's frozen snapshot. Hourly difference from
+M1's past-only usual median is screened on 2026-08-12 to 09-02 (supported from
+08-19) and candidates are re-tested on 09-02 to 09-16; M5's final holdout is not
+read. Of 1,520 same-time co-deviation, same-time change and 1–3 hour lagged-change
+tests, one passed discovery (Tipton–Leake, 311 km apart) and it failed
+confirmation. Neighbor pairs' median correlations (−0.02 to 0.04) match distant
+pairs. Autocorrelation-adjusted p-values were essential: unadjusted, 85 of 190
+co-deviation pairs looked significant, against 12 adjusted. The co-deviation
+screen can miss moderate effects (|ρ| below about 0.37 after BH); hour-to-hour
+co-movement above about 0.2 is unlikely in this window. Eight tests cover it.
+[Results and limits](m3-validation.md#relationship-study--2026-09-24-utc).
+Geographic placement, replay, episode inspection and held-out predictive checks
+remain; no relationship finding is claimed.
 
 Deliverables:
 
@@ -679,7 +695,7 @@ change. Offline study outputs do not alter existing record/storage contracts.
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
 | Which facilities are valid alternatives for each supported use case? | M2 | 2026-09-23: 19 active general-emergency destinations (Children's child-only; Anderson, DeSoto and Mississippi Baptist adult and child; others adult) and Leake unverified. Official pages and OpenStreetMap give no emergency-entrance coordinates (one unconfirmed OSM candidate at North Mississippi). User decided 2026-09-23: route to labeled campus centers now; add imagery-reviewed entrances later with `python -m edwait.entrances`. Next: the user's entrance reviews, then Leake's status and child scope at other general ERs. [Evidence](m2-destinations-2026-09-23.md) |
 | Which travel provider and benefit rule should be used? | M2 | TomTom key supplied locally; one budgeted live v3 contract probe passed. Validate actual hospital routes/coverage and benefit sensitivity after destination verification. Cloudflare Workers Free/shared SQLite Durable Object selected as a design target; account/terms, implementation and deployment pending. Historical movement remains descriptive |
-| Which geographic groups and lag ranges are defensible? | M3 | Heatmap now exposes co-occurring episodes by row and time. Next: define neighbor groups from campus locations (not entrances) and evaluate same-time and lagged co-deviation with calendar adjustment and later-period stability |
+| Which geographic groups and lag ranges are defensible? | M3 | 2026-09-24: 50 km campus-center neighbor groups and 0–3 hour lags tested under a frozen protocol; no pair association confirmed and neighbors match distant pairs. User decided 2026-09-24 to revisit in a few weeks (around 2026-10-15): then consider a rerun on a fresh post-2026-09-23 snapshot (longer window, more power), whether a held-out predictive check is still worthwhile, and whether the negative result belongs in the heatmap disclosure. [Evidence](m3-validation.md#relationship-study--2026-09-24-utc) |
 | Which time-series models add useful forecast skill, for which hospitals and horizons? | M5 | Snapshot/splits frozen and simple benchmarks/two ARIMA pilots evaluated on development only; modest gains and support failures do not justify release. Inspect residual/seasonal structure and cold-start support before expanding candidates and freezing later-period evaluation |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Choose measurable gates on development folds before final holdout; record per-facility/horizon eligibility and unavailable/fallback behavior |
 
@@ -688,9 +704,9 @@ hourly from 01:17 UTC on 2026-09-24, then remove the unreliable GitHub `schedule
 trigger and confirm the alert email subscription. M2's
 destinations route to labeled campus centers with live routes validated; next are
 the user's imagery-reviewed entrances, metric confirmation, traffic-hour route and
-uncertainty validation, and the free gateway's account, implementation and deployment. M3's heatmap is implemented; next
-are neighbor groups and calendar-adjusted co-deviation/lag analysis with later-period
-checks. M5's initial benchmark/ARIMA pilot checkpoint is complete; the full study
+uncertainty validation, and the free gateway's account, implementation and deployment. M3's heatmap is deployed and its
+offline relationship study found no confirmed association; by user decision it is
+revisited around 2026-10-15 with more history (rerun, predictive check, presentation). M5's initial benchmark/ARIMA pilot checkpoint is complete; the full study
 remains in progress with calibration and holdout unscored. Provider-contract
 uncertainty still blocks preferred-option claims, and no forecast display or public
 routing service has been released.
@@ -722,6 +738,7 @@ routing service has been released.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-24 UTC | Test M3 relationships offline on M5's frozen snapshot with a pre-registered discovery (to 09-02) and confirmation (09-02 to 09-16) split, 50 km campus-center neighbor pairs, autocorrelation-adjusted Spearman tests, BH per family and system-wide/residual-hour checks; never read M5's final holdout | Wait histories are highly persistent, so naive tests overstate association. A fixed protocol, later-period confirmation and M5 holdout isolation keep a negative or positive result credible. Distance does not select tests, so neighbors can be compared with distant pairs |
 | 2026-09-24 UTC | Dispatch the website workflow hourly from an EventBridge rule through an API destination and a repository-scoped fine-grained token (Actions read/write only), with a CloudWatch alarm on failed invocations; keep GitHub cron only until hourly delivery is observed | User decision. GitHub cron ran 3–9 hours apart on 2026-09-23, so two-hour context expired between builds. Reuses the tested workflow, protected sync and public checks without moving the build into AWS; an expired or revoked token fails without retry, hence the alarm |
 | 2026-09-23 UTC | Route eligible destinations to OpenStreetMap campus centers labeled "ER entrance unconfirmed" until entrances are reviewed; reviewed entrances (official, imagery or site visit, within 1 km of campus) always take precedence; 300 m campus snap tolerance | User decision after no entrance evidence was found; supersedes the 2026-09-14 rule that campus points cannot enable routing. Labels, a recommendation blocker and the `arrival` field keep the approximation visible; 54/54 live routes ended ≤61 m from campus points |
 | 2026-09-23 UTC | Record official active/service/explicit-age evidence per facility in the registry, keep `emergency_entrance` null, and never substitute campus centers, address geocodes or unconfirmed volunteer map points | Official pages and OpenStreetMap give no emergency arrival coordinates; the 2026-09-14 gate requires exact entrances. Explicit-only age evidence avoids assuming pediatric scope |
@@ -756,6 +773,7 @@ routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-24 UTC | M3 relationship study | Added protocol, `edwait/relationships.py`, runner, eight tests, aggregate results and two figures. 1,520 tests per period; one discovery candidate, none confirmed; neighbors indistinguishable from distant pairs. Discovery supported only from 2026-08-19 because of M1's coverage rule (recorded as an execution note, no rule changed). 72 Python/41 JS tests passed. [Evidence](m3-validation.md#relationship-study--2026-09-24-utc) | Offline only; no artifact, schema, S3 or dashboard change. `relationships.json` remains proposed |
 | 2026-09-24 UTC | M0/M1 hourly build trigger | User configured connection/API destination `github-dashboard-dispatch`, rule `dashboard_hourly` (`cron(17 * * * ? *)`), role `eventbridge-github-dashboard-dispatch` and alarm `dashboard-dispatch-failed`. Read-only check at 00:31–00:33 UTC confirmed the configuration; no invocation yet (created after the 00:17 slot); alert email pending confirmation. Later 2026-09-23 scheduled runs were 3–5 hours apart. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) | AWS configuration live; hourly delivery not yet observed. Repository workflow unchanged (cron retained as backup) |
 | 2026-09-23 UTC | M2 campus fallback and entrance tooling | Added `campus_point` for all 20 facilities, `arrival()` precedence, `arrival` in `travel.json`, campus labeling in status/rows/disclosure, `python -m edwait.entrances` (list/geojson/set/clear with eligibility-rule validation) and `scripts/check_routes.py`. 54/54 live routes passed; local end-to-end Compare returned 18 labeled rows. 64 Python/41 JS tests passed. [Evidence](m2-destinations-2026-09-23.md#campus-center-fallback-user-decision-2026-09-23) | Deployed `36d89bf` via [run 35833123203](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35833123203) (07:44 UTC); independent public check passed. Public Compare stays disabled without a gateway. [Evidence](production-followup-2026-09-23.md#campus-fallback-release-through-github-actions) |
 | 2026-09-23 UTC | M3 heatmap | Implemented the Versus usual heatmap with shared time control, row-to-focus linking (click/Enter/Space), tooltips, summary table and limits. Five JS tests plus a published-module check; live-history render and Chrome desktop/390/320 px review passed. [Evidence](m3-validation.md) | Deployed 07:21 UTC with `fa842c8` via documented direct S3 publication; public check passed. M3 remains in progress |

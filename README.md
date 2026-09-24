@@ -6,8 +6,8 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 **[Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html).**
 M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
 2026-09-22. M2's map and illustrative travel interface are published; real routing
-and recommendations remain disabled. M3's first view, a difference-from-usual
-heatmap, is in progress; M4 remains planned. M5's offline benchmark
+and recommendations remain disabled. M3's difference-from-usual heatmap is
+published and an offline relationship study found no confirmed pair association; M4 remains planned. M5's offline benchmark
 and ARIMA development study is in progress, with no public forecasts.
 See the [release evidence](docs/aws-deployment-2026-09-22.md) and
 [current plan](docs/development-plan.md).
@@ -45,7 +45,8 @@ observation.
 - [M2 destination evidence](docs/m2-destinations-2026-09-23.md): official status,
   service and age evidence for all 20 facilities, labeled campus-center fallback,
   live route validation and the entrance-review tool.
-- [M3 validation](docs/m3-validation.md): difference-from-usual heatmap and limits.
+- [M3 validation](docs/m3-validation.md) and [relationship protocol](docs/m3-relationship-protocol.md):
+  difference-from-usual heatmap, neighbor groups, pair-association study and limits.
 - [M5 benchmarks](docs/m5-validation.md) and [ARIMA pilot](docs/m5-arima-validation.md):
   frozen development study, error/support results, and remaining validation.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
@@ -64,7 +65,8 @@ observation.
 - [Dashboard](dashboard/index.qmd)
 - [All-hospital renderer](dashboard/overview.py), [time/legend controls](dashboard/overview.mjs),
   and [page styles](dashboard/latest.css)
-- [Difference-from-usual heatmap](dashboard/heatmap.mjs) (M3)
+- [Difference-from-usual heatmap](dashboard/heatmap.mjs) and offline
+  [relationship study](edwait/relationships.py) with its [runner](scripts/m3_relationships.py) (M3)
 - [Render and deployment workflow](.github/workflows/dashboard.yml)
 - [Travel context](edwait/travel.py), [TomTom Routing adapter](edwait/routing.py),
   [comparison bars](dashboard/travel.mjs), [origin controls](dashboard/origin.mjs),
