@@ -3,8 +3,9 @@
 M3 is **in progress**. The first deliverable, a facility-by-time heatmap of
 difference from usual with linked facility histories, is implemented. Neighbor
 groups and a same-time/lagged relationship study are now run offline (below),
-with a negative result. Held-out predictive checks, geographic placement and
-replay remain planned. Nothing here claims patient movement or causal spillover.
+with a negative result. Geographic placement and replay are implemented and
+validated locally (2026-09-26, not deployed). Held-out predictive checks remain
+for the 2026-10-15 checkpoint. Nothing here claims patient movement or causal spillover.
 
 ## Heatmap — 2026-09-23 UTC
 
@@ -152,3 +153,53 @@ co-movement larger than that among these facilities is unlikely in this window.
 Acceptance status: the explorer does not yet support episode inspection beyond
 the heatmap; calendar, serial-dependence and later-period checks are implemented
 and found no stable relationship. M3 remains in progress.
+
+## Map and replay — 2026-09-26 UTC
+
+Implemented and validated locally; **not deployed**. The Versus usual section gains
+a map and a replay bar under the heatmap. Files: [geo.mjs](../dashboard/geo.mjs)
+(states, snapshot, replay controls), [geo-map.mjs](../dashboard/geo-map.mjs)
+(MapLibre markers), the replay outline in [heatmap.mjs](../dashboard/heatmap.mjs),
+wiring in [app.mjs](../dashboard/app.mjs), markup and disclosure in
+[index.qmd](../dashboard/index.qmd), styles in [latest.css](../dashboard/latest.css).
+
+- Each hospital sits at its OpenStreetMap campus center, now embedded in the page's
+  registry JSON. No new artifact or storage contract: colors come from the same
+  binned `comparisons.json` history as the heatmap (hourly over seven days,
+  15-minute over 24 hours), in the heatmap's seven diverging steps.
+- Markers are buttons with glyphs (▲ 10+ above usual, ▼ 10+ below, ● within 10,
+  ? no usual range, – no reading), an accessible label naming the hospital, state
+  and period, and the focused hospital ringed. Activating one focuses that hospital.
+- Replay: a slider over the window's periods, Play/Pause (one period per 0.7 s,
+  stopping at the latest), and Latest. The selected period is outlined in the
+  heatmap, which moves in place without re-rendering. The slider's
+  `aria-valuetext` carries the period, so playback does not flood a live region.
+  A rebuild keeps the chosen period while it remains in the window; switching
+  between 24 hours and 7 days returns to the latest period.
+- View: the page's existing area groups (all hospitals, three states, and M3's
+  50 km neighbor groups) frame the map, separating the Memphis area's seven
+  campuses. The map refits on resize until the user pans or zooms.
+- Map code and tiles load only when the section nears the viewport. Viewing loads
+  the map area from OpenFreeMap, as the origin map does; the disclosure says so.
+  If the map fails, a status line points to the heatmap, which shows the same values.
+
+Validation: 7 new tests in [geo.test.mjs](../tests/geo.test.mjs) (states and
+glyphs, snapshot equals the heatmap column and skips hospitals without a campus,
+period persistence, the heatmap outline, stepping/play/latest/window reset, views,
+map failure). Suites: 90 Python and 67 JavaScript tests passed; Quarto rendered.
+The desktop app's browser pane was hidden, so it could not draw; headless Chrome
+(temporary profile, local review server with read-only S3 history) was used
+instead. At 1264 px: 20 markers on the basemap; stepping the slider from period
+167 to 161 changed every marker and moved the heatmap outline; activating a marker
+focused Mississippi Baptist; the Memphis-area view separated the cluster (Baptist
+Memphis and Children's, about 0.5 km apart, still touch until zoomed). No element
+extended past the section. Fresh loads at 390 and 320 px framed all 20 hospitals
+with no page overflow; the smallest text was 16 px throughout. The only console
+message was the shared map style's missing `circle-11` POI icon, present since
+the origin map's release.
+
+Limits: the same as the heatmap, plus map placement by campus center; nearness is
+not a service area and shared colors are not evidence of patient movement. The
+acceptance criterion on inspecting the episodes behind an association has nothing
+to inspect yet, because no association was confirmed; replay and the linked focus
+chart let any period be inspected.

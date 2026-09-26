@@ -238,6 +238,8 @@ s3://mem-ed-wait-times-dashboard/
   comparisons.mjs
   overview.mjs     # shared time controls and visible-line y-axis scaling
   heatmap.mjs      # M3 difference-from-usual heatmap; reads comparisons.json only
+  geo.mjs          # M3 map replay (added 2026-09-26, not yet deployed); comparisons.json only
+  geo-map.mjs      # M3 map markers; tiles come directly from OpenFreeMap, as for origin-map.mjs
   area.mjs         # M4 area counts; reads comparisons.json and data/latest.json only
   latest.css
   fonts/

@@ -198,6 +198,36 @@ pre { background: var(--surface); color: var(--muted); padding: 15px; }
 .heatmap-note { color: var(--faint); text-align: right; margin: 4px 0 0; }
 .heatmap-stage .data-disclosure > p { max-width: 85ch; line-height: 1.7; }
 @media (forced-colors: active) { .heat-cell { forced-color-adjust: none; } }
+.heat-replay { fill: none; stroke: var(--ink); stroke-width: 2; pointer-events: none; }
+/* M3 map and replay: markers reuse the heatmap's colors; ▲/▼/●/? carry the state without color. */
+.geo-panel { margin-top: 22px; }
+.geo-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 12px; }
+.geo-toolbar button { background: transparent; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); padding: 8px 14px; font: 16px var(--font); min-height: 44px; }
+.geo-toolbar button[aria-pressed="true"] { background: var(--accent); color: #08201f; }
+.geo-toolbar button:disabled { color: var(--faint); }
+.geo-slider { flex: 1 1 260px; min-width: 0; height: 44px; accent-color: var(--accent); }
+.geo-period { color: var(--muted); font: 16px/1.5 var(--font); }
+.geo-view { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); max-width: 100%; min-width: 0; margin-left: auto; }
+.geo-view select { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font: 16px var(--font); max-width: 100%; min-width: 0; min-height: 44px; text-overflow: ellipsis; }
+.geo-frame { position: relative; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.geo-map { height: 460px; width: 100%; background: var(--surface); font: 16px var(--font); }
+.geo-attribution { margin: 8px 0; color: var(--muted); font: 16px/1.5 var(--font); }
+.geo-status { color: var(--accent); margin: 10px 0; }
+.geo-status:empty { display: none; }
+.geo-marker { width: 32px; height: 32px; padding: 0; border: 2px solid var(--bg); border-radius: 50%; display: grid; place-items: center;
+  font: 700 16px/1 var(--font); color: var(--bg); cursor: pointer; box-shadow: 0 0 0 1px rgba(237, 243, 247, .4); }
+.geo-marker.heat-near, .geo-marker.heat-below-1, .geo-marker.heat-above-1 { color: var(--ink); }
+.geo-marker.geo-unsupported { background: repeating-linear-gradient(45deg, #6f8594 0 2px, var(--surface) 2px 5px); color: var(--ink); }
+.geo-marker.geo-empty { background: var(--surface); color: var(--faint); border-color: var(--line); }
+.geo-marker.selected { outline: 3px solid var(--accent); outline-offset: 2px; }
+.geo-marker:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.geo-map .maplibregl-ctrl-group { background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
+.geo-map .maplibregl-ctrl-group button { width: 44px; height: 44px; padding: 0; border-radius: 0; }
+.geo-map .maplibregl-ctrl-icon { filter: invert(1); }
+.geo-map .maplibregl-cooperative-gesture-screen { font: 16px/1.5 var(--font); padding: 16px; }
+.geo-map canvas:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+@media (max-width: 600px) { .geo-map { height: 360px; } }
+@media (forced-colors: active) { .geo-marker { forced-color-adjust: none; } }
 /* M4 area counts: reuse the heatmap's above/below hues; direction also carried by position and ▲/▼. */
 .area-stage { border-top: 1px solid var(--line); padding: 26px 0 20px; }
 .area-picker { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); max-width: 100%; min-width: 0; }

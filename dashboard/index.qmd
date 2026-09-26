@@ -87,7 +87,8 @@ if context is not None and any(entry["history"] for entry in context["facilities
     display(HTML('<p class="overview-stamp" title="Overview updates with the site build; gaps over 20 minutes stay blank">' +
                  'History · ' + html.escape(prepared.strftime('%b %d, %I:%M %p %Z')) + '</p>'))
 display(HTML('<script type="application/json" id="facility-registry">' +
-             json.dumps([{"slug": f["slug"], "display_name": f["display_name"], "short_name": short_name(f)}
+             json.dumps([{"slug": f["slug"], "display_name": f["display_name"], "short_name": short_name(f),
+                          "campus": {k: f["campus_point"][k] for k in ("latitude", "longitude")} if f.get("campus_point") else None}
                          for f in facilities]).replace("<", "\\u003c") +
              '</script>'))
 display(HTML('<script type="application/json" id="area-groups">' +
@@ -122,8 +123,21 @@ display(HTML('<div class="focus-toolbar"><label for="hospital-select">Focus</lab
   <div class="heatmap-legend" aria-label="Color key"></div>
   <div class="heatmap-chart" tabindex="-1" role="region" aria-label="Difference from usual for all hospitals"></div>
   <p class="heatmap-note"></p>
+  <div class="geo-panel">
+    <div class="geo-toolbar">
+      <button type="button" class="geo-play" aria-pressed="false" disabled>Play</button>
+      <input type="range" class="geo-slider" min="0" max="0" value="0" step="1" aria-label="Replay period" disabled>
+      <button type="button" class="geo-latest" disabled>Latest</button>
+      <output class="geo-period">No history to replay</output>
+      <label class="geo-view"><span>View</span><select class="geo-area"></select></label>
+    </div>
+    <div class="geo-frame"><div class="geo-map" role="region" aria-label="Map of hospitals colored by difference from usual in the replayed period"></div></div>
+    <p class="geo-attribution"><a href="https://openfreemap.org/">OpenFreeMap</a> · <a href="https://openmaptiles.org/">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a></p>
+    <p class="geo-status" role="status" aria-live="polite"></p>
+  </div>
   <details class="data-disclosure"><summary>Summary table &amp; limits</summary>
     <p>Each period shows the median difference between published readings and that hospital’s past-only usual median (M1 references). Rows that change together here are not evidence of patients moving between hospitals; shared calendar patterns, reporting changes and collection gaps can align colors.</p>
+    <p>The map places each hospital at its OpenStreetMap campus center and colors it with the replayed period, which is outlined in the heatmap: ▲ 10+ minutes above usual, ▼ 10+ below, ● within 10, ? no usual range, – no reading. Select a marker to focus that hospital. Hospitals near each other sharing a color are not evidence that patients moved between them. Viewing the map loads its area from OpenFreeMap; no location of yours is used.</p>
     <div class="heatmap-table table-scroll" tabindex="0" role="region" aria-label="Heatmap summary table"></div>
   </details>
 </section>

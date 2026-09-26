@@ -10,7 +10,7 @@ is pushed or deployed unless an entry below says so.
 
 ## Resume here
 
-Next action: step 9 (M3 map view and replay controls); re-check the SNS topic between steps.
+Next action: step 10 (time-gated checkpoint); then a final SNS check and wrap-up.
 
 ## Rules for this run
 
@@ -35,7 +35,7 @@ Next action: step 9 (M3 map view and replay controls); re-check the SNS topic be
 | 6 | Test routes at rush hour | Claude; weekday peak only | Partial; live run blocked (time) | Profile evidence done: 162 historical-mode requests for Monday 03:00/08:00/17:00 CDT, all within tolerance; peaks add median ~4.4 min, max 8.4 min ([m2-validation](m2-validation.md#traffic-profiles-and-rush-hour--2026-09-26-utc)). The live weekday-peak run needs Monday 2026-09-28, 12:00–14:00 or 21:00–23:00 UTC |
 | 7 | Draft the meaningful-difference (benefit) rule | Claude | Done (result: no rule qualifies) | Pre-registered backtest (`996a2f1`) on pre-holdout data: no fixed margin or screen reached 0.90 precision (best S½ 0.875; current screen 0.85); preferred-option claims stay disabled. [Results](m2-benefit-validation.md) |
 | 8 | M4 historical-alternatives replay | Blocked on M2 | Blocked (dependency) | Needs the deployed gateway and live traffic-hour validation (steps 3c, 6). `edwait/benefit.py` now holds reusable replay logic for three public origins |
-| 9 | M3 map view and replay controls | Claude | Not started | |
+| 9 | M3 map view and replay controls | Claude | Done (local only; not deployed) | `dashboard/geo.mjs`, `geo-map.mjs`, heatmap replay outline, area views; 7 new tests (90 Python / 67 JS pass); headless Chrome desktop/390/320 checks passed ([evidence](m3-validation.md#map-and-replay--2026-09-26-utc)). Deploying needs the user's approval to merge/push |
 | 10 | 2026-10-15 checkpoint: M3 rerun, M5 holdout decision and new study, M4 re-test | Time-gated | Not started | |
 
 ## Human review queue
@@ -140,3 +140,15 @@ Next action: step 9 (M3 map view and replay controls); re-check the SNS topic be
   0.92–1.00 under screen rules. Readings an hour after arrival: 0.60–0.70. Result
   recorded as the drafted (negative) rule; nothing public changed. Step 8 stays
   blocked on M2 deployment and live traffic validation.
+- 2026-09-26 01:10 UTC — Step 9. Built the map and replay under the heatmap (markers
+  as buttons with ▲/▼/●/? glyphs colored by the heatmap bins; slider/Play/Latest
+  outlining the heatmap column; area views; lazy MapLibre; campus points embedded in
+  the page registry; no new artifact). The desktop app's browser pane was hidden
+  (`visibilityState: hidden`, no animation frames), so neither map could start there;
+  replay controls were confirmed through the DOM. Visual checks used headless Chrome
+  with a temporary scratchpad profile: 20 markers, replay 167→161 updated markers
+  and the outline, marker activation focused Mississippi Baptist, Memphis-area view
+  separated the cluster, fresh 390/320 px loads framed all hospitals with no page
+  overflow and a 16 px text minimum. Fixed two issues found in review (stale
+  framing after resize; overlapping Memphis markers). Pre-existing console warning:
+  the shared map style's `circle-11` icon is missing from the OpenFreeMap sprite.

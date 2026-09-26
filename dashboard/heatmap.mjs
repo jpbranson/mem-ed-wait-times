@@ -49,7 +49,7 @@ export function summarize(row) {
 
 const dayFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric"});
 const timeFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit"});
-const span=(cell,binMs)=>`${dayFormat.format(cell.start)}, ${timeFormat.format(cell.start)}–${timeFormat.format(cell.start+binMs)}`;
+export const span=(cell,binMs)=>`${dayFormat.format(cell.start)}, ${timeFormat.format(cell.start)}–${timeFormat.format(cell.start+binMs)}`;
 
 const hourFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"numeric",hourCycle:"h23"});
 // Label Chicago midnights (7 days) or 6-hour marks (24 hours), thinned to fit and kept off the edges.
@@ -64,9 +64,17 @@ export function ticks(model, limit) {
   return marks.filter((_,i)=>i%step===0);
 }
 
-export function renderHeatmap(model, {width=900, focus=null}={}) {
+// Outline of the replayed period, shared with the map; moved in place during replay.
+function replayMarker(layout, index) {
+  const x=index===null ? 0 : layout.labelWidth+index*layout.cellWidth;
+  return `<rect class="heat-replay" x="${x.toFixed(2)}" y="${layout.top}" width="${Math.max(2,layout.cellWidth).toFixed(2)}" `+
+    `height="${layout.bottom-layout.top}" visibility="${index===null ? "hidden" : "visible"}" aria-hidden="true"/>`;
+}
+
+export function renderHeatmap(model, {width=900, focus=null, marker=null}={}) {
   const labelWidth=width<640 ? 168 : 190, right=width-12, top=8, rowHeight=24, gap=2;
   const cellWidth=(right-labelWidth)/model.columns, bottom=top+model.rows.length*rowHeight;
+  const layout={labelWidth,cellWidth,top,bottom};
   let content=`<title id="heatmap-title">Difference from usual by hospital over ${model.hours} hours</title>`+
     `<desc id="heatmap-description">Rows are hospitals; columns are ${model.binMs/60000}-minute periods in America/Chicago time. `+
     "Color shows the median minutes above or below that hospital's usual median. Blank periods have no reading; hatched periods lack a usual range. A summary table follows.</desc>"+
@@ -91,6 +99,7 @@ export function renderHeatmap(model, {width=900, focus=null}={}) {
     content+=`<line class="heat-tick" x1="${x}" x2="${x}" y1="${bottom}" y2="${bottom+6}"/>`+
       `<text x="${x}" y="${bottom+26}" text-anchor="middle">${escape(dayFormat.format(tick.at))}<tspan x="${x}" dy="20">${escape(timeFormat.format(tick.at))}</tspan></text>`;
   }
+  content+=replayMarker(layout,marker);
   const svg=`<svg viewBox="0 0 ${width} ${bottom+56}" role="group" aria-labelledby="heatmap-title heatmap-description">${content}</svg>`;
   const table='<table><caption>Periods by hospital in this window (median difference from usual median)</caption><thead><tr>'+
     '<th scope="col">Hospital</th><th scope="col">Periods with readings</th><th scope="col">With usual range</th>'+
@@ -99,7 +108,7 @@ export function renderHeatmap(model, {width=900, focus=null}={}) {
       const s=summarize(row);
       return `<tr><th scope="row">${escape(row.full)}</th><td>${s.observed}</td><td>${s.supported}</td><td>${s.above}</td><td>${s.below}</td><td>${s.largest===null ? "None" : signed(s.largest)}</td></tr>`;
     }).join("")+"</tbody></table>";
-  return {svg,table};
+  return {svg,table,layout};
 }
 
 export function renderLegend() {
@@ -110,7 +119,7 @@ export function renderLegend() {
 export function mountHeatmap(root, {expected, onSelect=()=>{}}) {
   const chart=root.querySelector(".heatmap-chart"), table=root.querySelector(".heatmap-table"), note=root.querySelector(".heatmap-note");
   root.querySelector(".heatmap-legend").innerHTML=renderLegend();
-  let lastKey="";
+  let lastKey="", layout=null, marked=null;
   const choose=target=>{ const row=target.closest?.(".heat-row"); if(row) onSelect(row.dataset.slug); };
   chart.addEventListener("click",event=>choose(event.target));
   chart.addEventListener("keydown",event=>{
@@ -122,12 +131,20 @@ export function mountHeatmap(root, {expected, onSelect=()=>{}}) {
       const key=JSON.stringify([context?.generated_at,hours,focus,width]);
       if(key===lastKey) return;
       lastKey=key;
-      if(!context) { chart.innerHTML="<p>History is unavailable until a valid comparison artifact loads.</p>"; table.innerHTML=""; note.textContent=""; return; }
+      if(!context) { chart.innerHTML="<p>History is unavailable until a valid comparison artifact loads.</p>"; table.innerHTML=""; note.textContent=""; layout=null; return; }
       const active=document.activeElement?.closest?.(".heat-row")?.dataset.slug;
-      const model=binHeatmap(context,expected,hours), view=renderHeatmap(model,{width,focus});
-      chart.innerHTML=view.svg; table.innerHTML=view.table;
+      const model=binHeatmap(context,expected,hours), view=renderHeatmap(model,{width,focus,marker:marked});
+      chart.innerHTML=view.svg; table.innerHTML=view.table; layout=view.layout;
       if(active) chart.querySelector(`.heat-row[data-slug="${CSS.escape(active)}"]`)?.focus({preventScroll:true});
       note.textContent=`Through ${dayFormat.format(model.end)}, ${timeFormat.format(model.end)} · ${model.binMs/60000}-minute periods · America/Chicago`;
+    },
+    // Replay moves only the outline; the grid itself is not re-rendered.
+    mark(index) {
+      marked=index;
+      const rect=chart.querySelector?.(".heat-replay");
+      if(!rect || !layout) return;
+      rect.setAttribute("visibility",index===null ? "hidden" : "visible");
+      if(index!==null) rect.setAttribute("x",(layout.labelWidth+index*layout.cellWidth).toFixed(2));
     }
   };
 }

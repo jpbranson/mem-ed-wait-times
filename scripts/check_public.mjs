@@ -30,7 +30,7 @@ if (expectedSite) {
     assert.equal(value.text, await readFile(join(expectedSite, path), 'utf8'), `${path}: public bytes differ from this build`);
   }
   // Browser modules are listed Quarto resources; a missing one breaks the page silently.
-  for (const path of ['app.mjs', 'heatmap.mjs', 'area.mjs', 'travel.mjs', 'comparisons.mjs']) {
+  for (const path of ['app.mjs', 'heatmap.mjs', 'geo.mjs', 'geo-map.mjs', 'area.mjs', 'travel.mjs', 'comparisons.mjs']) {
     const module = await get(path, /javascript/);
     assert.equal(module.text, await readFile(join(expectedSite, path), 'utf8'), `${path}: public bytes differ from this build`);
   }

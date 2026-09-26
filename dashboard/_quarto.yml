@@ -11,6 +11,8 @@ project:
     - comparisons.json
     - travel.mjs
     - heatmap.mjs
+    - geo.mjs
+    - geo-map.mjs
     - area.mjs
     - origin.mjs
     - origin-map.mjs

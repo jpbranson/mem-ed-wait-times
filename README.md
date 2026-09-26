@@ -96,6 +96,8 @@ History in the overview updates with the build, while individual readings refres
 independently. A Versus usual heatmap (M3) colors each hospital's hourly or
 15-minute median difference from its own usual median; selecting a row focuses
 that hospital. It describes readings, not patient movement between hospitals.
+Below it, a map (implemented 2026-09-26, not yet deployed) places each hospital at
+its campus center in the same colors, with a replay slider and area views.
 M4 adds an Across an area view that counts hospitals above or below
 their own usual in a chosen area (all, state, or 50 km neighbor group) beside a
 typical count, and a per-hospital typical-change graphic (median and 90th
