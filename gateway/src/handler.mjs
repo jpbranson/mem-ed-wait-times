@@ -3,11 +3,29 @@
 
 const API_HEADERS = {"Content-Type": "application/json", "Cache-Control": "no-store",
                      "Referrer-Policy": "no-referrer", "X-Content-Type-Options": "nosniff"};
-const TOO_MANY = new Set(["rate_limited", "provider_limit_reached", "request_budget_exhausted"]);
+const TOO_MANY = new Set(["rate_limited", "client_rate_limited", "provider_limit_reached", "request_budget_exhausted",
+                          "daily_budget_exhausted"]);
 const UNAVAILABLE = new Set(["routing_unavailable", "routing_not_configured", "routing_access_denied", "request_budget_unavailable"]);
 // Conditional and range headers only: no cookies or credentials reach the asset bucket.
 const FORWARDED = ["If-None-Match", "If-Modified-Since", "Range"];
 const DROPPED = /^(x-amz-|server$|set-cookie$)/i;
+
+// The client's network for per-client limits: an IPv4 address, or an IPv6 /64 (one
+// subscriber usually holds a whole /64 and can rotate addresses within it). Cloudflare
+// sets CF-Connecting-IP; anything unparseable shares one "unknown" limit.
+export function clientAddress(value) {
+  const text = String(value ?? "").trim().toLowerCase();
+  const octets = text.split(".");
+  if (octets.length === 4 && octets.every(o => /^\d{1,3}$/.test(o) && Number(o) <= 255)) return octets.map(Number).join(".");
+  const halves = text.split("::");
+  if (!/^[0-9a-f:]+$/.test(text) || halves.length > 2) return "unknown";
+  const [left, right] = halves.map(h => h ? h.split(":") : []);
+  const zeros = 8 - left.length - (right?.length ?? 0);
+  if (right ? zeros < 1 : zeros !== 0) return "unknown";
+  const groups = [...left, ...Array(right ? zeros : 0).fill("0"), ...(right ?? [])];
+  if (!groups.every(g => /^[0-9a-f]{1,4}$/.test(g))) return "unknown";
+  return groups.slice(0, 4).map(g => g.padStart(4, "0")).join(":") + "::/64";
+}
 
 export const statusFor = code => TOO_MANY.has(code) ? 429 : UNAVAILABLE.has(code) ? 503 : 422;
 const api = (body, status = 200, headers = {}) => new Response(JSON.stringify(body), {status, headers: {...API_HEADERS, ...headers}});
@@ -33,7 +51,7 @@ export async function handle(request, env, {gate, fetcher}) {
       input = JSON.parse(text);
     } catch { return api({error: "invalid_request"}, 400); }
     let result;
-    try { result = await gate.compare(input); } catch { result = {ok: false, code: "routing_unavailable"}; }
+    try { result = await gate.compare(input, clientAddress(request.headers.get("CF-Connecting-IP"))); } catch { result = {ok: false, code: "routing_unavailable"}; }
     return result.ok ? api(result.body) : api({error: result.code}, statusFor(result.code));
   }
   if (url.pathname.startsWith("/api/")) return api({error: "not_found"}, 404);

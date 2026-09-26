@@ -2,10 +2,10 @@
 
 Updated 2026-09-26 UTC. M2 is implemented as a prototype and remains **in
 progress**. The user supplied a local API key and one live v3 contract probe passed;
-account/billing settings have not been audited and no production routing service
-is configured. The [Cloudflare gateway](#cloudflare-gateway) is implemented and
-validated locally but not deployed. M0/M1 and M2's static interface were deployed on 2026-09-22;
-the public routing endpoint remains unavailable and recommendations remain disabled.
+account/billing settings have not been audited. The [Cloudflare gateway](#cloudflare-gateway)
+was deployed by the user on 2026-09-26 at an address that is not linked publicly.
+M0/M1 and M2's static interface were deployed on 2026-09-22; the S3 site keeps
+Compare disabled, and recommendations remain disabled.
 Since 2026-09-23, 18 adult and 4 child destinations are eligible using labeled
 campus centers (ER entrance unconfirmed); 54/54 live validation routes passed. See the [release record](aws-deployment-2026-09-22.md).
 The [readiness follow-up](m2-readiness-2026-09-23.md) records the live check,
@@ -59,8 +59,8 @@ is then discarded.
 
 The static S3 website cannot run this gateway. The public design, Cloudflare
 Workers Free with one SQLite Durable Object for durable shared accounting, is
-implemented in `gateway/` and described [below](#cloudflare-gateway); no account
-is configured and nothing is deployed. Before public activation, review the full
+implemented in `gateway/` and described [below](#cloudflare-gateway); it was
+deployed on 2026-09-26 but is not linked publicly. Before public activation, review the full
 provider license/privacy terms and validate real routes. Do not deploy independent
 public proxies with separate budgets or enable paid fallback.
 
@@ -223,8 +223,8 @@ the registry change with the dated evidence.
 Before enabling Compare, the page sends `GET /api/routes/status` (no origin or
 body). The local server answers `{"schema_version": 1, "available": <key configured>}`
 with `no-store`; static S3 returns an error, so the public page keeps Compare
-disabled and never posts coordinates there. A future public gateway must answer
-the same probe. The probe runs alongside the travel-context fetch and never delays it.
+disabled and never posts coordinates there. The Cloudflare gateway answers the
+same probe. The probe runs alongside the travel-context fetch and never delays it.
 
 The local route endpoint accepts only `POST /api/routes`, with JSON keys `latitude`,
 `longitude`, and `age_group`; it selects destinations from the trusted registry.
@@ -338,23 +338,51 @@ same-origin over HTTPS (which also satisfies geolocation's secure-context rule).
   same endpoint-distance checks as the Python adapter, after which geometry is
   discarded. Parsing runs in the object (30 s CPU per call on Free); the Worker
   itself only validates and forwards (10 ms CPU per request on Free).
-- Configuration: `ASSET_ORIGIN` and `TOMTOM_REQUEST_BUDGET` (1–20,000; default
-  20,000) in [wrangler.toml](../gateway/wrangler.toml); `TOMTOM_API_KEY` as a
+- Rate limits (added 2026-09-26, after the first deployment), checked in the same
+  transaction as the monthly ledger so a rejected comparison reserves nothing and
+  calls no provider:
+  - Per client: at most `CLIENT_BURST_LIMIT` (default 4) comparisons per 10 minutes
+    and `CLIENT_DAILY_LIMIT` (default 20) per UTC date, returning `client_rate_limited`
+    (429). The client is Cloudflare's `CF-Connecting-IP`: an IPv4 address, or an IPv6
+    /64, since one subscriber usually holds a whole /64 and can rotate addresses in
+    it. A missing or unparseable header falls into one shared limit.
+  - All clients: at most `TOMTOM_DAILY_BUDGET` (default 1,000, about 55 adult
+    comparisons) provider requests per UTC date, returning `daily_budget_exhausted`
+    (429). Per-address limits cannot stop a client that rotates addresses; this cap
+    means such a client needs about 20 days, not one, to spend the default monthly budget.
+  - Only comparisons that reserve provider requests count; `rate_limited`, cooldown,
+    configuration and context failures do not. The page shows its own message for
+    each code. The page sends a comparison only on an explicit Compare, so the
+    defaults leave room for normal use (new pins, the other age group, retries).
+  - Workers Free has no Cloudflare rate-limiting rule for a `workers.dev` address
+    (those rules need a zone), so the limits live in the Durable Object.
+- Configuration: `ASSET_ORIGIN`, `TOMTOM_REQUEST_BUDGET` (1–20,000; default
+  20,000), `TOMTOM_DAILY_BUDGET` (1–20,000; default 1,000), `CLIENT_BURST_LIMIT` and
+  `CLIENT_DAILY_LIMIT` (1–1,000; defaults 4 and 20) in
+  [wrangler.toml](../gateway/wrangler.toml); a malformed limit disables routing
+  (`request_budget_unavailable`) rather than lifting it. `TOMTOM_API_KEY` is a
   Worker secret. `TOMTOM_ENDPOINT` exists only for loopback test mocks; any other
   value disables routing so the key cannot be sent elsewhere.
 - Privacy: the code never logs, and `observability.enabled = false` turns off
   Workers Logs and traces (no Logpush is configured). Origins exist only in request
-  memory and the outbound TomTom call. Cloudflare still processes each request as
-  the host; the page's privacy line names it. Review Cloudflare's handling before launch.
+  memory and the outbound TomTom call. Client addresses reach the Durable Object only
+  in memory: it stores a 128-bit HMAC-SHA-256 of the client network under a random
+  salt that is replaced each UTC date (`salts(day, salt)`), with one
+  `clients(day, client, at)` row per counted comparison. Rows and salts from earlier
+  dates are deleted on the next comparison, so an identifier never links a client
+  across dates. The salt sits beside the identifiers, so the account owner could
+  test a guessed address against the current date's rows; nobody else can read them.
+  Cloudflare still processes each request as the host; the page's privacy line
+  names it. Review Cloudflare's handling before launch.
 
 **Local operation.** From `gateway/`, `npm install` installs the pinned wrangler
 4.141.0 (npm 11 skipped the esbuild/workerd install scripts on 2026-09-26; bundling
 and the local runtime still worked). `npm run build` bundles with a dry run
-(16.75 KiB). After `python -m edwait.prepare` and a Quarto render:
+(20.67 KiB with the rate limits). After `python -m edwait.prepare` and a Quarto render:
 
 ```powershell
 cd gateway
-node scripts/local-check.mjs          # mock provider; 11 checks; report in ..\.cache\
+node scripts/local-check.mjs          # mock provider; 13 checks; report in ..\.cache\
 node scripts/local-check.mjs --serve  # keep a mock-backed gateway running for a browser
 node scripts/local-check.mjs --live   # one real comparison: ~18 TomTom requests
 ```
@@ -364,6 +392,8 @@ public copy) and a loopback TomTom mock, so the default and `--serve` modes send
 nothing to TomTom. `--live` has wrangler read the key from `..\.env.local` with
 `--env-file`; it is never printed or passed on a command line. Its ledger is
 temporary, so reserve live requests in `.cache/tomtom-usage.sqlite3` as well.
+Every local request is one client, so the mock checks and `--serve` lift the
+per-client limits except in the two checks that test them.
 
 **Validation (2026-09-26 UTC).** 14 unit tests (`tests/gateway.test.mjs`, part of
 the site's Node suite) cover input and context validation, request format, parsing
@@ -377,29 +407,48 @@ restart; and the unconfigured state. Through the served page, Compare returned 1
 labeled rows with no console errors. One live comparison from downtown Memphis
 returned 18/18 routes in 4.6 s (2026-09-26 00:32 UTC).
 
-**Deployment (for the account owner, not done).**
+**Rate-limit validation (2026-09-26 ~02:50 UTC, local; not yet deployed).** Three
+new unit tests (17 gateway tests; Node suite 71/71, Python 90/90) cover IPv4/IPv6 /64
+grouping and the shared fallback; burst and daily per-client limits with another
+network unaffected, a rejected comparison reserving nothing, the window sliding,
+hashed identifiers with no address in storage, and a new salt and deleted rows at
+the next UTC date; the all-client daily cap and its reset; limit parsing; and 429
+mapping. In `wrangler dev` with the mock, 13/13 checks passed: the 11 above with
+per-client limits lifted, plus the daily cap and a per-client burst limit, each
+rejecting after a restart with no provider call. The page maps both new codes to
+their own messages (travel test).
 
-1. Create or choose a Cloudflare account on the Workers Free plan; review the
-   Workers/Durable Objects terms and Cloudflare's privacy policy for handling
-   user coordinates.
-2. From `gateway/`: `npx wrangler login`, then `npx wrangler secret put TOMTOM_API_KEY`
-   (typed at the prompt, never in a command line or file).
-3. Consider lowering `TOMTOM_REQUEST_BUDGET` (for example to 15,000): the Worker's
-   ledger cannot see requests made by local scripts or the review server.
-4. `npm run build`, then `npx wrangler deploy`. Then check the status probe, one
-   Compare from a public point, cache headers, and that the S3 site is unchanged.
-5. Link the `workers.dev` URL publicly only after the remaining M2 gates below.
+**Deployment (done by the account owner on 2026-09-26).** The account owner
+deployed the Worker on Workers Free with `TOMTOM_API_KEY` as a secret; the public
+check and cache fix are recorded above. It is managed under Workers & Pages →
+`mem-ed-wait-times` at [dash.cloudflare.com](https://dash.cloudflare.com/). To redeploy
+after a gateway change, from `gateway/`: `npm run build`, then `npx wrangler deploy`
+(`npx wrangler login` first if needed; replace the key only with
+`npx wrangler secret put TOMTOM_API_KEY`, typed at the prompt, never in a command
+line or file). Then check the status probe, one Compare from a public point, cache
+headers, and that the S3 site is unchanged.
 
-There is no per-client limit: a scripted client could spend the monthly budget,
-after which the ledger stops all routing until the window rolls. Consider a
-Cloudflare rate-limiting rule before a public launch.
+Still open before linking the `workers.dev` URL publicly:
+
+1. The remaining M2 gates below.
+2. Review Cloudflare's Workers/Durable Objects terms and privacy policy for its
+   handling of user coordinates.
+3. Deploy the rate limits (implemented and validated locally on 2026-09-26; the
+   live Worker predates them), then confirm from a public connection that a fifth
+   comparison within 10 minutes returns `client_rate_limited`. The page's messages
+   for the new codes publish with the next hourly build after a push to `main`;
+   until then it shows its generic routing error for them.
+4. Consider lowering `TOMTOM_REQUEST_BUDGET` (the repository still sets 20,000; for
+   example 15,000): the Worker's ledger cannot see requests made by local scripts or
+   the review server.
 
 ## Remaining M2 acceptance work
 
 Local key configuration and one actual v3 response check are complete. Verify
 account free-plan settings, emergency arrival points and applicability, confirm the
 current wait API's clinical/averaging/update/zero-value contract, evaluate representative real routes
-and threshold sensitivity, and settle a free public gateway's operational terms.
+and threshold sensitivity, and settle the deployed gateway's privacy review and
+deploy its rate limits.
 Then review the interpretation and presentation before enabling public use.
 The local prototype and synthetic tests do not satisfy those evidence gates.
 See [dated validation](m2-validation.md) and the [living plan](development-plan.md).

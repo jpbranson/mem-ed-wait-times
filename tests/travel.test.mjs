@@ -105,6 +105,7 @@ test("TomTom traffic delay is informational and old provider contracts are rejec
 test("routing setup and quota errors remain distinct; raw provider messages never reach the page",async()=>{
   for(const [code,message] of [["routing_not_configured",/not available yet/],
     ["request_budget_exhausted",/allowance reached/],["provider_limit_reached",/provider limit/],
+    ["client_rate_limited",/limit reached for this connection/],["daily_budget_exhausted",/Today's routing allowance/],
     ["__proto__",/Road estimates unavailable/]]) {
     let result;
     const feed=createRouteFeed({fetcher:async()=>({ok:false,json:async()=>({error:code,message:"secret-key-and-origin"})}),onChange:r=>result=r});

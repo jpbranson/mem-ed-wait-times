@@ -22,6 +22,9 @@ const PUBLIC = "https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/"
 // Downtown Memphis road point used by scripts/check_routes.py: public, never a user location.
 const ORIGIN = {latitude: 35.1495, longitude: -90.049};
 const MOCK_KEY = "local-check-key";
+// Every local request comes from one client, so checks other than the limit checks lift
+// the per-client limits (the gateway's defaults are in wrangler.toml).
+const LOOSE = {CLIENT_BURST_LIMIT: "1000", CLIENT_DAILY_LIMIT: "1000"};
 const TYPES = {".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript",
   ".json": "application/json", ".css": "text/css", ".woff2": "font/woff2", ".svg": "image/svg+xml",
   ".png": "image/png", ".txt": "text/plain; charset=utf-8", ".map": "application/json"};
@@ -133,7 +136,7 @@ let worker = null;
 try {
   if (args.has("--serve")) {
     worker = await start(args.has("--live") ? {ASSET_ORIGIN: assetOrigin, TOMTOM_REQUEST_BUDGET: "60"} :
-      {ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, TOMTOM_REQUEST_BUDGET: "2000"},
+      {ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE, TOMTOM_REQUEST_BUDGET: "2000"},
       args.has("--live") ? [join(root, ".env.local")] : []);
     console.log(`Gateway (${args.has("--live") ? "LIVE TomTom" : "mock TomTom"}) at ${worker.base}/ — Ctrl+C to stop (pid ${process.pid})`);
     await new Promise(resolve => process.once("SIGINT", resolve));
@@ -151,7 +154,7 @@ try {
         reported_delay: ok.filter(r => r.traffic_delay_seconds > 0).length, unknown_delay: ok.filter(r => r.traffic_delay_seconds === null).length};
     });
   } else {
-    worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, TOMTOM_REQUEST_BUDGET: String(2 * adults + 4)});
+    worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE, TOMTOM_REQUEST_BUDGET: String(2 * adults + 4)});
     await check("dashboard pages pass through with bucket cache headers", async () => {
       const page = await fetch(worker.base + "/?x=1");
       assert.equal(page.status, 200);
@@ -205,13 +208,13 @@ try {
       assert.equal(mock.starts.length, before);
     });
     await stop(worker);
-    worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, TOMTOM_REQUEST_BUDGET: String(2 * adults + 4)});
+    worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE, TOMTOM_REQUEST_BUDGET: String(2 * adults + 4)});
     await check("ledger persists across a restart", async () => {
       const {status, data} = await compare(worker);
       assert.deepEqual([status, data], [429, {error: "request_budget_exhausted"}]);
     });
     await stop(worker);
-    worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, TOMTOM_REQUEST_BUDGET: "2000"});
+    worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE, TOMTOM_REQUEST_BUDGET: "2000"});
     await check("slow provider responses end at the comparison deadline", async () => {
       mock.delayMs = 16_000;
       const began = performance.now(), {status, data} = await compare(worker), seconds = (performance.now() - began) / 1000;
@@ -220,13 +223,33 @@ try {
       assert.ok(seconds < 20, `took ${seconds.toFixed(1)} s`);
       return {seconds: +seconds.toFixed(1)};
     });
+    // Four comparisons above (3 adult, 1 child) were recorded for this client and date
+    // within 10 minutes; the limits persist across restarts.
+    await check("the daily cap across clients stops before provider calls", async () => {
+      await stop(worker);
+      worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE,
+        TOMTOM_REQUEST_BUDGET: "2000", TOMTOM_DAILY_BUDGET: String(4 * adults)});
+      const before = mock.starts.length;
+      assert.deepEqual(await compare(worker), {status: 429, data: {error: "daily_budget_exhausted"}});
+      assert.equal(mock.starts.length, before);
+    });
+    await check("the per-client burst limit persists and stops before provider calls", async () => {
+      await stop(worker);
+      worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY,
+        TOMTOM_REQUEST_BUDGET: "2000", CLIENT_BURST_LIMIT: "3"});
+      const before = mock.starts.length;
+      assert.deepEqual(await compare(worker), {status: 429, data: {error: "client_rate_limited"}});
+      assert.equal(mock.starts.length, before);
+      await stop(worker);
+      worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE, TOMTOM_REQUEST_BUDGET: "2000"});
+    });
     await check("provider quota errors cool down, including across a restart", async () => {
       mock.status = 429;
       assert.deepEqual(await compare(worker), {status: 429, data: {error: "provider_limit_reached"}});
       mock.status = 200;
       const before = mock.starts.length;
       await stop(worker);
-      worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, TOMTOM_REQUEST_BUDGET: "2000"});
+      worker = await start({ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, ...LOOSE, TOMTOM_REQUEST_BUDGET: "2000"});
       assert.deepEqual(await compare(worker), {status: 429, data: {error: "provider_limit_reached"}});
       assert.equal(mock.starts.length, before);
     });

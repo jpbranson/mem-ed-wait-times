@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {ENDPOINT, GatewayError, candidatesFrom, compareRoutes, parseRoute, validateOrigin} from "../gateway/src/comparison.mjs";
-import {RouteGateCore, budgetLimit, endpointFrom} from "../gateway/src/gate.mjs";
-import {handle, statusFor} from "../gateway/src/handler.mjs";
+import {RouteGateCore, budgetLimit, endpointFrom, limitsFrom} from "../gateway/src/gate.mjs";
+import {clientAddress, handle, statusFor} from "../gateway/src/handler.mjs";
 import {eligible, validateRoutes} from "../dashboard/travel.mjs";
 
 let sqlite = null;
@@ -25,6 +25,9 @@ function travel() {
       {slug: "c", display_name: "Example C", eligibility: {adult: "Active emergency service unverified", child: "Unverified"},
        arrival: "campus", arrival_point: {latitude: 35.2, longitude: -90.1}, movement: movement()}]};
 }
+
+// The same context, published at the clock's current time (contexts expire after two hours).
+const current = time => ({...travel(), generated_at: new Date(time.value).toISOString()});
 
 function payload(origin = [-90.05, 35.15], destination = [-90.04, 35.14], summary = {}) {
   return {routes: [{summary: {lengthInMeters: 2058, travelDurationInSeconds: 600, trafficDelayDurationInSeconds: 60, ...summary},
@@ -179,6 +182,11 @@ test("budget, gate and endpoint configuration fail closed", () => {
   assert.equal(budgetLimit(undefined), 20000);
   assert.equal(budgetLimit(" 25 "), 25);
   for (const bad of ["0", "20001", "1e3", "-1", "2.5", "abc"]) assert.equal(code(() => budgetLimit(bad)), "request_budget_unavailable");
+  assert.deepEqual(limitsFrom({}), {monthly: 20000, daily: 1000, burst: 4, clientDaily: 20});
+  assert.deepEqual(limitsFrom({TOMTOM_DAILY_BUDGET: "50", CLIENT_BURST_LIMIT: "2", CLIENT_DAILY_LIMIT: "9"}),
+                   {monthly: 20000, daily: 50, burst: 2, clientDaily: 9});
+  for (const bad of [{TOMTOM_DAILY_BUDGET: "0"}, {TOMTOM_DAILY_BUDGET: "20001"}, {CLIENT_BURST_LIMIT: "x"}, {CLIENT_DAILY_LIMIT: "1001"}])
+    assert.equal(code(() => limitsFrom(bad)), "request_budget_unavailable");
   assert.equal(endpointFrom(undefined), ENDPOINT);
   assert.equal(endpointFrom("http://127.0.0.1:9999/calculate"), "http://127.0.0.1:9999/calculate");
   for (const bad of ["https://evil.example/calculate", "http://example.com/", "https://127.0.0.1/", "not a url"])
@@ -198,18 +206,78 @@ test("a comparison reserves its whole set first, persists usage, and stores no l
   assert.deepEqual(await second.core.compare({...ORIGIN}), {ok: false, code: "request_budget_exhausted"});
   assert.equal(second.routes.length, 0);
   assert.deepEqual(store.db.prepare("SELECT day, calls FROM requests").all().map(r => ({...r})), [{day: "2026-09-14", calls: 2}]);
-  assert.deepEqual(store.db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").all().map(r => r.name), ["requests", "state"]);
+  assert.deepEqual(store.db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").all().map(r => r.name),
+                   ["clients", "requests", "salts", "state"]);
 });
 
 test("the ledger rolls over 32 UTC dates and a clock rollback keeps newer reservations", {skip: !sqlite}, () => {
   const {core} = gate({env: {TOMTOM_REQUEST_BUDGET: "2"}});
-  core.reserve(2, now);
-  assert.equal(code(() => core.reserve(1, now + 31 * DAY)), "request_budget_exhausted");
-  core.reserve(2, now + 32 * DAY);
-  assert.equal(code(() => core.reserve(1, now)), "request_budget_exhausted");
+  core.reserve(2, now, "c");
+  assert.equal(code(() => core.reserve(1, now + 31 * DAY, "c")), "request_budget_exhausted");
+  core.reserve(2, now + 32 * DAY, "c");
+  assert.equal(code(() => core.reserve(1, now, "c")), "request_budget_exhausted");
   const broken = gate({env: {TOMTOM_REQUEST_BUDGET: "2"}});
   broken.core.sql = {exec() { throw new Error("disk"); }};
-  assert.equal(code(() => broken.core.reserve(1, now)), "request_budget_unavailable");
+  assert.equal(code(() => broken.core.reserve(1, now, "c")), "request_budget_unavailable");
+});
+
+test("client addresses group IPv6 by /64 and fall back to one shared limit", () => {
+  assert.equal(clientAddress(" 203.0.113.7 "), "203.0.113.7");
+  assert.equal(clientAddress("203.000.113.007"), "203.0.113.7");
+  const net = "2001:0db8:0001:0002::/64";
+  for (const text of ["2001:db8:1:2::1", "2001:DB8:1:2:ffff:ffff:ffff:ffff", "2001:db8:1:2:0:0:0:9"]) assert.equal(clientAddress(text), net);
+  assert.notEqual(clientAddress("2001:db8:1:3::1"), net);
+  assert.equal(clientAddress("::1"), "0000:0000:0000:0000::/64");
+  for (const bad of [null, "", "256.1.1.1", "1.2.3", "1::2::3", "2001:db8:1:2:3:4:5:6:7", "12345::", "::ffff:1.2.3.4", "host.example"])
+    assert.equal(clientAddress(bad), "unknown");
+});
+
+test("per-client limits count reserved comparisons only and never store addresses", {skip: !sqlite}, async () => {
+  const store = storage(), time = clock(), address = "198.51.100.23";
+  const g = gate({store, time, env: {TOMTOM_REQUEST_BUDGET: "1000", CLIENT_BURST_LIMIT: "2", CLIENT_DAILY_LIMIT: "3"}});
+  for (let i = 0; i < 2; i++) assert.equal((await g.core.compare({...ORIGIN}, address)).ok, true);
+  const spent = g.routes.length;
+  assert.deepEqual(await g.core.compare({...ORIGIN}, address), {ok: false, code: "client_rate_limited"});
+  assert.equal(g.routes.length, spent);
+  // Another network is unaffected; a rejected comparison reserves nothing.
+  assert.equal((await g.core.compare({...ORIGIN}, "198.51.100.24")).ok, true);
+  assert.equal(store.db.prepare("SELECT SUM(calls) AS n FROM requests").get().n, 6);
+  // The burst window slides; the daily limit then holds until the next UTC date.
+  time.value += 600_000;
+  assert.equal((await g.core.compare({...ORIGIN}, address)).ok, true);
+  time.value += 600_000;
+  assert.deepEqual(await g.core.compare({...ORIGIN}, address), {ok: false, code: "client_rate_limited"});
+  const identifiers = store.db.prepare("SELECT DISTINCT client FROM clients").all().map(r => r.client);
+  assert.equal(identifiers.length, 2);
+  assert.ok(identifiers.every(id => /^[0-9a-f]{32}$/.test(id)));
+  const dump = JSON.stringify(store.db.prepare("SELECT * FROM clients").all()) + JSON.stringify(store.db.prepare("SELECT * FROM salts").all());
+  assert.ok(!dump.includes("198.51.100"));
+  // A new UTC date brings a new salt and removes the previous date's rows.
+  const [salt] = store.db.prepare("SELECT salt FROM salts").all().map(r => r.salt);
+  time.value = Date.parse("2026-09-15T00:00:01Z");
+  const next = gate({store, time, context: current(time), env: {TOMTOM_REQUEST_BUDGET: "1000", CLIENT_BURST_LIMIT: "2", CLIENT_DAILY_LIMIT: "3"}});
+  assert.equal((await next.core.compare({...ORIGIN}, address)).ok, true);
+  assert.deepEqual(store.db.prepare("SELECT day, COUNT(*) AS n FROM clients GROUP BY day").all().map(r => ({...r})), [{day: "2026-09-15", n: 1}]);
+  const salts = store.db.prepare("SELECT day, salt FROM salts").all();
+  assert.deepEqual(salts.map(r => r.day), ["2026-09-15"]);
+  assert.notEqual(salts[0].salt, salt);
+  assert.notEqual(store.db.prepare("SELECT client FROM clients").get().client, identifiers[0]);
+  // Calls without an address share one limit rather than bypassing it.
+  const shared = gate({env: {TOMTOM_REQUEST_BUDGET: "1000", CLIENT_BURST_LIMIT: "1"}});
+  assert.equal((await shared.core.compare({...ORIGIN})).ok, true);
+  assert.deepEqual(await shared.core.compare({...ORIGIN}), {ok: false, code: "client_rate_limited"});
+});
+
+test("a daily cap across all clients limits address rotation", {skip: !sqlite}, async () => {
+  const store = storage(), time = clock(), env = {TOMTOM_REQUEST_BUDGET: "1000", TOMTOM_DAILY_BUDGET: "5"};
+  const g = gate({store, time, env});
+  assert.equal((await g.core.compare({...ORIGIN}, "192.0.2.1")).ok, true);
+  assert.equal((await g.core.compare({...ORIGIN}, "192.0.2.2")).ok, true);
+  const spent = g.routes.length;
+  assert.deepEqual(await g.core.compare({...ORIGIN}, "192.0.2.3"), {ok: false, code: "daily_budget_exhausted"});
+  assert.equal(g.routes.length, spent);
+  time.value += DAY;
+  assert.equal((await gate({store, time, env, context: current(time)}).core.compare({...ORIGIN}, "192.0.2.3")).ok, true);
 });
 
 test("missing configuration, context or storage spends nothing", {skip: !sqlite}, async () => {
@@ -270,13 +338,14 @@ function post(body, headers = {}) {
 }
 
 test("the HTTP boundary enforces origin, size and error mapping without leaking details", async () => {
-  const seen = [];
   const env = {TOMTOM_API_KEY: KEY, ASSET_ORIGIN: "https://assets.example"};
-  const ok = {compare: async input => { seen.push(input); return {ok: true, body: {schema_version: 2}}; }};
-  let response = await handle(post(ORIGIN), env, {gate: ok});
+  const seen = [], addresses = [];
+  const ok = {compare: async (input, address) => { seen.push(input); addresses.push(address); return {ok: true, body: {schema_version: 2}}; }};
+  let response = await handle(post(ORIGIN, {"CF-Connecting-IP": "2001:db8:1:2::99"}), env, {gate: ok});
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("Cache-Control"), "no-store");
   assert.deepEqual(seen, [ORIGIN]);
+  assert.deepEqual(addresses, ["2001:0db8:0001:0002::/64"]);
   for (const request of [post(ORIGIN, {Origin: "https://evil.example"}), post(ORIGIN, {Origin: ""})])
     assert.equal((await handle(request, env, {gate: ok})).status, 403);
   for (const request of [post("x".repeat(513)), post(ORIGIN, {"Content-Type": "text/plain"}), post("{"), post(ORIGIN, {"Content-Length": "0"})]) {
@@ -285,7 +354,8 @@ test("the HTTP boundary enforces origin, size and error mapping without leaking 
     assert.deepEqual(await response.json(), {error: "invalid_request"});
   }
   assert.equal(seen.length, 1);
-  for (const [error, status] of [["rate_limited", 429], ["request_budget_exhausted", 429], ["routing_not_configured", 503],
+  for (const [error, status] of [["rate_limited", 429], ["client_rate_limited", 429], ["daily_budget_exhausted", 429],
+                                 ["request_budget_exhausted", 429], ["routing_not_configured", 503],
                                  ["routing_access_denied", 503], ["invalid_origin", 422], ["no_verified_destinations", 422]]) {
     response = await handle(post(ORIGIN), env, {gate: {compare: async () => ({ok: false, code: error})}});
     assert.equal(response.status, status);

@@ -4,7 +4,7 @@ M3 is **in progress**. The first deliverable, a facility-by-time heatmap of
 difference from usual with linked facility histories, is implemented. Neighbor
 groups and a same-time/lagged relationship study are now run offline (below),
 with a negative result. Geographic placement and replay are implemented and
-validated locally (2026-09-26, not deployed). Held-out predictive checks remain
+validated locally and deployed (2026-09-26). Held-out predictive checks remain
 for the 2026-10-15 checkpoint. Nothing here claims patient movement or causal spillover.
 
 ## Heatmap — 2026-09-23 UTC
@@ -156,7 +156,8 @@ and found no stable relationship. M3 remains in progress.
 
 ## Map and replay — 2026-09-26 UTC
 
-Implemented and validated locally; **not deployed**. The Versus usual section gains
+Implemented and validated locally; deployed 2026-09-26 with `87885e4` (build
+[36209744679](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/36209744679)). The Versus usual section gains
 a map and a replay bar under the heatmap. Files: [geo.mjs](../dashboard/geo.mjs)
 (states, snapshot, replay controls), [geo-map.mjs](../dashboard/geo-map.mjs)
 (MapLibre markers), the replay outline in [heatmap.mjs](../dashboard/heatmap.mjs),

@@ -165,7 +165,9 @@ export function createRouteFeed({fetcher=globalThis.fetch, onChange=()=>{}}={}) 
             routing_not_configured:"Routing is not available yet",
             routing_access_denied:"Routing is temporarily unavailable",
             no_verified_destinations:"Emergency destinations awaiting verification",
-            rate_limited:"Another comparison is running · try again shortly"};
+            rate_limited:"Another comparison is running · try again shortly",
+            client_rate_limited:"Comparison limit reached for this connection · try again later",
+            daily_budget_exhausted:"Today's routing allowance reached · try again later"};
           if(Object.hasOwn(messages,code)) error=messages[code];
           throw Error("Route request failed");
         }

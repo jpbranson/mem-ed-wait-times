@@ -12,8 +12,8 @@ export class RouteGate extends DurableObject {
     this.core = new RouteGateCore({sql: ctx.storage.sql, transaction: fn => ctx.storage.transactionSync(fn), env, fetcher});
   }
 
-  compare(input) {
-    return this.core.compare(input);
+  compare(input, address) {
+    return this.core.compare(input, address);
   }
 }
 

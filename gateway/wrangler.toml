@@ -1,4 +1,4 @@
-# Cloudflare Workers Free routing gateway for M2. Implemented locally, not deployed.
+# Cloudflare Workers Free routing gateway for M2, deployed 2026-09-26 (not linked publicly).
 # Operation, privacy and release gates: docs/m2-operations.md#cloudflare-gateway.
 name = "mem-ed-wait-times"
 main = "src/index.mjs"
@@ -8,7 +8,10 @@ preview_urls = false
 
 [vars]
 ASSET_ORIGIN = "https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com"
-TOMTOM_REQUEST_BUDGET = "20000"
+TOMTOM_REQUEST_BUDGET = "20000"   # provider requests per 32 UTC dates, all clients
+TOMTOM_DAILY_BUDGET = "1000"      # provider requests per UTC date, all clients (~55 comparisons)
+CLIENT_BURST_LIMIT = "4"          # comparisons per client network per 10 minutes
+CLIENT_DAILY_LIMIT = "20"         # comparisons per client network per UTC date
 
 [[durable_objects.bindings]]
 name = "ROUTE_GATE"

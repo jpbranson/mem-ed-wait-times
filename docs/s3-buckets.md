@@ -238,7 +238,7 @@ s3://mem-ed-wait-times-dashboard/
   comparisons.mjs
   overview.mjs     # shared time controls and visible-line y-axis scaling
   heatmap.mjs      # M3 difference-from-usual heatmap; reads comparisons.json only
-  geo.mjs          # M3 map replay (added 2026-09-26, not yet deployed); comparisons.json only
+  geo.mjs          # M3 map replay (deployed 2026-09-26); comparisons.json only
   geo-map.mjs      # M3 map markers; tiles come directly from OpenFreeMap, as for origin-map.mjs
   area.mjs         # M4 area counts; reads comparisons.json and data/latest.json only
   latest.css
@@ -339,7 +339,7 @@ required since 2026-09-23, when labeled campus centers became the fallback while
 emergency entrances are unreviewed), and supported 90th percentile absolute changes
 in published waits at 15/30/60/120-minute horizons. Recommendations are explicitly
 disabled. Contract change dated 2026-09-26 UTC (additive, schema version unchanged,
-**not yet deployed**): each facility also carries a required `arrival_point`, the
+deployed 2026-09-26 with `87885e4`): each facility also carries a required `arrival_point`, the
 latitude/longitude of the routing target named by `arrival` (reviewed entrance or
 labeled campus center, both from the public Git registry), or null when `arrival`
 is null. The routing gateway reads these so it routes to exactly the destinations
@@ -362,11 +362,15 @@ No provider key is included in website files or collector configuration. Future
 public gateway storage remains a separate deployment decision.
 `POST /api/routes` and its `GET /api/routes/status` availability probe exist only
 in the local review server; static S3 hosting does not supply them, so the public
-page keeps Compare disabled. A Cloudflare Worker gateway implemented on 2026-09-26
-UTC (`gateway/`, validated locally, **not deployed**) would supply both at its own
+page keeps Compare disabled. A Cloudflare Worker gateway (`gateway/`, deployed
+2026-09-26 UTC at an address not linked publicly) supplies both at its own
 origin while passing this bucket's files through unchanged. Its one SQLite Durable
-Object stores only a `requests(day, calls)` usage ledger and a `state` row holding
-the provider cooldown time; no origins, routes or keys. It writes nothing to S3.
+Object stores only a `requests(day, calls)` usage ledger, a `state` row holding
+the provider cooldown time and, for the rate limits added 2026-09-26 (validated
+locally, not yet deployed), `clients(day, client, at)` rows keyed by a salted hash
+of the client network plus that date's random `salts(day, salt)` row; earlier
+dates' rows are deleted. No origins, routes, keys or client addresses. It writes
+nothing to S3.
 See [M2 operations](m2-operations.md#cloudflare-gateway).
 The raw six-field observation schema, attempts/latest contracts, and compaction
 layout are unchanged by M2. See [M2 operations](m2-operations.md).
