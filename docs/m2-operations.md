@@ -1,9 +1,10 @@
 # M2 travel comparison: local operation and release gates
 
-Updated 2026-09-23 UTC. M2 is implemented as a prototype and remains **in
+Updated 2026-09-26 UTC. M2 is implemented as a prototype and remains **in
 progress**. The user supplied a local API key and one live v3 contract probe passed;
 account/billing settings have not been audited and no production routing service
-is configured. M0/M1 and M2's static interface were deployed on 2026-09-22;
+is configured. The [Cloudflare gateway](#cloudflare-gateway) is implemented and
+validated locally but not deployed. M0/M1 and M2's static interface were deployed on 2026-09-22;
 the public routing endpoint remains unavailable and recommendations remain disabled.
 Since 2026-09-23, 18 adult and 4 child destinations are eligible using labeled
 campus centers (ER entrance unconfirmed); 54/54 live validation routes passed. See the [release record](aws-deployment-2026-09-22.md).
@@ -56,11 +57,12 @@ straight-line estimates. Route endpoints must be within 250 meters of the origin
 and 150 meters of a reviewed entrance or 300 meters of a campus center; geometry
 is then discarded.
 
-The static S3 website cannot run this gateway. Cloudflare Workers Free with one
-SQLite Durable Object is the selected design target; no account or gateway has
-been configured. Before public activation, implement durable shared accounting,
-review the full provider license/privacy terms, and validate real routes. Do not
-deploy independent public proxies with separate budgets or enable paid fallback.
+The static S3 website cannot run this gateway. The public design, Cloudflare
+Workers Free with one SQLite Durable Object for durable shared accounting, is
+implemented in `gateway/` and described [below](#cloudflare-gateway); no account
+is configured and nothing is deployed. Before public activation, review the full
+provider license/privacy terms and validate real routes. Do not deploy independent
+public proxies with separate budgets or enable paid fallback.
 
 ## Preparation and local review
 
@@ -284,6 +286,95 @@ Even a passing result **cannot enable a recommendation**: metric semantics and
 traffic uncertainty remain unverified. Code and schema enforce
 `recommendations_enabled: false`. M5 now has an [offline development study](m5-validation.md);
 it does not change this policy or provide arrival-time forecasts.
+
+## Cloudflare gateway
+
+Implemented 2026-09-26 UTC in [`gateway/`](../gateway/) and validated locally in
+Cloudflare's runtime. **Not deployed**: no Cloudflare account, secret, route or
+billing exists. It replaces nothing; the S3 site keeps working with Compare disabled.
+
+**Design.** One Worker serves the dashboard and the API from the same
+`workers.dev` origin, so the page's relative `/api/routes` requests stay
+same-origin over HTTPS (which also satisfies geolocation's secure-context rule).
+
+- Every other `GET`/`HEAD` passes through from the bucket's HTTPS object URL
+  (`ASSET_ORIGIN`) with its status and cache headers, including `no-store` on
+  `data/latest.json`. `/` maps to `index.html`. Query strings, cookies and
+  credentials are never forwarded; `x-amz-*` and `Server` headers are dropped.
+- `GET /api/routes/status` and `POST /api/routes` keep the local server's contract:
+  exact same-origin `Origin`, a JSON body of at most 512 bytes with exactly
+  `latitude`, `longitude` and `age_group`, bounded error codes with the same
+  429/503/422/400/403 mapping, `no-store`, and the v2 [route schema](routes.schema.json).
+- Destinations come from the published `travel.json`: facilities whose eligibility
+  for the requested group is null, routed to their `arrival_point`. It is fetched
+  with `no-store` for each comparison; a missing, malformed, duplicate-slug or
+  two-hour-old context returns `routing_unavailable` before anything is reserved.
+  The gateway therefore compares exactly the set the page validates, and registry
+  changes reach it with the next hourly build, with no Worker redeploy.
+- One named Durable Object (`RouteGate`) runs every comparison: one at a time
+  (others get `rate_limited`); the whole comparison reserved first in a
+  `requests(day, calls)` ledger over 32 UTC dates, never refunded; a 60-second
+  cooldown after 401/403/429, persisted so eviction or redeploy cannot clear it;
+  four workers whose starts are serialized at least 250 ms apart by the clock; a
+  15-second comparison deadline and at most 7 seconds per request; no retries; the
+  same endpoint-distance checks as the Python adapter, after which geometry is
+  discarded. Parsing runs in the object (30 s CPU per call on Free); the Worker
+  itself only validates and forwards (10 ms CPU per request on Free).
+- Configuration: `ASSET_ORIGIN` and `TOMTOM_REQUEST_BUDGET` (1–20,000; default
+  20,000) in [wrangler.toml](../gateway/wrangler.toml); `TOMTOM_API_KEY` as a
+  Worker secret. `TOMTOM_ENDPOINT` exists only for loopback test mocks; any other
+  value disables routing so the key cannot be sent elsewhere.
+- Privacy: the code never logs, and `observability.enabled = false` turns off
+  Workers Logs and traces (no Logpush is configured). Origins exist only in request
+  memory and the outbound TomTom call. Cloudflare still processes each request as
+  the host; the page's privacy line names it. Review Cloudflare's handling before launch.
+
+**Local operation.** From `gateway/`, `npm install` installs the pinned wrangler
+4.141.0 (npm 11 skipped the esbuild/workerd install scripts on 2026-09-26; bundling
+and the local runtime still worked). `npm run build` bundles with a dry run
+(16.75 KiB). After `python -m edwait.prepare` and a Quarto render:
+
+```powershell
+cd gateway
+node scripts/local-check.mjs          # mock provider; 11 checks; report in ..\.cache\
+node scripts/local-check.mjs --serve  # keep a mock-backed gateway running for a browser
+node scripts/local-check.mjs --live   # one real comparison: ~18 TomTom requests
+```
+
+The harness serves `dashboard/_site` as the asset origin (latest readings from the
+public copy) and a loopback TomTom mock, so the default and `--serve` modes send
+nothing to TomTom. `--live` has wrangler read the key from `..\.env.local` with
+`--env-file`; it is never printed or passed on a command line. Its ledger is
+temporary, so reserve live requests in `.cache/tomtom-usage.sqlite3` as well.
+
+**Validation (2026-09-26 UTC).** 14 unit tests (`tests/gateway.test.mjs`, part of
+the site's Node suite) cover input and context validation, request format, parsing
+parity, start spacing, deadline, partial failures, fatal codes, the ledger (real
+SQLite), serialization, cooldown and the HTTP boundary. In `wrangler dev` with the
+mock, 11/11 checks passed: pass-through and cache headers; status; 18 adult and 4
+child routes equal to the page's eligible sets; provider starts at least 250.1 ms
+apart; serialized concurrent requests; ledger exhaustion before provider calls and
+its persistence across a restart; a 15.1 s deadline; cooldown persistence across a
+restart; and the unconfigured state. Through the served page, Compare returned 18
+labeled rows with no console errors. One live comparison from downtown Memphis
+returned 18/18 routes in 4.6 s (2026-09-26 00:32 UTC).
+
+**Deployment (for the account owner, not done).**
+
+1. Create or choose a Cloudflare account on the Workers Free plan; review the
+   Workers/Durable Objects terms and Cloudflare's privacy policy for handling
+   user coordinates.
+2. From `gateway/`: `npx wrangler login`, then `npx wrangler secret put TOMTOM_API_KEY`
+   (typed at the prompt, never in a command line or file).
+3. Consider lowering `TOMTOM_REQUEST_BUDGET` (for example to 15,000): the Worker's
+   ledger cannot see requests made by local scripts or the review server.
+4. `npm run build`, then `npx wrangler deploy`. Then check the status probe, one
+   Compare from a public point, cache headers, and that the S3 site is unchanged.
+5. Link the `workers.dev` URL publicly only after the remaining M2 gates below.
+
+There is no per-client limit: a scripted client could spend the monthly budget,
+after which the ledger stops all routing until the window rolls. Consider a
+Cloudflare rate-limiting rule before a public launch.
 
 ## Remaining M2 acceptance work
 

@@ -81,6 +81,7 @@ EventBridge rule dispatches the workflow hourly; its first four dispatches
   [comparison bars](dashboard/travel.mjs), [origin controls](dashboard/origin.mjs),
   [clickable map](dashboard/origin-map.mjs), [local review server](edwait/serve.py),
   [entrance review tool](edwait/entrances.py), and [live route check](scripts/check_routes.py)
+- [Cloudflare routing gateway](gateway/README.md) (M2; local only)
 
 ## Dashboard behavior and limits
 
@@ -117,7 +118,10 @@ reviewed entrances with `python -m edwait.entrances` (see
 Account/billing settings have not been audited.
 M2 remains in progress; recommendations and public routing are not enabled.
 The page enables Compare only when `GET /api/routes/status` confirms a gateway,
-so the static S3 site never posts coordinates.
+so the static S3 site never posts coordinates. A free
+[Cloudflare Workers gateway](docs/m2-operations.md#cloudflare-gateway) that would
+serve the page and routing at one origin is implemented and validated locally
+(2026-09-26) but not deployed; it needs the account owner's Cloudflare setup.
 See [M2 setup](docs/m2-operations.md#preparation-and-local-review) for local key
 configuration and preview commands. Representative hospital-route validation remains pending.
 The free origin map and Use my location work independently of routing eligibility

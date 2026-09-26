@@ -129,6 +129,28 @@ cannot cause the public page to post a user's coordinates to S3. The local revie
 server answers from its configured key; a future public gateway must implement the
 same probe. Tests cover the probe, the S3 error case and the local server response.
 
+## Leake recheck — 2026-09-26 UTC
+
+Official pages were re-fetched; the evidence is unchanged. The
+[location page](https://www.baptistonline.org/locations/leake) describes a Level IV
+emergency department and showed a live ER wait; the
+[services page](https://www.baptistonline.org/locations/leake/services) gives no ER
+hours; the [emergency services list](https://www.baptistonline.org/services/emergency)
+still names 19 locations without Leake.
+
+Supporting federal evidence, not an official Baptist statement:
+
+- CMS Provider Data, Hospital General Information (dataset `xubh-q36u`, queried
+  2026-09-26): BAPTIST MEDICAL CENTER-LEAKE, CCN 251315, type "Critical Access
+  Hospitals", emergency services "Yes".
+- [42 CFR 485.618](https://www.law.cornell.edu/cfr/text/42/485.618) requires a
+  critical access hospital's emergency services to be available 24 hours a day,
+  with a practitioner on call and on site within 30 minutes (60 in frontier areas).
+
+The registry is unchanged: `active_status` stays `unknown` until the user decides
+whether this evidence meets the 24/7 rule or confirms by phone (601-267-1100).
+The on-call allowance may matter when comparing its published wait.
+
 ## Remaining decisions
 
 1. **Entrance evidence.** Resolved for now by the labeled campus fallback; the user

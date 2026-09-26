@@ -336,8 +336,13 @@ adult/child group, each facility's `arrival` kind (`entrance`, `campus` or `null
 required since 2026-09-23, when labeled campus centers became the fallback while
 emergency entrances are unreviewed), and supported 90th percentile absolute changes
 in published waits at 15/30/60/120-minute horizons. Recommendations are explicitly
-disabled. Arrival coordinates stay in the Git registry and are not written to S3.
-The two context files have independent atomic replacements and expiry checks.
+disabled. Contract change dated 2026-09-26 UTC (additive, schema version unchanged,
+**not yet deployed**): each facility also carries a required `arrival_point`, the
+latitude/longitude of the routing target named by `arrival` (reviewed entrance or
+labeled campus center, both from the public Git registry), or null when `arrival`
+is null. The routing gateway reads these so it routes to exactly the destinations
+the page compares. They are hospital locations, never user origins; the browser
+ignores the field. The two context files have independent atomic replacements and expiry checks.
 Correction 2026-09-24 UTC: earlier `absolute_change_p90` values were read from
 unsorted changes and were not true percentiles; preparation now sorts first. The
 shape is unchanged ([details](m4-validation.md#m2-movement-correction)).
@@ -355,7 +360,12 @@ No provider key is included in website files or collector configuration. Future
 public gateway storage remains a separate deployment decision.
 `POST /api/routes` and its `GET /api/routes/status` availability probe exist only
 in the local review server; static S3 hosting does not supply them, so the public
-page keeps Compare disabled. Public activation and free hosting remain unresolved.
+page keeps Compare disabled. A Cloudflare Worker gateway implemented on 2026-09-26
+UTC (`gateway/`, validated locally, **not deployed**) would supply both at its own
+origin while passing this bucket's files through unchanged. Its one SQLite Durable
+Object stores only a `requests(day, calls)` usage ledger and a `state` row holding
+the provider cooldown time; no origins, routes or keys. It writes nothing to S3.
+See [M2 operations](m2-operations.md#cloudflare-gateway).
 The raw six-field observation schema, attempts/latest contracts, and compaction
 layout are unchanged by M2. See [M2 operations](m2-operations.md).
 

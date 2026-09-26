@@ -10,9 +10,7 @@ is pushed or deployed unless an entry below says so.
 
 ## Resume here
 
-Next action: step 5 — browser check through `node scripts/local-check.mjs --serve`
-(from `gateway/`), one live comparison (`--live`), then docs; re-check the SNS
-subscription between steps.
+Next action: step 6 (rush-hour routes); re-check the SNS subscription between steps.
 
 ## Rules for this run
 
@@ -33,7 +31,7 @@ subscription between steps.
 | 3b | Verify Leake's active emergency status | Human; Claude researched | Blocked (human decision) | Official pages unchanged (Level IV ER, live wait shown, no 24/7 wording, absent from the emergency list). CMS lists CCN 251315 as a critical access hospital with emergency services; 42 CFR 485.618(a) requires 24-hour availability. Registry unchanged |
 | 3c | Cloudflare account and terms for the gateway | Human | Blocked (human) | Claude cannot create accounts or accept terms |
 | 4 | Establish what `CV_ED_Wait` measures | Human or Baptist; Claude drafted the inquiry | Blocked (human) | Draft in [m2-metric-inquiry-2026-09-26.md](m2-metric-inquiry-2026-09-26.md), not sent. API response has no timestamp or caching headers |
-| 5 | Build the Cloudflare routing gateway locally | Claude | In progress | `gateway/` Worker + SQLite Durable Object; 14 unit tests; 11/11 workerd checks with a mock provider (`gateway/scripts/local-check.mjs`). Remaining: browser check, one live comparison, docs |
+| 5 | Build the Cloudflare routing gateway locally | Claude | Done (local only; not deployed) | `gateway/` Worker + SQLite Durable Object; 14 unit tests; 11/11 workerd checks with a mock provider; browser Compare through the served page (18 rows, no console errors); one live comparison 18/18 in 4.6 s. Docs: m2-operations "Cloudflare gateway", s3-buckets, README, plan. Deployment needs step 3c |
 | 6 | Test routes at rush hour | Claude; weekday peak only | Not started | |
 | 7 | Draft the meaningful-difference (benefit) rule | Claude | Not started | |
 | 8 | M4 historical-alternatives replay | Blocked on M2 | Not started | |
@@ -56,7 +54,8 @@ subscription between steps.
    within 30 minutes, which may affect how its wait compares. On approval Claude sets
    `active_status` and records the evidence.
 4. **Cloudflare account (step 3c).** Create or choose a Free-plan account and review
-   its terms; the gateway (step 5) cannot deploy without it.
+   its terms; the gateway (step 5, done locally) cannot deploy without it. Steps:
+   `docs/m2-operations.md#cloudflare-gateway` ("Deployment").
 5. **Send the metric inquiry (step 4).** Review and send the draft in
    `docs/m2-metric-inquiry-2026-09-26.md`, or tell Claude to change it.
 
@@ -93,3 +92,12 @@ subscription between steps.
   18 adult / 4 child sets equal to the page's, provider starts ≥250.1 ms apart,
   serialization, ledger exhaustion and persistence across restart, 15.1 s deadline,
   cooldown persistence, unconfigured state. Full suites: 84 Python, 60 JS passed.
+- 2026-09-26 00:45 UTC — Step 5 done (local). Browser: the page served through the
+  mock-backed gateway enabled Compare and returned 18 labeled rows (DOM click; the
+  pane was not drawing, so coordinate clicks failed), no console errors. Live: reserved
+  18 requests in `.cache/tomtom-usage.sqlite3`, then one comparison from downtown
+  Memphis through workerd returned 18/18 routes in 4.6 s at 00:32 UTC (drive
+  9.8–219.2 min, no reported delay on a Friday evening); TomTom accepted the Worker's
+  `Z` timestamps. Page privacy line now names the Cloudflare gateway. Plan, M2
+  operations (gateway section with the owner's deployment steps), S3 reference,
+  README and a Leake addendum in m2-destinations updated.

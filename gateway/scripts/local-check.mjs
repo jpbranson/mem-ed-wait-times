@@ -135,7 +135,7 @@ try {
     worker = await start(args.has("--live") ? {ASSET_ORIGIN: assetOrigin, TOMTOM_REQUEST_BUDGET: "60"} :
       {ASSET_ORIGIN: assetOrigin, TOMTOM_ENDPOINT: endpoint, TOMTOM_API_KEY: MOCK_KEY, TOMTOM_REQUEST_BUDGET: "2000"},
       args.has("--live") ? [join(root, ".env.local")] : []);
-    console.log(`Gateway (${args.has("--live") ? "LIVE TomTom" : "mock TomTom"}) at ${worker.base}/ — Ctrl+C to stop`);
+    console.log(`Gateway (${args.has("--live") ? "LIVE TomTom" : "mock TomTom"}) at ${worker.base}/ — Ctrl+C to stop (pid ${process.pid})`);
     await new Promise(resolve => process.once("SIGINT", resolve));
   } else if (args.has("--live")) {
     // One comparison: `adults` real Routing requests, reserved in this run's local ledger.

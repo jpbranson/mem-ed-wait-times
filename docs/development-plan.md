@@ -1,12 +1,14 @@
 # Development plan
 
-Last updated: 2026-09-24 04:35 UTC (evening of September 23 America/Chicago)
+Last updated: 2026-09-26 00:40 UTC (evening of September 25 America/Chicago)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
 remain in progress; official status/service/age evidence covers all 20
 destinations, and by user decision 18 adult/4 child destinations route to labeled
-campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are added. M3 is in progress with
+campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are added.
+A Cloudflare Workers routing gateway is implemented and validated locally, including
+one live comparison, but not deployed (2026-09-26). M3 is in progress with
 a difference-from-usual heatmap and an offline relationship study that found no
 confirmed pair association. M4 is in progress: area counts and wait-stability
 summaries were deployed on 2026-09-24 (`8242ad1`, 03:17 UTC build); the historical
@@ -16,9 +18,10 @@ gates, then scored calibration. Only Collierville at 60 minutes remains eligible
 the final holdout, which the user chose to keep reserved while more data is
 collected; no public forecasts exist.
 Website builds are now also dispatched hourly by a user-configured AWS EventBridge
-rule because GitHub cron proved unreliable. Its first four dispatches (01:17–04:17
-UTC on 2026-09-24) all produced successful builds; about a day of hourly delivery is
-still to be observed before the backup cron is removed.
+rule because GitHub cron proved unreliable. All 47 hourly dispatches from 01:17 UTC
+on 2026-09-24 through 23:17 UTC on 2026-09-25 produced successful builds. The backup
+cron is removed once the alarm's email subscription is confirmed; the original link
+expired unconfirmed, so a new one was sent at 00:07 UTC on 2026-09-26.
 
 Local preview rebuilt and started on 2026-09-22 at `http://127.0.0.1:8765/`
 using read-only S3 history and the existing review server. That local launch
@@ -66,7 +69,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Compaction | Concatenates raw without rewriting provenance; attaches a fingerprint of copied raw objects | [Compactor](../lambda_function.py) |
 | Shared history | Selects one source per UTC batch-date partition, validates and deduplicates by facility/metric, reports coverage/gaps/rejections | [Reader](../edwait/data.py) |
 | Registry | Stable slugs, verified names/state groupings, timezone/source dates; 2026-09-23 official evidence for active status, general-emergency service and explicit age groups, with per-facility `destination_evidence`; OpenStreetMap `campus_point` fallbacks labeled "ER entrance unconfirmed"; `emergency_entrance` null until reviewed via `python -m edwait.entrances` | [Registry](../edwait/facilities.json), [destination evidence](m2-destinations-2026-09-23.md) |
-| Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Compare is enabled only after a `GET /api/routes/status` gateway confirmation, so static hosting never receives coordinates. 18 adult/4 child destinations route to labeled campus centers; 54/54 live validation routes passed. Metric evidence, reviewed entrances and public gateway remain pending; recommendations disabled | [M2 operations](m2-operations.md), [readiness follow-up](m2-readiness-2026-09-23.md) |
+| Travel prototype | Independent origin controls/map, TomTom v3 adapter and persistent usage budget; user supplied a local key and one live nonclinical API probe passed on 2026-09-23 UTC. Compare is enabled only after a `GET /api/routes/status` gateway confirmation, so static hosting never receives coordinates. 18 adult/4 child destinations route to labeled campus centers; 54/54 live validation routes passed. A Cloudflare Workers gateway (Worker plus one SQLite Durable Object) serving page and API at one origin, with destinations read from the published `travel.json`, passed unit, local-runtime, browser and one live check on 2026-09-26; not deployed. Metric evidence, reviewed entrances and gateway deployment remain pending; recommendations disabled | [M2 operations](m2-operations.md), [gateway](m2-operations.md#cloudflare-gateway), [readiness follow-up](m2-readiness-2026-09-23.md) |
 | Self-comparisons | Past-only 28-day local references, minimum support and fallbacks, median/band/percentile, minute differences, and recent direction | [Analysis](../edwait/analysis.py), [dated replay](m1-validation.md) |
 | Relationship study | Geography-only neighbor groups (campus centers ≤50 km) and a frozen discovery/confirmation test of same-time co-deviation, same-time changes and 1–3 h lagged changes for all 190 pairs, with autocorrelation-adjusted p-values, BH, system-wide and residual-hour checks. One discovery candidate, none confirmed; offline only | [Protocol](m3-relationship-protocol.md), [results](m3-validation.md#relationship-study--2026-09-24-utc) |
 | Area counts and stability (M4) | Deployed 2026-09-24 (`8242ad1`). An Across an area view counts hospitals above or below their own usual (M1 rule) for all hospitals, registry states or M3's ≥3-member 50 km neighbor groups: live now, plus 24-hour/seven-day columns beside a typical count. A per-hospital typical-change graphic shows 28-day median/90th percentile movement and the 10+ minute share at 15–120 minutes, from additive `comparisons.json` fields. This week's area counts were close to independent chance | [Area view](../dashboard/area.mjs), [areas](../edwait/areas.py), [stability](../edwait/stability.py), [validation](m4-validation.md) |
@@ -379,8 +382,9 @@ local prototype and TomTom adapter are implemented with automated validation;
 destination/metric verification, representative hospital-route evaluation, and
 public hosting implementation remain unresolved. A local user-provided key and
 one live nonclinical TomTom v3 request passed on 2026-09-23 UTC. Cloudflare Workers
-Free with a shared SQLite Durable Object is the selected design target, not a
-configured or deployed service. [Readiness evidence](m2-readiness-2026-09-23.md).
+Free with a shared SQLite Durable Object is the selected design, implemented and
+validated locally on 2026-09-26 (below) but not configured or deployed.
+[Readiness evidence](m2-readiness-2026-09-23.md).
 Destination research on 2026-09-23 UTC recorded official active-status, service and
 age evidence for all 20 facilities in the registry but found no verifiable
 emergency-entrance coordinates. By user decision, destinations now route to
@@ -398,6 +402,20 @@ was read from unsorted changes, so published values were not percentiles (Memphi
 15 minutes: 5.2 versus a sorted 44.4). The screen only appears beside routes and
 never reached public users. Preparation now sorts first, with a regression test and
 an unchanged schema; corrected values were published with M4 on 2026-09-24. [Evidence](m4-validation.md#m2-movement-correction).
+Gateway (2026-09-26 UTC, local only): [`gateway/`](../gateway/) implements the
+public design as a Worker that passes the S3 dashboard through and serves
+`/api/routes` at the same origin, with one SQLite Durable Object that serializes
+comparisons, holds the only usage ledger and persists the provider cooldown.
+Destinations come from the published `travel.json`, which gains an additive
+`arrival_point` per facility, so the gateway always routes to exactly the page's
+eligible set. 14 unit tests (in the site's Node suite), 11/11 end-to-end checks in
+`wrangler dev` with a mock provider, a browser Compare through the served page, and
+one live comparison (18/18 routes, 4.6 s) passed. Deployment needs the account
+owner's Cloudflare account, terms review and secret; see
+[gateway operations](m2-operations.md#cloudflare-gateway). Leake recheck
+(2026-09-26): official pages still lack 24/7 wording, while CMS lists it as a
+critical access hospital with emergency services (42 CFR 485.618 requires 24-hour
+availability); the user decides whether that evidence qualifies.
 
 Implemented locally:
 
@@ -745,7 +763,7 @@ M2 prototype adds travel context. Relationship and forecast outputs remain propo
 | --- | --- | --- |
 | `data/latest.json` | Completed collection, including partial/total facility failures | Versioned latest per-facility observation, separate attempt, timestamps, coverage, and freshness policy |
 | `comparisons.json` | Each successful website preparation, before Quarto render (configured hourly/manual) | Versioned local-day/hour references, empirical distributions, support, coverage, seven rolling days of historical comparisons, M4 28-day wait-stability summaries (added and deployed 2026-09-24), and operator latency |
-| `travel.json` | Same history read as M1 preparation | M2 eligibility reasons, 15/30/60/120-minute historical movement and support, fixed provisional policy, disabled recommendation gate; no origins/routes |
+| `travel.json` | Same history read as M1 preparation | M2 eligibility reasons, arrival kind and (additive 2026-09-26, not deployed) arrival point, 15/30/60/120-minute historical movement and support, fixed provisional policy, disabled recommendation gate; no origins/routes |
 | `relationships.json` | Validated analytical refresh | Supported pair/lag summaries, evaluation period, and limitations |
 | `forecasts.json` (proposed, M5) | Validated model update cadence, to be selected after benchmarking | Facility/metric, issue time, last observation/training cutoff, future target times, point forecasts and interval levels, model version, support, expiration, and unavailable/fallback states |
 
@@ -764,6 +782,8 @@ usage persists only UTC date/count reservations in `.cache/tomtom-usage.sqlite3`
 Preserve this counter across restarts; free public hosting needs durable shared
 accounting. This integration changes no raw/latest/travel artifact schema or S3
 object layout. [Storage reference](s3-buckets.md#travel-context-artifact-m2-prototype).
+The Cloudflare gateway (2026-09-26, not deployed) provides that shared accounting
+in its Durable Object and reads `travel.json` arrival points; it writes nothing to S3.
 The origin-map follow-up adds static renderer/style assets and direct browser
 requests to OpenFreeMap. It stores no selected points, location history, or map
 tiles in S3 and changes no observation, latest, travel, or route-response schema.
@@ -777,24 +797,24 @@ change. Offline study outputs do not alter existing record/storage contracts.
 
 | Question | Needed by | Next action |
 | --- | --- | --- |
-| What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed |
-| What schedules and completion guarantees exist in deployment? | M0/M1 | Decided 2026-09-24 UTC: the user configured EventBridge rule `dashboard_hourly` to dispatch the workflow at minute 17 with a repository-scoped token, plus a failed-invocation alarm. GitHub cron ran 3–9 hours apart on 2026-09-23. Dispatches at 01:17–04:17 UTC on 2026-09-24 succeeded (4 invocations, 0 failed; alarm `OK`). Next: observe about a day of hourly `workflow_dispatch` runs, have the user confirm the alert email subscription (still `PendingConfirmation` at 04:30 UTC), then remove the workflow's `schedule:` trigger; do not lengthen freshness limits. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) |
+| What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed. 2026-09-26: the API response carries no timestamp or caching headers; an inquiry to Baptist is drafted for the user to send ([draft](m2-metric-inquiry-2026-09-26.md), not sent) |
+| What schedules and completion guarantees exist in deployment? | M0/M1 | Decided 2026-09-24 UTC: the user configured EventBridge rule `dashboard_hourly` to dispatch the workflow at minute 17 with a repository-scoped token, plus a failed-invocation alarm. GitHub cron ran 3–9 hours apart on 2026-09-23. Dispatches at 01:17–04:17 UTC on 2026-09-24 succeeded (4 invocations, 0 failed; alarm `OK`). Observed through 2026-09-25 23:17 UTC: all 47 hourly `workflow_dispatch` runs since 01:17 UTC on 2026-09-24 succeeded, while the backup cron ran 5 times a day, 3–6 hours apart. The email subscription's two-day confirmation token expired unconfirmed; a new confirmation was requested at 2026-09-26 00:07 UTC. Next: the user confirms it, then remove the workflow's `schedule:` trigger; do not lengthen freshness limits. [Evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) |
 | Where will independently refreshed public data live? | M0 | Resolved and deployed 2026-09-22: website-bucket `data/latest.json`, collector-owned, no-store, same-origin fetch; workflow excludes `data/*`; public refresh and preservation verified |
 | What baseline groups and support thresholds work reliably? | M1 | Resolved for first release: 28 local days, weekday/weekend hour ±1 with explicit broader fallbacks, eight days/64 readings/75% coverage; [replay and limits](m1-validation.md). Revisit with more seasons and confirmed metric semantics |
-| Which facilities are valid alternatives for each supported use case? | M2 | 2026-09-23: 19 active general-emergency destinations (Children's child-only; Anderson, DeSoto and Mississippi Baptist adult and child; others adult) and Leake unverified. Official pages and OpenStreetMap give no emergency-entrance coordinates (one unconfirmed OSM candidate at North Mississippi). User decided 2026-09-23: route to labeled campus centers now; add imagery-reviewed entrances later with `python -m edwait.entrances`. Next: the user's entrance reviews, then Leake's status and child scope at other general ERs. [Evidence](m2-destinations-2026-09-23.md) |
-| Which travel provider and benefit rule should be used? | M2 | TomTom key supplied locally; one budgeted live v3 contract probe passed. Validate actual hospital routes/coverage and benefit sensitivity after destination verification. Cloudflare Workers Free/shared SQLite Durable Object selected as a design target; account/terms, implementation and deployment pending. Historical movement remains descriptive |
+| Which facilities are valid alternatives for each supported use case? | M2 | 2026-09-23: 19 active general-emergency destinations (Children's child-only; Anderson, DeSoto and Mississippi Baptist adult and child; others adult) and Leake unverified. Official pages and OpenStreetMap give no emergency-entrance coordinates (one unconfirmed OSM candidate at North Mississippi). User decided 2026-09-23: route to labeled campus centers now; add imagery-reviewed entrances later with `python -m edwait.entrances`. Next: the user's entrance reviews, then Leake's status and child scope at other general ERs. 2026-09-26: Leake's official pages unchanged; CMS lists it as a critical access hospital with emergency services, which federal rules require 24 hours a day. The user decides whether that meets the evidence rule or phones the hospital. [Evidence](m2-destinations-2026-09-23.md) |
+| Which travel provider and benefit rule should be used? | M2 | TomTom key supplied locally; one budgeted live v3 contract probe passed. Validate actual hospital routes/coverage and benefit sensitivity after destination verification. Cloudflare Workers Free/shared SQLite Durable Object gateway implemented and validated locally on 2026-09-26 ([operations](m2-operations.md#cloudflare-gateway)); the user's account/terms review, secret and deployment pending. Historical movement remains descriptive |
 | Which geographic groups and lag ranges are defensible? | M3 | 2026-09-24: 50 km campus-center neighbor groups and 0–3 hour lags tested under a frozen protocol; no pair association confirmed and neighbors match distant pairs. User decided 2026-09-24 to revisit in a few weeks (around 2026-10-15): then consider a rerun on a fresh post-2026-09-23 snapshot (longer window, more power), whether a held-out predictive check is still worthwhile, and whether the negative result belongs in the heatmap disclosure. [Evidence](m3-validation.md#relationship-study--2026-09-24-utc) |
 | Which time-series models add useful forecast skill, for which hospitals and horizons? | M5 | 2026-09-24: diagnostics done; v2 candidates selected on development and frozen; calibration left one eligible pair (Collierville 60 min, Fourier ARIMA). User decided 2026-09-24 to defer the one-time holdout and collect more data first; it stays reserved and unscored. When enough post-2026-09-23 history exists (for example, alongside M3's revisit around 2026-10-15), decide whether to score the reserved holdout and pre-register a new study on the fresh data, including profile persistence at 60–120 min for high-variance hospitals. [Evidence](m5-candidates-validation.md) |
 | When do area counts indicate something beyond chance? | M4 | 2026-09-24: one week of counts matched an independence reference (all hospitals: 3+ above usual in 33% of hours versus 30% expected), so counts are shown descriptively beside a typical count. Revisit around 2026-10-15 with M3/M5 on longer history before adding any area-wide label. [Evidence](m4-validation.md) |
 | What support, improvement, interval calibration, and update-cost limits justify forecast display? | M5; later M2/M3 integration | Frozen 2026-09-24 in the [protocol amendment](m5-study-protocol.md#amendment--2026-09-24-utc-before-calibration-scoring) and [freeze](m5-freeze.json): ≥1 min and 5% MAE gain, RMSE no worse, bootstrap gain interval above zero, ≥150 targets/6 days, ≥95% availability, ≤1% fit failure, coverage within 5 points, ≤10 min daily fitting; pass on calibration and holdout. Unavailable/fallback display behavior remains to be defined with the artifact contract if a pair qualifies |
 
-Next checkpoint: the EventBridge rule's first four dispatches (01:17–04:17 UTC on
-2026-09-24) succeeded. After about a day of hourly delivery, remove the unreliable
-GitHub `schedule:` trigger; the user still needs to confirm the alert email
-subscription. M2's
-destinations route to labeled campus centers with live routes validated; next are
-the user's imagery-reviewed entrances, metric confirmation, traffic-hour route and
-uncertainty validation, and the free gateway's account, implementation and deployment. M3's heatmap is deployed and its
+Next checkpoint: all 47 hourly EventBridge dispatches through 23:17 UTC on
+2026-09-25 succeeded. Once the user confirms the alert email subscription (new link
+sent 2026-09-26 00:07 UTC), remove the unreliable GitHub `schedule:` trigger. M2's
+destinations route to labeled campus centers with live routes validated, and the
+free gateway is implemented and validated locally; next are the user's
+imagery-reviewed entrances, Leake decision, metric inquiry, Cloudflare account and
+deployment, plus traffic-hour route and uncertainty validation. M3's heatmap is deployed and its
 offline relationship study found no confirmed association; by user decision it is
 revisited around 2026-10-15 with more history (rerun, predictive check, presentation). M5's development and calibration are scored under a frozen selection; only
 Collierville 60 min remains eligible. By user decision the one-time holdout stays
@@ -831,6 +851,8 @@ routing service has been released.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-26 UTC | M2 gateway: read destinations from the published `travel.json`, which gains an additive `arrival_point` per facility, instead of bundling the registry into the Worker | The page validates route coverage against `travel.json` eligibility, so the gateway must compare exactly that set. A bundled copy would need a Worker redeploy for every registry change and could drift. The bucket already serves the page's code, so trusting its artifact adds no new trust. Fetched with `no-store` per comparison; stale or malformed context stops before reserving usage |
+| 2026-09-26 UTC | M2 gateway: run every TomTom call in one SQLite Durable Object; the Worker only validates and passes through; serialize route starts and anchor them to the clock | Free-plan Workers allow 10 ms CPU per request, Durable Objects 30 s. One object gives one shared ledger, one comparison at a time and a persisted cooldown across redeploys. Timers can fire early: a naive limiter measured 14.7 ms between starts in tests, so grants are chained and wait until the clock reaches each slot, as the Python lock does |
 | 2026-09-24 UTC | M4: count hospitals above/below usual under M1's outer-10%-plus-10-minute rule for all hospitals, states and M3's ≥3-member 50 km groups, shown beside a typical count with no area-wide event label. Add 28-day stability summaries to `comparisons.json` (additive, schema version unchanged) and defer the historical alternatives replay | Reuses validated rules and pre-registered groups rather than inventing regions. One week of counts matched independence, and M3 found no confirmed association. Stability shares M2's support rules. Travel replay needs validated routes |
 | 2026-09-24 UTC | Sort changes before M2's movement 90th percentile | `quantile()` interpolates in the order given. Unsorted input made published values arbitrary. Found while sharing the code with M4 |
 | 2026-09-24 UTC | Defer M5's final holdout; keep it reserved and unscored while more data is collected | User decision after the calibration checkpoint. Scoring is irreversible, a pass would support only one modest pair, and the busier-hospital profile hypothesis needs fresh post-2026-09-23 data anyway. Nothing public changes while it waits |
@@ -870,6 +892,8 @@ routing service has been released.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-26 UTC | M2 gateway | Added `gateway/` (Worker, SQLite Durable Object, pinned wrangler 4.141.0, local-check harness), `tests/gateway.test.mjs`, additive `travel.json` `arrival_point` with schema/test updates, and the Cloudflare mention in the page's privacy line. 84 Python and 60 JS tests passed; 11/11 mock checks in `wrangler dev`; browser Compare through the served page returned 18 rows with no console errors; one live comparison returned 18/18 routes in 4.6 s. [Evidence](m2-operations.md#cloudflare-gateway) | Local only; not deployed. No Cloudflare account, secret or route exists |
+| 2026-09-26 UTC | M0/M1 hourly dispatch observation | 47/47 EventBridge `workflow_dispatch` runs from 2026-09-24 01:17 to 2026-09-25 23:17 UTC succeeded; backup cron 5 per day, 3–6 hours apart. The alert email's two-day confirmation token (sent 2026-09-24 00:24:56 UTC) expired unconfirmed; a new one was requested at 2026-09-26 00:07 UTC. Metric inquiry drafted ([draft](m2-metric-inquiry-2026-09-26.md)); Leake rechecked | Workflow unchanged; cron removal waits for the confirmation |
 | 2026-09-24 UTC | M4 release | The user approved the push of `8242ad1`. The EventBridge dispatch at 03:17 UTC built and published it (run [35950813345](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35950813345)), and the 04:17 dispatch rebuilt it (run [35955001963](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35955001963)); both public checks passed. An independent public check and a Chrome review passed at 04:26 UTC. [Evidence](production-followup-2026-09-23.md#m4-release) | Deployed. Dispatches 01:17–04:17 all succeeded (4 invocations, 0 failed); the backup cron has not run since 01:27 |
 | 2026-09-24 UTC | M0/M1 hourly dispatch observation | EventBridge rule `dashboard_hourly` recorded one invocation each at 01:17 and 02:17 UTC and no failed invocations; alarm `OK`. Resulting `workflow_dispatch` runs [35942241664](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35942241664) and [35946597828](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/35946597828) succeeded in about two minutes each, including the public freshness checks. The backup cron also ran at 01:27. Alert email subscription still `PendingConfirmation`. [Evidence](production-followup-2026-09-23.md#observed-dispatches) | Hourly builds delivered by EventBridge; about a day of delivery still to observe before removing the cron |
 | 2026-09-24 UTC | M4 area counts and wait stability | Added `edwait/stability.py`, `edwait/areas.py`, `dashboard/area.mjs`, stability rendering, schema/storage docs and [validation](m4-validation.md). Corrected M2 movement percentiles. Tests: 84 Python and 46 JavaScript passed. Real-data preparation and render passed, as did the Chrome desktop/390/320 px review after an overflow fix. Area counts were close to independence | Local only; not deployed. `comparisons.json` gains additive stability fields when next published |

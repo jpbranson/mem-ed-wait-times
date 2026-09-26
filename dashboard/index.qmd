@@ -154,7 +154,7 @@ display(HTML('<div class="focus-toolbar"><label for="hospital-select">Focus</lab
     <button type="button" class="travel-clear">Clear</button>
   </form>
   <p class="origin-status" role="status" aria-live="polite">Choose an origin using the map, your location, or coordinates</p>
-  <p class="travel-privacy">Viewing the map shares its area with <a href="https://openfreemap.org/privacy/">OpenFreeMap</a>. Compare sends your selected coordinates to <a href="https://www.tomtom.com/en_gb/privacy/">TomTom</a>. This app does not save your location.</p>
+  <p class="travel-privacy">Viewing the map shares its area with <a href="https://openfreemap.org/privacy/">OpenFreeMap</a>. Compare sends your selected coordinates through this site's routing gateway on <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare</a> to <a href="https://www.tomtom.com/en_gb/privacy/">TomTom</a>. This app does not save your location.</p>
   <p class="travel-status" role="status" aria-live="polite">Loading travel context…</p>
   <div class="travel-chart" role="region" aria-label="Drive and published wait comparison"></div>
   <details class="data-disclosure"><summary>Coverage &amp; uncertainty</summary>
