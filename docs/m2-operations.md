@@ -293,8 +293,15 @@ it does not change this policy or provide arrival-time forecasts.
 ## Cloudflare gateway
 
 Implemented 2026-09-26 UTC in [`gateway/`](../gateway/) and validated locally in
-Cloudflare's runtime. **Not deployed**: no Cloudflare account, secret, route or
-billing exists. It replaces nothing; the S3 site keeps working with Compare disabled.
+Cloudflare's runtime. **Deployed 2026-09-26** by the account owner (Workers Free) at
+`https://mem-ed-wait-times.jpbranson.workers.dev/`, after site build
+[36209744679](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/36209744679)
+published `travel.json` arrival points. Public check at 01:54 UTC: the page (5.58 MB)
+and map module passed through, `/api/routes/status` returned `available: true` with
+`no-store`, `data/latest.json` kept `no-store`, a cross-origin POST was rejected (403),
+and one Compare from downtown Memphis returned 18/18 routes in 4.7 s with no origin
+or geometry in the response. The S3 site is unchanged, with Compare disabled. The
+URL is not linked publicly; M2's recommendation gates are unchanged.
 
 **Design.** One Worker serves the dashboard and the API from the same
 `workers.dev` origin, so the page's relative `/api/routes` requests stay
