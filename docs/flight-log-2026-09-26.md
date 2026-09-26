@@ -25,8 +25,8 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
 
 | # | Step | Owner | Status | Evidence and notes |
 | --- | --- | --- | --- | --- |
-| 1 | Confirm the `dashboard-dispatch-alerts` SNS email subscription | Human | Blocked (human) | Original link (sent 2026-09-24 00:24:56 UTC) expired after two days. Fresh confirmation requested 2026-09-26 00:07:18 UTC, valid until about 2026-09-28 00:07 UTC. Still one subscription, `PendingConfirmation` |
-| 2 | Remove the backup GitHub `schedule:` trigger | Claude, after step 1 | Blocked on step 1 | Observation gate met: 47/47 hourly dispatches succeeded, 2026-09-24 01:17 to 2026-09-25 23:17 UTC. Re-check the subscription between steps; do this as soon as it is confirmed |
+| 1 | Confirm the `dashboard-dispatch-alerts` SNS email subscription | Human | Blocked (human) | Subscription (created 2026-09-24 00:24:56 UTC) never confirmed. A re-send at 2026-09-26 00:07 UTC did not extend it; by 00:37 UTC the topic had **no subscriptions** (0 confirmed, 0 pending). Restoring it failed safely: CloudTrail redacts the address. The user must re-create and confirm it |
+| 2 | Remove the backup GitHub `schedule:` trigger | Claude, after step 1 | Blocked on step 1 | Observation gate met: 47/47 hourly dispatches succeeded, 2026-09-24 01:17 to 2026-09-25 23:17 UTC. Re-check the topic between steps; do this once a subscription is confirmed |
 | 3a | Review ER entrances from imagery | Human | Blocked (human) | Tooling checked: `python -m edwait.entrances list` prints aerial links for all 20 (all still `campus`); review file `.cache/entrance-review-20260926.geojson` (Git-ignored) |
 | 3b | Verify Leake's active emergency status | Human; Claude researched | Blocked (human decision) | Official pages unchanged (Level IV ER, live wait shown, no 24/7 wording, absent from the emergency list). CMS lists CCN 251315 as a critical access hospital with emergency services; 42 CFR 485.618(a) requires 24-hour availability. Registry unchanged |
 | 3c | Cloudflare account and terms for the gateway | Human | Blocked (human) | Claude cannot create accounts or accept terms |
@@ -40,9 +40,13 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
 
 ## Human review queue
 
-1. **Confirm the alarm email.** Open "AWS Notification - Subscription Confirmation"
-   (sent 2026-09-26 00:07 UTC) and click the link before about 2026-09-28 00:07 UTC.
-   Until then the `dashboard-dispatch-failed` alarm reaches no one, and step 2 waits.
+1. **Re-create and confirm the alarm email.** The topic has no subscribers, so the
+   `dashboard-dispatch-failed` alarm reaches no one. Any "Subscription Confirmation"
+   email already received is for the lapsed subscription and will likely fail. In the
+   SNS console (us-east-1) open topic `dashboard-dispatch-alerts` → Create subscription
+   → Email → your address, then click the new link within two days. CLI equivalent:
+   `aws sns subscribe --topic-arn arn:aws:sns:us-east-1:666037347522:dashboard-dispatch-alerts --protocol email --notification-endpoint <address>`.
+   Step 2 waits for this.
 2. **Review ER entrances (step 3a).** Run `.venv\Scripts\python.exe -m edwait.entrances list`
    for aerial links (or open `.cache/entrance-review-20260926.geojson`). For each
    entrance you confirm: `python -m edwait.entrances set SLUG --lat .. --lon ..
@@ -58,6 +62,9 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
    `docs/m2-operations.md#cloudflare-gateway` ("Deployment").
 5. **Send the metric inquiry (step 4).** Review and send the draft in
    `docs/m2-metric-inquiry-2026-09-26.md`, or tell Claude to change it.
+6. **Security observation (not a step).** CloudTrail records this machine's AWS CLI
+   calls as the root user. AWS recommends against root access keys; consider an IAM
+   user or role with only the permissions these scripts need, then removing the root keys.
 
 ## Log
 
@@ -71,7 +78,8 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
   tokens as valid for two days, so the original link was about to expire. Re-issued
   `Subscribe` for the same topic and existing email endpoint (returns
   `pending confirmation`; no duplicate subscription). Blocked on the user's click.
-  Step 2 is blocked on step 1.
+  Step 2 is blocked on step 1. (Superseded at 00:37 UTC: the re-send did not keep
+  the subscription alive; see below.)
 - 2026-09-26 00:12 UTC — Steps 3–4. Entrance tooling runs; review GeoJSON exported.
   Leake: re-fetched official location, services and emergency-list pages (no 24/7
   wording; not listed); CMS Provider Data query (dataset `xubh-q36u`) and 42 CFR
@@ -101,3 +109,12 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
   `Z` timestamps. Page privacy line now names the Cloudflare gateway. Plan, M2
   operations (gateway section with the owner's deployment steps), S3 reference,
   README and a Leake addendum in m2-destinations updated.
+- 2026-09-26 00:38 UTC — Step 1 correction. The topic now lists no subscriptions
+  (attributes: 0 confirmed, 0 pending). CloudTrail shows only the two `Subscribe`
+  calls (2026-09-24 00:24:56 and my 2026-09-26 00:07:18) and no confirm or
+  unsubscribe, so SNS removed the unconfirmed subscription about two days after
+  creation; re-sending did not extend it. Tried to restore the original subscription
+  from CloudTrail's `Subscribe` parameters: SNS rejected the value (`InvalidParameter`)
+  because CloudTrail stores the endpoint redacted (8-character placeholder). Nothing
+  was created. Not guessing the address; queued for the user. Observation for the
+  user: this machine's AWS CLI calls appear in CloudTrail as the **root** identity.
