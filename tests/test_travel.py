@@ -60,12 +60,23 @@ class TravelTests(unittest.TestCase):
         context = build_travel(History(records=rows), NOW)
         memphis = next(f for f in context["facilities"] if f["slug"] == "memphis")
         self.assertEqual([m["absolute_change_p90"] for m in memphis["movement"]], [1, 2, 4, 8])
+        # The gateway routes to exactly the published arrival point for each facility.
+        facilities = {f["slug"]: f for f in registry()}
+        for entry in context["facilities"]:
+            point, kind = arrival(facilities[entry["slug"]])
+            self.assertEqual(entry["arrival"], kind)
+            self.assertEqual(entry["arrival_point"], {"latitude": point["latitude"], "longitude": point["longitude"]})
         self.assertEqual(memphis["movement"][0]["pairs"], 959)
         self.assertEqual(memphis["movement"][0]["days"], 10)
         schema = json.loads(Path("docs/travel.schema.json").read_text())
         Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema, format_checker=FormatChecker())
         validator.validate(context)
+        mismatched = deepcopy(context)
+        mismatched["facilities"][0]["arrival"] = None
+        self.assertTrue(list(validator.iter_errors(mismatched)))
+        mismatched["facilities"][0]["arrival_point"] = None
+        validator.validate(mismatched)
         context["origin"] = {"latitude": 35.15, "longitude": -90.05}
         self.assertTrue(list(validator.iter_errors(context)))
         self.assertFalse(context["recommendations_enabled"])

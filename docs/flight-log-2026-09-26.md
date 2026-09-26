@@ -10,7 +10,9 @@ is pushed or deployed unless an entry below says so.
 
 ## Resume here
 
-Next action: step 1 — re-check the SNS subscription, then continue down the table.
+Next action: step 5 — browser check through `node scripts/local-check.mjs --serve`
+(from `gateway/`), one live comparison (`--live`), then docs; re-check the SNS
+subscription between steps.
 
 ## Rules for this run
 
@@ -31,7 +33,7 @@ Next action: step 1 — re-check the SNS subscription, then continue down the ta
 | 3b | Verify Leake's active emergency status | Human; Claude researched | Blocked (human decision) | Official pages unchanged (Level IV ER, live wait shown, no 24/7 wording, absent from the emergency list). CMS lists CCN 251315 as a critical access hospital with emergency services; 42 CFR 485.618(a) requires 24-hour availability. Registry unchanged |
 | 3c | Cloudflare account and terms for the gateway | Human | Blocked (human) | Claude cannot create accounts or accept terms |
 | 4 | Establish what `CV_ED_Wait` measures | Human or Baptist; Claude drafted the inquiry | Blocked (human) | Draft in [m2-metric-inquiry-2026-09-26.md](m2-metric-inquiry-2026-09-26.md), not sent. API response has no timestamp or caching headers |
-| 5 | Build the Cloudflare routing gateway locally | Claude | Not started | |
+| 5 | Build the Cloudflare routing gateway locally | Claude | In progress | `gateway/` Worker + SQLite Durable Object; 14 unit tests; 11/11 workerd checks with a mock provider (`gateway/scripts/local-check.mjs`). Remaining: browser check, one live comparison, docs |
 | 6 | Test routes at rush hour | Claude; weekday peak only | Not started | |
 | 7 | Draft the meaningful-difference (benefit) rule | Claude | Not started | |
 | 8 | M4 historical-alternatives replay | Blocked on M2 | Not started | |
@@ -78,3 +80,16 @@ Next action: step 1 — re-check the SNS subscription, then continue down the ta
   evidence; registry not changed pending the user's decision. One read-only API
   request showed no timestamp or cache headers. Drafted the metric inquiry; the
   site's 911 and triage wording it cites was confirmed in `dashboard/index.qmd`.
+- 2026-09-26 00:30 UTC — Step 5 checkpoint. Design: the Worker proxies the S3 site
+  (same origin for page and API) and reads destinations from the published
+  `travel.json`, which now carries each facility's `arrival_point` (additive), so the
+  page and gateway always compare the same set and registry changes need no Worker
+  redeploy. TomTom calls, the usage ledger and the cooldown live in one SQLite
+  Durable Object (30 s CPU per call on Free) rather than the 10 ms Worker. Fixed a
+  limiter flaw found by tests (timers can fire early; grants are now serialized and
+  anchored to the clock). Installed pinned wrangler 4.141.0 in `gateway/` (Git-ignored
+  `node_modules`); dry-run bundle 16.75 KiB. Local prepare/render from read-only S3
+  history, then 11/11 workerd checks passed: pass-through and cache headers, status,
+  18 adult / 4 child sets equal to the page's, provider starts ≥250.1 ms apart,
+  serialization, ledger exhaustion and persistence across restart, 15.1 s deadline,
+  cooldown persistence, unconfigured state. Full suites: 84 Python, 60 JS passed.

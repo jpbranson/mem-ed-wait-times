@@ -19,7 +19,8 @@
       "type": "array", "maxItems": 20,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["slug","display_name","eligibility","arrival","movement"],
+        "required": ["slug","display_name","eligibility","arrival","arrival_point","movement"],
+        "allOf": [{"if":{"properties":{"arrival":{"const":null}}},"then":{"properties":{"arrival_point":{"type":"null"}}},"else":{"properties":{"arrival_point":{"type":"object"}}}}],
         "properties": {
           "slug": {"type":"string","minLength":1},
           "display_name": {"type":"string","minLength":1},
@@ -28,6 +29,14 @@
             "properties":{"adult":{"type":["string","null"]},"child":{"type":["string","null"]}}
           },
           "arrival": {"description":"Routing target kind: a reviewed emergency entrance, or a labeled campus-center fallback (ER entrance unconfirmed)","enum":["entrance","campus",null]},
+          "arrival_point": {
+            "description":"Coordinates of the routing target named by arrival; a hospital location, never a user origin. Added 2026-09-26 (additive) so the routing gateway compares exactly the page's eligible destinations.",
+            "oneOf":[
+              {"type":"null"},
+              {"type":"object","additionalProperties":false,"required":["latitude","longitude"],
+               "properties":{"latitude":{"type":"number","minimum":-90,"maximum":90},"longitude":{"type":"number","minimum":-180,"maximum":180}}}
+            ]
+          },
           "movement": {
             "type":"array","minItems":4,"maxItems":4,
             "items": {

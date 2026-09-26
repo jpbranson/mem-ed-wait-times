@@ -103,8 +103,13 @@ def build_travel(history, now, facilities=None):
             movement.append({"horizon_minutes": horizon, "pairs": len(changes), "days": len(days),
                              "absolute_change_p90": quantile(sorted(abs(c) for c in changes), POLICY["quantile"]) if supported else None})
         reasons = {group: eligibility(facility, group, now) for group in ("adult", "child")}
+        point, kind = arrival(facility)
+        # The routing gateway reads its targets from this artifact, so the page and the
+        # gateway always compare the same destinations. Hospital points only, never origins.
         entries.append({"slug": facility["slug"], "display_name": facility["display_name"],
-                        "eligibility": reasons, "arrival": arrival(facility)[1], "movement": movement})
+                        "eligibility": reasons, "arrival": kind,
+                        "arrival_point": None if point is None else {"latitude": point["latitude"], "longitude": point["longitude"]},
+                        "movement": movement})
     return {"schema_version": 1, "method_version": "travel-wait-v1", "metric": METRIC,
             "generated_at": now.isoformat(), "source_start": start.isoformat(), "source_end": end.isoformat(),
             "policy": POLICY.copy(), "recommendations_enabled": False,

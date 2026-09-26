@@ -1,0 +1,14 @@
+{
+  "name": "mem-ed-wait-times-gateway",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Workers routing gateway for the M2 travel comparison. Not deployed.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run --outdir .wrangler/dist",
+    "check": "node scripts/local-check.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.141.0"
+  }
+}

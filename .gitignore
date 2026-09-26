@@ -11,3 +11,6 @@ dashboard/comparisons.json
 dashboard/travel.json
 .env
 .env.local
+gateway/node_modules/
+gateway/.wrangler/
+gateway/.dev.vars
