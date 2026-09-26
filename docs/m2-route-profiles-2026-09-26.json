@@ -1,0 +1,566 @@
+{
+ "description": "TomTom Orbis Routing v3 historical-mode (typical speed profile) durations from three fixed public city-center road points to each adult-eligible destination, for Monday 2026-09-28 departures. Requested 2026-09-26 00:40-00:42 UTC with scripts/check_routes.py --traffic historical; all routes ended within the arrival tolerance. No geometry.",
+ "provider": "tomtom",
+ "traffic": "historical",
+ "departures": {
+  "night": "2026-09-28T03:00:00-05:00",
+  "am": "2026-09-28T08:00:00-05:00",
+  "pm": "2026-09-28T17:00:00-05:00"
+ },
+ "origins": {
+  "downtown-memphis": [
+   -90.049,
+   35.1495
+  ],
+  "downtown-jackson": [
+   -90.1848,
+   32.2988
+  ],
+  "downtown-tupelo": [
+   -88.7034,
+   34.2576
+  ]
+ },
+ "routes": [
+  {
+   "origin": "downtown-jackson",
+   "slug": "baptist-medical-center",
+   "arrival": "campus",
+   "seconds": {
+    "night": 443,
+    "am": 525,
+    "pm": 524
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "baptist-medical-center-yazoo",
+   "arrival": "campus",
+   "seconds": {
+    "night": 3047,
+    "am": 3189,
+    "pm": 3175
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "baptist-medical-center-attala",
+   "arrival": "campus",
+   "seconds": {
+    "night": 4679,
+    "am": 4880,
+    "pm": 4909
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "anderson",
+   "arrival": "campus",
+   "seconds": {
+    "night": 5037,
+    "am": 5166,
+    "pm": 5230
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "calhoun",
+   "arrival": "campus",
+   "seconds": {
+    "night": 7689,
+    "am": 7988,
+    "pm": 7933
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "north-mississippi",
+   "arrival": "campus",
+   "seconds": {
+    "night": 8688,
+    "am": 9015,
+    "pm": 8947
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "golden-triangle",
+   "arrival": "campus",
+   "seconds": {
+    "night": 8844,
+    "am": 9216,
+    "pm": 9198
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "desoto",
+   "arrival": "campus",
+   "seconds": {
+    "night": 9668,
+    "am": 9966,
+    "pm": 9951
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "memphis",
+   "arrival": "campus",
+   "seconds": {
+    "night": 10746,
+    "am": 11040,
+    "pm": 11015
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "union-county",
+   "arrival": "campus",
+   "seconds": {
+    "night": 10752,
+    "am": 11203,
+    "pm": 11053
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "crittenden",
+   "arrival": "campus",
+   "seconds": {
+    "night": 10780,
+    "am": 11068,
+    "pm": 11056
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "collierville",
+   "arrival": "campus",
+   "seconds": {
+    "night": 11129,
+    "am": 11426,
+    "pm": 11399
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "arlington",
+   "arrival": "campus",
+   "seconds": {
+    "night": 11578,
+    "am": 11843,
+    "pm": 11864
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "booneville",
+   "arrival": "campus",
+   "seconds": {
+    "night": 12164,
+    "am": 12542,
+    "pm": 12482
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "tipton",
+   "arrival": "campus",
+   "seconds": {
+    "night": 12944,
+    "am": 13347,
+    "pm": 13226
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "nea",
+   "arrival": "campus",
+   "seconds": {
+    "night": 14185,
+    "am": 14504,
+    "pm": 14464
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "huntingdon",
+   "arrival": "campus",
+   "seconds": {
+    "night": 16927,
+    "am": 17195,
+    "pm": 17169
+   }
+  },
+  {
+   "origin": "downtown-jackson",
+   "slug": "union-city",
+   "arrival": "campus",
+   "seconds": {
+    "night": 17655,
+    "am": 18144,
+    "pm": 17872
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "crittenden",
+   "arrival": "campus",
+   "seconds": {
+    "night": 586,
+    "am": 603,
+    "pm": 605
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "memphis",
+   "arrival": "campus",
+   "seconds": {
+    "night": 1033,
+    "am": 1172,
+    "pm": 1225
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "desoto",
+   "arrival": "campus",
+   "seconds": {
+    "night": 1047,
+    "am": 1117,
+    "pm": 1172
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "arlington",
+   "arrival": "campus",
+   "seconds": {
+    "night": 1648,
+    "am": 1714,
+    "pm": 1922
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "collierville",
+   "arrival": "campus",
+   "seconds": {
+    "night": 1873,
+    "am": 1981,
+    "pm": 2258
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "tipton",
+   "arrival": "campus",
+   "seconds": {
+    "night": 2743,
+    "am": 2988,
+    "pm": 3145
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "nea",
+   "arrival": "campus",
+   "seconds": {
+    "night": 3944,
+    "am": 4126,
+    "pm": 4062
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "north-mississippi",
+   "arrival": "campus",
+   "seconds": {
+    "night": 4591,
+    "am": 4778,
+    "pm": 4877
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "union-county",
+   "arrival": "campus",
+   "seconds": {
+    "night": 4609,
+    "am": 4720,
+    "pm": 4931
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "booneville",
+   "arrival": "campus",
+   "seconds": {
+    "night": 6557,
+    "am": 6858,
+    "pm": 7042
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "huntingdon",
+   "arrival": "campus",
+   "seconds": {
+    "night": 6925,
+    "am": 7047,
+    "pm": 7312
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "calhoun",
+   "arrival": "campus",
+   "seconds": {
+    "night": 7049,
+    "am": 7348,
+    "pm": 7431
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "union-city",
+   "arrival": "campus",
+   "seconds": {
+    "night": 7341,
+    "am": 7768,
+    "pm": 7667
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "baptist-medical-center-attala",
+   "arrival": "campus",
+   "seconds": {
+    "night": 8012,
+    "am": 8272,
+    "pm": 8287
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "golden-triangle",
+   "arrival": "campus",
+   "seconds": {
+    "night": 9468,
+    "am": 9617,
+    "pm": 9838
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "baptist-medical-center-yazoo",
+   "arrival": "campus",
+   "seconds": {
+    "night": 9877,
+    "am": 10136,
+    "pm": 10154
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "baptist-medical-center",
+   "arrival": "campus",
+   "seconds": {
+    "night": 10459,
+    "am": 10697,
+    "pm": 10738
+   }
+  },
+  {
+   "origin": "downtown-memphis",
+   "slug": "anderson",
+   "arrival": "campus",
+   "seconds": {
+    "night": 13380,
+    "am": 13801,
+    "pm": 13699
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "union-county",
+   "arrival": "campus",
+   "seconds": {
+    "night": 1615,
+    "am": 1723,
+    "pm": 1728
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "booneville",
+   "arrival": "campus",
+   "seconds": {
+    "night": 1894,
+    "am": 1987,
+    "pm": 1997
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "north-mississippi",
+   "arrival": "campus",
+   "seconds": {
+    "night": 3156,
+    "am": 3269,
+    "pm": 3265
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "golden-triangle",
+   "arrival": "campus",
+   "seconds": {
+    "night": 3681,
+    "am": 3795,
+    "pm": 3807
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "calhoun",
+   "arrival": "campus",
+   "seconds": {
+    "night": 3709,
+    "am": 3917,
+    "pm": 3935
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "collierville",
+   "arrival": "campus",
+   "seconds": {
+    "night": 5095,
+    "am": 5341,
+    "pm": 5299
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "desoto",
+   "arrival": "campus",
+   "seconds": {
+    "night": 5195,
+    "am": 5418,
+    "pm": 5414
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "arlington",
+   "arrival": "campus",
+   "seconds": {
+    "night": 5515,
+    "am": 5752,
+    "pm": 5732
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "memphis",
+   "arrival": "campus",
+   "seconds": {
+    "night": 5553,
+    "am": 5886,
+    "pm": 5927
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "crittenden",
+   "arrival": "campus",
+   "seconds": {
+    "night": 6314,
+    "am": 6526,
+    "pm": 6530
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "baptist-medical-center-attala",
+   "arrival": "campus",
+   "seconds": {
+    "night": 6797,
+    "am": 7199,
+    "pm": 7129
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "tipton",
+   "arrival": "campus",
+   "seconds": {
+    "night": 7422,
+    "am": 7708,
+    "pm": 7669
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "anderson",
+   "arrival": "campus",
+   "seconds": {
+    "night": 7766,
+    "am": 8056,
+    "pm": 8024
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "huntingdon",
+   "arrival": "campus",
+   "seconds": {
+    "night": 8506,
+    "am": 8763,
+    "pm": 8745
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "nea",
+   "arrival": "campus",
+   "seconds": {
+    "night": 9704,
+    "am": 9957,
+    "pm": 9933
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "baptist-medical-center-yazoo",
+   "arrival": "campus",
+   "seconds": {
+    "night": 9999,
+    "am": 10291,
+    "pm": 10230
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "union-city",
+   "arrival": "campus",
+   "seconds": {
+    "night": 10731,
+    "am": 11151,
+    "pm": 11075
+   }
+  },
+  {
+   "origin": "downtown-tupelo",
+   "slug": "baptist-medical-center",
+   "arrival": "campus",
+   "seconds": {
+    "night": 10856,
+    "am": 11362,
+    "pm": 11196
+   }
+  }
+ ]
+}
