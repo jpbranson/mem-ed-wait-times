@@ -8,9 +8,11 @@ remain in progress; official status/service/age evidence covers all 20
 destinations, and by user decision 18 adult/4 child destinations route to labeled
 campus centers (ER entrance unconfirmed) until imagery-reviewed entrances are added.
 A Cloudflare Workers routing gateway is implemented and validated locally, including
-one live comparison, but not deployed (2026-09-26). M3 is in progress with
-a difference-from-usual heatmap and an offline relationship study that found no
-confirmed pair association. M4 is in progress: area counts and wait-stability
+one live comparison, but not deployed (2026-09-26). A pre-registered backtest found
+no benefit rule reliable enough to adopt, so preferred-option claims stay disabled.
+M3 is in progress with a difference-from-usual heatmap, an offline relationship
+study that found no confirmed pair association, and a campus map with replay that
+is validated locally but not deployed (2026-09-26). M4 is in progress: area counts and wait-stability
 summaries were deployed on 2026-09-24 (`8242ad1`, 03:17 UTC build); the historical
 alternatives replay is deferred until M2 routing is validated. M5 is in progress offline: after benchmarks and
 ARIMA pilots, a v2 candidate study scored development, froze its selections and

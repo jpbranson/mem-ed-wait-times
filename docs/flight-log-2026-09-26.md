@@ -10,7 +10,9 @@ is pushed or deployed unless an entry below says so.
 
 ## Resume here
 
-Next action: step 10 (time-gated checkpoint); then a final SNS check and wrap-up.
+Run complete at 2026-09-26 01:08 UTC. Nothing further can proceed without the user:
+work the human review queue below. When the alarm subscription is confirmed, do
+step 2 (remove the `schedule:` trigger, update the docs, push to `main` alone).
 
 ## Rules for this run
 
@@ -36,7 +38,7 @@ Next action: step 10 (time-gated checkpoint); then a final SNS check and wrap-up
 | 7 | Draft the meaningful-difference (benefit) rule | Claude | Done (result: no rule qualifies) | Pre-registered backtest (`996a2f1`) on pre-holdout data: no fixed margin or screen reached 0.90 precision (best S½ 0.875; current screen 0.85); preferred-option claims stay disabled. [Results](m2-benefit-validation.md) |
 | 8 | M4 historical-alternatives replay | Blocked on M2 | Blocked (dependency) | Needs the deployed gateway and live traffic-hour validation (steps 3c, 6). `edwait/benefit.py` now holds reusable replay logic for three public origins |
 | 9 | M3 map view and replay controls | Claude | Done (local only; not deployed) | `dashboard/geo.mjs`, `geo-map.mjs`, heatmap replay outline, area views; 7 new tests (90 Python / 67 JS pass); headless Chrome desktop/390/320 checks passed ([evidence](m3-validation.md#map-and-replay--2026-09-26-utc)). Deploying needs the user's approval to merge/push |
-| 10 | 2026-10-15 checkpoint: M3 rerun, M5 holdout decision and new study, M4 re-test | Time-gated | Not started | |
+| 10 | 2026-10-15 checkpoint: M3 rerun, M5 holdout decision and new study, M4 re-test | Time-gated | Blocked (time and user decisions) | Needs ~3 weeks of post-2026-09-23 data and the user's holdout decision; checklist below. Nothing run early: reading the fresh data now would spoil pre-registration |
 
 ## Human review queue
 
@@ -67,7 +69,20 @@ Next action: step 10 (time-gated checkpoint); then a final SNS check and wrap-up
    [m2-validation](m2-validation.md#traffic-profiles-and-rush-hour--2026-09-26-utc)
    (54 requests), or ask Claude to then. Claude can also set up a one-off scheduled
    task for it if you approve that.
-7. **Security observation (not a step).** CloudTrail records this machine's AWS CLI
+7. **2026-10-15 checkpoint decisions (step 10).** (a) Score M5's reserved holdout
+   (2026-09-16 to 09-23, one-time, only Collierville 60 min eligible) or retire it;
+   (b) pre-register before reading fresh data: an M3 rerun on a post-2026-09-23
+   snapshot (and whether a held-out predictive check is still worth doing), a new M5
+   study (profile persistence at 60–120 min for high-variance hospitals), and any
+   per-area M2 benefit rule; (c) whether M3's negative result belongs in the heatmap
+   disclosure; (d) re-test M4 area counts against independence. Snapshot command:
+   `.venv\Scripts\python.exe scripts/m1_snapshot.py --start 2026-09-23T00:00:00Z --end 2026-10-15T00:00:00Z --output .cache/history-20261015.json`.
+   Claude can draft the pre-registrations before then if asked.
+8. **Review and deploy this branch.** Merging `next-steps-2026-09-26` into `main`
+   publishes within the hour: the M3 map/replay, the privacy line naming the
+   Cloudflare gateway, and `travel.json` arrival points. The gateway itself deploys
+   separately (step 3c). Not pushed.
+9. **Security observation (not a step).** CloudTrail records this machine's AWS CLI
    calls as the root user. AWS recommends against root access keys; consider an IAM
    user or role with only the permissions these scripts need, then removing the root keys.
 
@@ -140,7 +155,7 @@ Next action: step 10 (time-gated checkpoint); then a final SNS check and wrap-up
   0.92–1.00 under screen rules. Readings an hour after arrival: 0.60–0.70. Result
   recorded as the drafted (negative) rule; nothing public changed. Step 8 stays
   blocked on M2 deployment and live traffic validation.
-- 2026-09-26 01:10 UTC — Step 9. Built the map and replay under the heatmap (markers
+- 2026-09-26 01:05 UTC — Step 9. Built the map and replay under the heatmap (markers
   as buttons with ▲/▼/●/? glyphs colored by the heatmap bins; slider/Play/Latest
   outlining the heatmap column; area views; lazy MapLibre; campus points embedded in
   the page registry; no new artifact). The desktop app's browser pane was hidden
@@ -152,3 +167,9 @@ Next action: step 10 (time-gated checkpoint); then a final SNS check and wrap-up
   overflow and a 16 px text minimum. Fixed two issues found in review (stale
   framing after resize; overlapping Memphis markers). Pre-existing console warning:
   the shared map style's `circle-11` icon is missing from the OpenFreeMap sprite.
+- 2026-09-26 01:08 UTC — Step 10 is time-gated; checklist added to the review queue.
+  Stopped the local review server by PID after a too-broad `taskkill` filter matched
+  nothing (all other Python processes confirmed still running); no headless Chrome
+  processes left. Final checks: alarm topic still 0 confirmed / 0 pending; the
+  00:17 UTC dispatch succeeded (48/48 hourly). Run complete: steps 5, 7 and 9 done
+  (local only), step 6 partial, the rest queued for the user. Branch not pushed.
