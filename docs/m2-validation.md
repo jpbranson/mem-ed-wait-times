@@ -160,6 +160,45 @@ Native viewport settings were restored after the review. The final rendered page
 showed the revised provider-transmission disclosure, blank origin inputs and
 disabled real routing. No browser console errors were observed.
 
+## Traffic profiles and rush hour — 2026-09-26 UTC
+
+TomTom's v3 `live` mode estimates durations from historical speed profiles plus
+current jams and closures; `historical` mode uses the profiles only and always
+reports zero `trafficDelayDurationInSeconds`, which counts jams relative to free
+flow ([v3 contract](https://docs.tomtom.com/routing-api/documentation/tomtom-orbis-maps/v3/calculate-route)).
+Typical rush-hour slowing therefore appears in the duration, not the delay field.
+That explains the zero delays on every route in the overnight 2026-09-23 run and
+in a Friday-evening gateway check (2026-09-26 00:32 UTC). Neither establishes
+live-jam coverage.
+
+`scripts/check_routes.py` gained `--traffic` and `--departure` options, and
+`scripts/compare_routes.py` compares saved runs route by route. Three runs used
+`--traffic historical` for Monday 2026-09-28 at 03:00, 08:00 and 17:00 Chicago
+time: three public city-center origins times 18 adult destinations, 162 requests
+reserved in the local ledger. All 162 ended within tolerance (at most 61 m).
+Compared with 03:00 on the same 54 routes:
+
+| Departure (CDT) | Extra minutes: median / 90th pct / max | Ratio: median / max | Largest origin effect |
+| --- | --- | --- | --- |
+| 08:00 | 4.3 / 6.9 / 8.4 | 1.04 / 1.19 | Jackson median +5.0 min |
+| 17:00 | 4.5 / 6.2 / 8.1 | 1.03 / 1.21 | Memphis median +5.0 min, ratio up to 1.21 |
+
+The 2026-09-23 overnight live run agreed with the 03:00 profile within about
+±5 minutes (median −1.3). TomTom's typical profiles thus add about 3–8 minutes
+at weekday peaks on these routes; incidents, weather and heavier jams can add
+more, and profiles say nothing about live coverage. Aggregate results:
+[m2-traffic-profile-2026-09-26.json](m2-traffic-profile-2026-09-26.json); the
+per-route files (no geometry) are in the Git-ignored `.cache/`.
+
+**Still required:** a `live` run during an actual weekday peak (next: Monday
+2026-09-28, 12:00–14:00 or 21:00–23:00 UTC), compared with the profile for the
+same hour to measure jam delay and reported-delay coverage:
+
+```powershell
+.venv\Scripts\python.exe scripts/check_routes.py --output .cache/route-validation-20260928-am.json
+.venv\Scripts\python.exe scripts/compare_routes.py .cache/route-profile-20260928T0800-0500.json .cache/route-validation-20260928-am.json
+```
+
 ## Outstanding evidence and release work
 
 All 20 real registry entries remain travel-ineligible. The pages reviewed on

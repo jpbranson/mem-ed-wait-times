@@ -10,7 +10,7 @@ is pushed or deployed unless an entry below says so.
 
 ## Resume here
 
-Next action: step 6 (rush-hour routes); re-check the SNS subscription between steps.
+Next action: step 7 (draft the benefit rule); re-check the SNS topic between steps.
 
 ## Rules for this run
 
@@ -32,7 +32,7 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
 | 3c | Cloudflare account and terms for the gateway | Human | Blocked (human) | Claude cannot create accounts or accept terms |
 | 4 | Establish what `CV_ED_Wait` measures | Human or Baptist; Claude drafted the inquiry | Blocked (human) | Draft in [m2-metric-inquiry-2026-09-26.md](m2-metric-inquiry-2026-09-26.md), not sent. API response has no timestamp or caching headers |
 | 5 | Build the Cloudflare routing gateway locally | Claude | Done (local only; not deployed) | `gateway/` Worker + SQLite Durable Object; 14 unit tests; 11/11 workerd checks with a mock provider; browser Compare through the served page (18 rows, no console errors); one live comparison 18/18 in 4.6 s. Docs: m2-operations "Cloudflare gateway", s3-buckets, README, plan. Deployment needs step 3c |
-| 6 | Test routes at rush hour | Claude; weekday peak only | Not started | |
+| 6 | Test routes at rush hour | Claude; weekday peak only | Partial; live run blocked (time) | Profile evidence done: 162 historical-mode requests for Monday 03:00/08:00/17:00 CDT, all within tolerance; peaks add median ~4.4 min, max 8.4 min ([m2-validation](m2-validation.md#traffic-profiles-and-rush-hour--2026-09-26-utc)). The live weekday-peak run needs Monday 2026-09-28, 12:00–14:00 or 21:00–23:00 UTC |
 | 7 | Draft the meaningful-difference (benefit) rule | Claude | Not started | |
 | 8 | M4 historical-alternatives replay | Blocked on M2 | Not started | |
 | 9 | M3 map view and replay controls | Claude | Not started | |
@@ -62,7 +62,12 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
    `docs/m2-operations.md#cloudflare-gateway` ("Deployment").
 5. **Send the metric inquiry (step 4).** Review and send the draft in
    `docs/m2-metric-inquiry-2026-09-26.md`, or tell Claude to change it.
-6. **Security observation (not a step).** CloudTrail records this machine's AWS CLI
+6. **Live rush-hour run (step 6).** On Monday 2026-09-28 between 12:00 and 14:00 UTC
+   (7–9 AM Chicago), run the two commands in
+   [m2-validation](m2-validation.md#traffic-profiles-and-rush-hour--2026-09-26-utc)
+   (54 requests), or ask Claude to then. Claude can also set up a one-off scheduled
+   task for it if you approve that.
+7. **Security observation (not a step).** CloudTrail records this machine's AWS CLI
    calls as the root user. AWS recommends against root access keys; consider an IAM
    user or role with only the permissions these scripts need, then removing the root keys.
 
@@ -118,3 +123,11 @@ Next action: step 6 (rush-hour routes); re-check the SNS subscription between st
   because CloudTrail stores the endpoint redacted (8-character placeholder). Nothing
   was created. Not guessing the address; queued for the user. Observation for the
   user: this machine's AWS CLI calls appear in CloudTrail as the **root** identity.
+- 2026-09-26 00:45 UTC — Step 6. TomTom docs: `live` = historical profiles plus
+  current jams; the delay field counts jams only (zero in `historical` mode), which
+  explains all-zero delays so far. Added `--traffic`/`--departure` to
+  `scripts/check_routes.py` and `scripts/compare_routes.py`. Ran historical profiles
+  for Monday 03:00/08:00/17:00 CDT (162 requests, reserved in the local ledger, all
+  within tolerance). Peak vs 03:00: 08:00 median +4.3 min (max +8.4, ratio ≤1.19);
+  17:00 median +4.5 (max +8.1, ratio ≤1.21). Summary committed as
+  `docs/m2-traffic-profile-2026-09-26.json`. Live peak run is time-gated to Monday.

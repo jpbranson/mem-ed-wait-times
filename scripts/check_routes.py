@@ -28,7 +28,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--env-file", type=Path, default=Path(".env.local"))
     parser.add_argument("--output", type=Path, default=Path(".cache/route-validation.json"))
+    parser.add_argument("--traffic", choices=("live", "historical"), default="live",
+                        help="historical: TomTom's typical speeds only, without current jams")
+    parser.add_argument("--departure", type=datetime.fromisoformat,
+                        help="departure time with UTC offset (default now); future times use traffic profiles")
     args = parser.parse_args()
+    if args.departure is not None and args.departure.tzinfo is None:
+        parser.error("--departure needs a UTC offset")
     key = read_key(args.env_file)
     if not key:
         print(json.dumps({"status": "routing_not_configured"}))
@@ -50,7 +56,8 @@ def main():
                 response = requests.post(ENDPOINT, json={
                     "routePlanningLocations": {"origin": {"type": "Point", "coordinates": origin},
                                                "destination": {"type": "Point", "coordinates": destination}},
-                    "traffic": "live", "departureDateTime": datetime.now(timezone.utc).isoformat(), "routeType": "fast",
+                    "traffic": args.traffic, "routeType": "fast",
+                    "departureDateTime": (args.departure or datetime.now(timezone.utc)).isoformat(),
                     "travelMode": "car", "maxPathAlternativeRoutes": 0},
                     headers={"TomTom-Api-Key": key, "TomTom-Api-Version": "3", "Attributes": "routes.summary,routes.legs.path",
                              "Content-Type": "application/json", "User-Agent": USER_AGENT}, timeout=(2, 8), allow_redirects=False)
@@ -67,7 +74,9 @@ def main():
             results.append(row)
             time.sleep(.3)
     ok = [r for r in results if r.get("within_tolerance")]
-    summary = {"checked_at": now.isoformat(), "requests": len(results), "passed": len(ok),
+    summary = {"checked_at": now.isoformat(), "traffic": args.traffic,
+               "departure": args.departure.isoformat() if args.departure else "now",
+               "requests": len(results), "passed": len(ok),
                "max_end_offset_m": max((r["end_offset_m"] for r in results if "end_offset_m" in r), default=None),
                "status": "passed" if len(ok) == len(results) else "partial"}
     args.output.parent.mkdir(parents=True, exist_ok=True)
