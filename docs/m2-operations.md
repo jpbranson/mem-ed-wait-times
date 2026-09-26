@@ -265,8 +265,12 @@ and all differences because the missing route could be shortest.
 
 For each available row: total = drive + published wait; extra drive = drive minus
 closest drive; difference = closest total minus row total. Positive differences
-mean a lower arithmetic estimate, not measured patient time savings. Values are
-sorted by drive time, with no preferred marker.
+mean a lower arithmetic estimate, not measured patient time savings. Rows are
+sorted by drive time by default; since 2026-09-26 a Sort by control also orders them
+by published wait or by drive + wait (missing values last, ties by drive time).
+Sorting never changes the closest hospital or any difference, and sorting by drive +
+wait adds the caption "an arithmetic estimate, not a recommendation". There is no
+preferred marker.
 
 The [travel artifact](travel.schema.json) summarizes absolute published-wait
 changes at 15/30/60/120-minute horizons across 28 prior complete local days. It
@@ -302,6 +306,10 @@ and map module passed through, `/api/routes/status` returned `available: true` w
 and one Compare from downtown Memphis returned 18/18 routes in 4.7 s with no origin
 or geometry in the response. The S3 site is unchanged, with Compare disabled. The
 URL is not linked publicly; M2's recommendation gates are unchanged.
+Fix (2026-09-26, needs a redeploy): Cloudflare's edge cache kept `latest.css` from
+the build before the M3 map (`CF-Cache-Status: HIT`), leaving the map's buttons
+unstyled. The pass-through now fetches site files with `cache: "no-store"` and adds
+`Cache-Control: no-cache` where the bucket sets none, so browsers revalidate by ETag.
 
 **Design.** One Worker serves the dashboard and the API from the same
 `workers.dev` origin, so the page's relative `/api/routes` requests stay

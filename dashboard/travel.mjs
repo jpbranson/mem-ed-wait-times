@@ -97,10 +97,21 @@ export function compareTravel({context, routes, live, now=Date.now(), contextFai
     "Some routes unavailable · closest and differences withheld"};
 }
 
+export const sortKeys={drive:"drive time",wait:"published wait",total:"drive + wait"};
+// Reorders rows only: closest (by road) and every difference stay the same. Missing
+// values go last; ties fall back to drive time.
+export function sortTravel(result, key) {
+  const field=Object.hasOwn(sortKeys,key) ? key : "drive", value=v=>v ?? Infinity;
+  return {...result,sortedBy:field,rows:[...result.rows].sort((a,b)=>
+    value(a[field])-value(b[field]) || value(a.drive)-value(b.drive) || a.slug.localeCompare(b.slug))};
+}
+
 export function renderTravel(result, example=false) {
   if(!result.rows.length) return `<p class="travel-empty">${escape(result.message)}</p>`;
   const max=Math.max(1,...result.rows.map(r=>r.total ?? r.drive ?? 0));
-  return `<p class="travel-caption">${example ? "Illustrative example · fictional hospitals and readings" : escape(result.message)}</p>`+
+  const order=result.sortedBy==="total" ? " · Sorted by drive + wait, an arithmetic estimate, not a recommendation" :
+    result.sortedBy==="wait" ? " · Sorted by published wait" : "";
+  return `<p class="travel-caption">${example ? "Illustrative example · fictional hospitals and readings" : escape(result.message)}${order}</p>`+
     '<div class="travel-key"><span><i class="drive-swatch"></i> Drive</span><span><i class="wait-swatch"></i> Published wait</span><span>Minutes</span></div>'+
     '<ol class="travel-rows">'+result.rows.map(r=>{
       const delta=r.difference===null ? "Difference unavailable" : r.slug===result.closest ? "Closest by road" :
@@ -171,6 +182,7 @@ export function mountTravel(root,{expected,getLive,fetcher=globalThis.fetch,orig
   const status=root.querySelector(".travel-status"), chart=root.querySelector(".travel-chart");
   const submit=root.querySelector("[type=submit]");
   const exampleButton=root.querySelector(".travel-example"), support=root.querySelector(".travel-support");
+  const sort=root.querySelector(".travel-sort-select");
   let context=null,failed=false,routes=null,error="",example=false,busy=false,pending=false,routing=null;
   const routeFeed=createRouteFeed({fetcher,onChange:state=>{routes=state.routes;error=state.error;busy=false;render();}});
   function invalidate() { routeFeed.clear();routes=null;error="";busy=false;example=false; }
@@ -186,7 +198,7 @@ export function mountTravel(root,{expected,getLive,fetcher=globalThis.fetch,orig
       routing===null ? "Checking road estimate availability…" : routing===false ? `${destinations(candidates)} · road estimates not available on this site yet` :
       destinations(candidates));
     const result=compareTravel({context,routes,live:getLive(),contextFailed:failed});
-    chart.innerHTML=renderTravel(example ? exampleComparison() : !routes ? {...result,message:""} : result,example);
+    chart.innerHTML=renderTravel(sortTravel(example ? exampleComparison() : !routes ? {...result,message:""} : result,sort.value),example);
     const excluded=(context?.facilities ?? []).filter(f=>f.eligibility[group.value]);
     support.innerHTML=(excluded.length ? `<p>${excluded.length} excluded destinations</p><ul>`+excluded.map(f=>`<li>${escape(f.display_name)} · ${escape(f.eligibility[group.value])}</li>`).join("")+"</ul>" : "")+
       (result.rows.length ? `<p>TomTom road estimates requested ${Math.floor(result.routeAge/60)} min ago. Live traffic is requested; zero or missing delay does not establish coverage on every road.</p><ul>`+
@@ -218,6 +230,7 @@ export function mountTravel(root,{expected,getLive,fetcher=globalThis.fetch,orig
     routeFeed.request(origin.value(),context,group.value);
   });
   exampleButton.addEventListener("click",()=>{example=!example;render();});
+  sort.addEventListener("change",render);
   render();
   return {render,refresh};
 }

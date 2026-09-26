@@ -48,10 +48,15 @@ async function assets(request, env, fetcher, url) {
   for (const name of FORWARDED) if (request.headers.has(name)) headers.set(name, request.headers.get(name));
   try {
     // Query strings are dropped: the page never uses them and S3 treats some as subresources.
-    // Cache headers pass through unchanged, including no-store on data/latest.json.
-    const upstream = await fetcher(new URL(path, env.ASSET_ORIGIN), {method: request.method, headers, redirect: "manual"});
+    // Bypass Cloudflare's cache: it would otherwise keep .css/.js from an earlier site build
+    // (seen 2026-09-26). Cache headers pass through, including no-store on data/latest.json.
+    const upstream = await fetcher(new URL(path, env.ASSET_ORIGIN),
+                                   {method: request.method, headers, redirect: "manual", cache: "no-store"});
     const out = new Headers();
     for (const [name, value] of upstream.headers) if (!DROPPED.test(name)) out.set(name, value);
+    // The bucket sets no cache policy on site files; make browsers revalidate (cheap 304s
+    // by ETag) so each build is seen at once instead of after a heuristic delay.
+    if (!out.has("Cache-Control")) out.set("Cache-Control", "no-cache");
     out.set("X-Content-Type-Options", "nosniff");
     return new Response(upstream.body, {status: upstream.status, headers: out});
   } catch {

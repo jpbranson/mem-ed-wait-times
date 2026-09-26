@@ -134,6 +134,8 @@ pre { background: var(--surface); color: var(--muted); padding: 15px; }
 .travel-controls label { display: flex; flex: 1 1 170px; flex-direction: column; color: var(--muted); gap: 4px; min-width: 0; }
 .travel-controls input, .travel-controls select { width: 100%; min-width: 0; box-sizing: border-box; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
 .travel-status { color: var(--accent); margin: 14px 0; }
+.travel-sort { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); max-width: 100%; min-width: 0; }
+.travel-sort select { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font: 16px var(--font); min-height: 44px; max-width: 100%; min-width: 0; }
 .travel-chart:empty, .travel-empty:empty { display: none; }
 .travel-key { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 22px 0; color: var(--muted); }
 .travel-key span { display: inline-flex; align-items: center; gap: 8px; }

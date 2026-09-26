@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate,probeRouting,destinations} from "../dashboard/travel.mjs";
+import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate,probeRouting,destinations,sortTravel} from "../dashboard/travel.mjs";
 
 const at="2026-09-14T17:00:00Z", now=Date.parse(at);
 const facilities=[{slug:"a",display_name:"Example A"},{slug:"b",display_name:"Example B"}];
@@ -144,4 +144,22 @@ test("campus-center arrivals are labeled everywhere and never called verified en
   }
   const noPoint=fixture();noPoint.context.facilities[0].arrival=null;
   assert.throws(()=>validateTravel(noPoint.context,facilities), "an eligible destination needs an arrival point");
+});
+
+test("rows sort by drive, published wait or drive + wait without changing closest or differences",()=>{
+  const result=compareTravel(fixture());
+  const order=key=>sortTravel(result,key).rows.map(r=>r.slug);
+  assert.deepEqual(order("drive"),["a","b"]);
+  assert.deepEqual(order("wait"),["b","a"]);
+  assert.deepEqual(order("total"),["b","a"]);
+  assert.deepEqual(order("unknown"),["a","b"]);
+  const sorted=sortTravel(result,"total");
+  assert.equal(sorted.closest,"a");
+  assert.equal(sorted.rows.find(r=>r.slug==="b").difference,31.5);
+  assert.match(renderTravel(sorted),/Sorted by drive \+ wait, an arithmetic estimate, not a recommendation/);
+  assert.doesNotMatch(renderTravel(sortTravel(result,"drive")),/Sorted by/);
+  // A hospital without a current wait goes last when sorting by wait or total.
+  const missing=fixture();missing.live.artifact.facilities[1].last_success=null;
+  assert.deepEqual(sortTravel(compareTravel(missing),"wait").rows.map(r=>r.slug),["a","b"]);
+  assert.deepEqual(sortTravel(exampleComparison(),"total").rows.map(r=>r.slug),["example-b","example-c","example-a"]);
 });

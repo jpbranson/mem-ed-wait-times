@@ -325,6 +325,10 @@ test("static assets pass through from the bucket without query strings, cookies 
   assert.equal(response.headers.get("ETag"), '"abc"');
   assert.equal(response.headers.get("x-amz-request-id"), null);
   assert.equal(response.headers.get("Server"), null);
+  assert.equal(requests[0].init.cache, "no-store");  // Never an edge copy from an earlier build.
+  const uncached = await handle(new Request("https://gateway.example/latest.css"), env,
+    {gate: null, fetcher: async () => new Response("a{}", {headers: {"Content-Type": "text/css", ETag: '"css"'}})});
+  assert.equal(uncached.headers.get("Cache-Control"), "no-cache");
   await handle(new Request("https://gateway.example/data/latest.json?t=5"), env, {gate: null, fetcher});
   assert.equal(requests[1].url, "https://bucket.example/data/latest.json");
   assert.equal((await handle(new Request("https://gateway.example/index.html", {method: "POST", body: "x"}), env, {gate: null, fetcher})).status, 405);
