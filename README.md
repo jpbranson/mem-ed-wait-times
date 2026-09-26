@@ -48,6 +48,8 @@ EventBridge rule dispatches the workflow hourly; its first four dispatches
 - [M2 destination evidence](docs/m2-destinations-2026-09-23.md): official status,
   service and age evidence for all 20 facilities, labeled campus-center fallback,
   live route validation and the entrance-review tool.
+- [M2 benefit-rule backtest](docs/m2-benefit-validation.md) and [protocol](docs/m2-benefit-protocol.md):
+  how often a lower drive-plus-wait estimate still held at arrival; no rule qualified.
 - [M3 validation](docs/m3-validation.md) and [relationship protocol](docs/m3-relationship-protocol.md):
   difference-from-usual heatmap, neighbor groups, pair-association study and limits.
 - [M4 validation](docs/m4-validation.md): area counts versus chance, wait-stability

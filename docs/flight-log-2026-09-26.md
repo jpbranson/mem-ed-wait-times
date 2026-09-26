@@ -10,7 +10,7 @@ is pushed or deployed unless an entry below says so.
 
 ## Resume here
 
-Next action: step 7 (draft the benefit rule); re-check the SNS topic between steps.
+Next action: step 9 (M3 map view and replay controls); re-check the SNS topic between steps.
 
 ## Rules for this run
 
@@ -33,8 +33,8 @@ Next action: step 7 (draft the benefit rule); re-check the SNS topic between ste
 | 4 | Establish what `CV_ED_Wait` measures | Human or Baptist; Claude drafted the inquiry | Blocked (human) | Draft in [m2-metric-inquiry-2026-09-26.md](m2-metric-inquiry-2026-09-26.md), not sent. API response has no timestamp or caching headers |
 | 5 | Build the Cloudflare routing gateway locally | Claude | Done (local only; not deployed) | `gateway/` Worker + SQLite Durable Object; 14 unit tests; 11/11 workerd checks with a mock provider; browser Compare through the served page (18 rows, no console errors); one live comparison 18/18 in 4.6 s. Docs: m2-operations "Cloudflare gateway", s3-buckets, README, plan. Deployment needs step 3c |
 | 6 | Test routes at rush hour | Claude; weekday peak only | Partial; live run blocked (time) | Profile evidence done: 162 historical-mode requests for Monday 03:00/08:00/17:00 CDT, all within tolerance; peaks add median ~4.4 min, max 8.4 min ([m2-validation](m2-validation.md#traffic-profiles-and-rush-hour--2026-09-26-utc)). The live weekday-peak run needs Monday 2026-09-28, 12:00–14:00 or 21:00–23:00 UTC |
-| 7 | Draft the meaningful-difference (benefit) rule | Claude | Not started | |
-| 8 | M4 historical-alternatives replay | Blocked on M2 | Not started | |
+| 7 | Draft the meaningful-difference (benefit) rule | Claude | Done (result: no rule qualifies) | Pre-registered backtest (`996a2f1`) on pre-holdout data: no fixed margin or screen reached 0.90 precision (best S½ 0.875; current screen 0.85); preferred-option claims stay disabled. [Results](m2-benefit-validation.md) |
+| 8 | M4 historical-alternatives replay | Blocked on M2 | Blocked (dependency) | Needs the deployed gateway and live traffic-hour validation (steps 3c, 6). `edwait/benefit.py` now holds reusable replay logic for three public origins |
 | 9 | M3 map view and replay controls | Claude | Not started | |
 | 10 | 2026-10-15 checkpoint: M3 rerun, M5 holdout decision and new study, M4 re-test | Time-gated | Not started | |
 
@@ -131,3 +131,12 @@ Next action: step 7 (draft the benefit rule); re-check the SNS topic between ste
   within tolerance). Peak vs 03:00: 08:00 median +4.3 min (max +8.4, ratio ≤1.19);
   17:00 median +4.5 (max +8.1, ratio ≤1.21). Summary committed as
   `docs/m2-traffic-profile-2026-09-26.json`. Live peak run is time-gated to Monday.
+- 2026-09-26 00:55 UTC — Step 7. Wrote and committed the protocol, route-profile input,
+  `edwait/benefit.py`, runner and 6 tests before any real-data run (`996a2f1`); data
+  restricted to batches before 2026-09-16 (M5 holdout untouched). Run: 93,818 records,
+  14,170 discovery / 7,924 confirmation opportunities, 20 s. No rule met the gates
+  (precision ≥0.90, lower bound ≥0.80): F10–F60 0.84–0.86, S1 0.85, S½ 0.875;
+  confirmation similar. Exploratory: Memphis origin 0.72–0.81, Jackson/Tupelo
+  0.92–1.00 under screen rules. Readings an hour after arrival: 0.60–0.70. Result
+  recorded as the drafted (negative) rule; nothing public changed. Step 8 stays
+  blocked on M2 deployment and live traffic validation.

@@ -1,0 +1,1301 @@
+{
+ "version": "m2-benefit-v1",
+ "records_used": 93818,
+ "latest_batch_used": "2026-09-15T23:53:51.003367+00:00",
+ "periods": {
+  "discovery": {
+   "opportunities": 14170,
+   "days": 26,
+   "closest": [
+    [
+     "downtown-jackson",
+     "baptist-medical-center"
+    ],
+    [
+     "downtown-memphis",
+     "crittenden"
+    ],
+    [
+     "downtown-tupelo",
+     "union-county"
+    ]
+   ],
+   "rules": {
+    "F0": {
+     "opportunities": 14170,
+     "claims": 2223,
+     "claim_days": 26,
+     "claim_rate": 0.15688073394495414,
+     "precision": 0.7903733693207378,
+     "median_A": 19.56666666666665,
+     "p10_A": -23.4,
+     "later": {
+      "n": 2220,
+      "precision": 0.6135135135135135
+     },
+     "stress": {
+      "n": 2223,
+      "precision": 0.6648672964462438
+     },
+     "precision_interval": [
+      0.767073289649706,
+      0.8130419977659747
+     ]
+    },
+    "F10": {
+     "opportunities": 14170,
+     "claims": 1709,
+     "claim_days": 26,
+     "claim_rate": 0.12060691601976006,
+     "precision": 0.8373317729666472,
+     "median_A": 29.316666666666663,
+     "p10_A": -23.473333333333333,
+     "later": {
+      "n": 1708,
+      "precision": 0.6510538641686182
+     },
+     "stress": {
+      "n": 1709,
+      "precision": 0.7682855471035693
+     },
+     "precision_interval": [
+      0.8076317806473634,
+      0.8660436694962911
+     ]
+    },
+    "F20": {
+     "opportunities": 14170,
+     "claims": 1301,
+     "claim_days": 26,
+     "claim_rate": 0.09181369089625971,
+     "precision": 0.8416602613374328,
+     "median_A": 41.31666666666666,
+     "p10_A": -26.599999999999994,
+     "later": {
+      "n": 1301,
+      "precision": 0.6587240584166026
+     },
+     "stress": {
+      "n": 1301,
+      "precision": 0.7940046118370484
+     },
+     "precision_interval": [
+      0.8066088658884948,
+      0.8742409737720743
+     ]
+    },
+    "F30": {
+     "opportunities": 14170,
+     "claims": 1020,
+     "claim_days": 26,
+     "claim_rate": 0.07198306280875089,
+     "precision": 0.8480392156862745,
+     "median_A": 58.04166666666667,
+     "p10_A": -27.52999999999999,
+     "later": {
+      "n": 1020,
+      "precision": 0.653921568627451
+     },
+     "stress": {
+      "n": 1020,
+      "precision": 0.8117647058823529
+     },
+     "precision_interval": [
+      0.8052819363579417,
+      0.8868375169079211
+     ]
+    },
+    "F45": {
+     "opportunities": 14170,
+     "claims": 773,
+     "claim_days": 26,
+     "claim_rate": 0.054551870148200426,
+     "precision": 0.8551099611901681,
+     "median_A": 78.9,
+     "p10_A": -31.57,
+     "later": {
+      "n": 773,
+      "precision": 0.6701164294954722
+     },
+     "stress": {
+      "n": 773,
+      "precision": 0.8279430789133247
+     },
+     "precision_interval": [
+      0.795789334997573,
+      0.9123976350031118
+     ]
+    },
+    "F60": {
+     "opportunities": 14170,
+     "claims": 632,
+     "claim_days": 26,
+     "claim_rate": 0.044601270289343686,
+     "precision": 0.8449367088607594,
+     "median_A": 90.35833333333333,
+     "p10_A": -41.55500000000001,
+     "later": {
+      "n": 632,
+      "precision": 0.6740506329113924
+     },
+     "stress": {
+      "n": 632,
+      "precision": 0.8259493670886076
+     },
+     "precision_interval": [
+      0.7756371476838269,
+      0.9116633755975889
+     ]
+    },
+    "S1": {
+     "opportunities": 14170,
+     "claims": 636,
+     "claim_days": 25,
+     "claim_rate": 0.04488355681016232,
+     "precision": 0.8522012578616353,
+     "median_A": 84.31666666666666,
+     "p10_A": -42.95,
+     "later": {
+      "n": 636,
+      "precision": 0.7028301886792453
+     },
+     "stress": {
+      "n": 636,
+      "precision": 0.8317610062893082
+     },
+     "precision_interval": [
+      0.7818627450980392,
+      0.9196024431860796
+     ]
+    },
+    "S0.5": {
+     "opportunities": 14170,
+     "claims": 982,
+     "claim_days": 26,
+     "claim_rate": 0.06930134086097389,
+     "precision": 0.8747454175152749,
+     "median_A": 56.44166666666667,
+     "p10_A": -22.104999999999958,
+     "later": {
+      "n": 982,
+      "precision": 0.6965376782077393
+     },
+     "stress": {
+      "n": 982,
+      "precision": 0.8462321792260692
+     },
+     "precision_interval": [
+      0.8227495415097897,
+      0.9209892787524366
+     ]
+    }
+   },
+   "by_origin": {
+    "downtown-jackson": {
+     "F0": {
+      "opportunities": 1797,
+      "claims": 646,
+      "claim_days": 26,
+      "claim_rate": 0.35948803561491377,
+      "precision": 0.8281733746130031,
+      "median_A": 41.516666666666666,
+      "p10_A": -13.50000000000001,
+      "later": {
+       "n": 645,
+       "precision": 0.703875968992248
+      },
+      "stress": {
+       "n": 646,
+       "precision": 0.7306501547987616
+      }
+     },
+     "F10": {
+      "opportunities": 1797,
+      "claims": 557,
+      "claim_days": 26,
+      "claim_rate": 0.3099610461880913,
+      "precision": 0.8689407540394973,
+      "median_A": 52.39999999999999,
+      "p10_A": -9.319999999999993,
+      "later": {
+       "n": 556,
+       "precision": 0.7356115107913669
+      },
+      "stress": {
+       "n": 557,
+       "precision": 0.7899461400359067
+      }
+     },
+     "F20": {
+      "opportunities": 1797,
+      "claims": 476,
+      "claim_days": 26,
+      "claim_rate": 0.2648859209794101,
+      "precision": 0.8949579831932774,
+      "median_A": 60.41666666666666,
+      "p10_A": -0.2916666666666643,
+      "later": {
+       "n": 476,
+       "precision": 0.7647058823529411
+      },
+      "stress": {
+       "n": 476,
+       "precision": 0.842436974789916
+      }
+     },
+     "F30": {
+      "opportunities": 1797,
+      "claims": 416,
+      "claim_days": 26,
+      "claim_rate": 0.23149693934335003,
+      "precision": 0.9110576923076923,
+      "median_A": 68.60000000000001,
+      "p10_A": 6.499999999999993,
+      "later": {
+       "n": 416,
+       "precision": 0.7572115384615384
+      },
+      "stress": {
+       "n": 416,
+       "precision": 0.8798076923076923
+      }
+     },
+     "F45": {
+      "opportunities": 1797,
+      "claims": 329,
+      "claim_days": 25,
+      "claim_rate": 0.18308291597106288,
+      "precision": 0.9331306990881459,
+      "median_A": 83.81666666666666,
+      "p10_A": 16.303333333333338,
+      "later": {
+       "n": 329,
+       "precision": 0.7720364741641338
+      },
+      "stress": {
+       "n": 329,
+       "precision": 0.9057750759878419
+      }
+     },
+     "F60": {
+      "opportunities": 1797,
+      "claims": 277,
+      "claim_days": 22,
+      "claim_rate": 0.15414579855314414,
+      "precision": 0.9422382671480144,
+      "median_A": 92.39999999999999,
+      "p10_A": 21.72333333333334,
+      "later": {
+       "n": 277,
+       "precision": 0.779783393501805
+      },
+      "stress": {
+       "n": 277,
+       "precision": 0.927797833935018
+      }
+     },
+     "S1": {
+      "opportunities": 1797,
+      "claims": 200,
+      "claim_days": 20,
+      "claim_rate": 0.11129660545353366,
+      "precision": 0.955,
+      "median_A": 108.39999999999999,
+      "p10_A": 26.319999999999993,
+      "later": {
+       "n": 200,
+       "precision": 0.82
+      },
+      "stress": {
+       "n": 200,
+       "precision": 0.94
+      }
+     },
+     "S0.5": {
+      "opportunities": 1797,
+      "claims": 323,
+      "claim_days": 24,
+      "claim_rate": 0.17974401780745689,
+      "precision": 0.934984520123839,
+      "median_A": 84.39999999999999,
+      "p10_A": 17.606666666666673,
+      "later": {
+       "n": 323,
+       "precision": 0.7739938080495357
+      },
+      "stress": {
+       "n": 323,
+       "precision": 0.913312693498452
+      }
+     }
+    },
+    "downtown-memphis": {
+     "F0": {
+      "opportunities": 6388,
+      "claims": 1095,
+      "claim_days": 26,
+      "claim_rate": 0.1714151534126487,
+      "precision": 0.7205479452054795,
+      "median_A": 21.549999999999997,
+      "p10_A": -42.39666666666666,
+      "later": {
+       "n": 1093,
+       "precision": 0.4757548032936871
+      },
+      "stress": {
+       "n": 1095,
+       "precision": 0.628310502283105
+      }
+     },
+     "F10": {
+      "opportunities": 6388,
+      "claims": 887,
+      "claim_days": 26,
+      "claim_rate": 0.13885410144020038,
+      "precision": 0.7711386696730552,
+      "median_A": 30.049999999999997,
+      "p10_A": -44.04333333333333,
+      "later": {
+       "n": 887,
+       "precision": 0.5118376550169109
+      },
+      "stress": {
+       "n": 887,
+       "precision": 0.7046223224351748
+      }
+     },
+     "F20": {
+      "opportunities": 6388,
+      "claims": 710,
+      "claim_days": 24,
+      "claim_rate": 0.11114589855979963,
+      "precision": 0.780281690140845,
+      "median_A": 39.15833333333333,
+      "p10_A": -47.81666666666666,
+      "later": {
+       "n": 710,
+       "precision": 0.5380281690140845
+      },
+      "stress": {
+       "n": 710,
+       "precision": 0.7281690140845071
+      }
+     },
+     "F30": {
+      "opportunities": 6388,
+      "claims": 576,
+      "claim_days": 24,
+      "claim_rate": 0.09016906700062617,
+      "precision": 0.7951388888888888,
+      "median_A": 50.30833333333334,
+      "p10_A": -58.68333333333334,
+      "later": {
+       "n": 576,
+       "precision": 0.5642361111111112
+      },
+      "stress": {
+       "n": 576,
+       "precision": 0.7534722222222222
+      }
+     },
+     "F45": {
+      "opportunities": 6388,
+      "claims": 441,
+      "claim_days": 22,
+      "claim_rate": 0.06903569192235441,
+      "precision": 0.7959183673469388,
+      "median_A": 72.48333333333335,
+      "p10_A": -62.95,
+      "later": {
+       "n": 441,
+       "precision": 0.5918367346938775
+      },
+      "stress": {
+       "n": 441,
+       "precision": 0.7687074829931972
+      }
+     },
+     "F60": {
+      "opportunities": 6388,
+      "claims": 355,
+      "claim_days": 20,
+      "claim_rate": 0.055572949279899815,
+      "precision": 0.7690140845070422,
+      "median_A": 88.55000000000001,
+      "p10_A": -67.60333333333334,
+      "later": {
+       "n": 355,
+       "precision": 0.5915492957746479
+      },
+      "stress": {
+       "n": 355,
+       "precision": 0.7464788732394366
+      }
+     },
+     "S1": {
+      "opportunities": 6388,
+      "claims": 372,
+      "claim_days": 20,
+      "claim_rate": 0.05823418910457107,
+      "precision": 0.771505376344086,
+      "median_A": 83.625,
+      "p10_A": -68.39666666666666,
+      "later": {
+       "n": 372,
+       "precision": 0.5940860215053764
+      },
+      "stress": {
+       "n": 372,
+       "precision": 0.7446236559139785
+      }
+     },
+     "S0.5": {
+      "opportunities": 6388,
+      "claims": 511,
+      "claim_days": 23,
+      "claim_rate": 0.07999373825923607,
+      "precision": 0.8003913894324853,
+      "median_A": 57.45000000000002,
+      "p10_A": -61.68333333333334,
+      "later": {
+       "n": 511,
+       "precision": 0.5714285714285714
+      },
+      "stress": {
+       "n": 511,
+       "precision": 0.761252446183953
+      }
+     }
+    },
+    "downtown-tupelo": {
+     "F0": {
+      "opportunities": 5985,
+      "claims": 482,
+      "claim_days": 26,
+      "claim_rate": 0.08053467000835422,
+      "precision": 0.8983402489626556,
+      "median_A": 11.350000000000009,
+      "p10_A": -0.34999999999999715,
+      "later": {
+       "n": 482,
+       "precision": 0.8049792531120332
+      },
+      "stress": {
+       "n": 482,
+       "precision": 0.6597510373443983
+      }
+     },
+     "F10": {
+      "opportunities": 5985,
+      "claims": 265,
+      "claim_days": 23,
+      "claim_rate": 0.04427736006683375,
+      "precision": 0.9924528301886792,
+      "median_A": 17.6,
+      "p10_A": 10.330000000000009,
+      "later": {
+       "n": 265,
+       "precision": 0.939622641509434
+      },
+      "stress": {
+       "n": 265,
+       "precision": 0.9358490566037736
+      }
+     },
+     "F20": {
+      "opportunities": 5985,
+      "claims": 115,
+      "claim_days": 16,
+      "claim_rate": 0.01921470342522974,
+      "precision": 1.0,
+      "median_A": 24.35000000000001,
+      "p10_A": 16.696666666666673,
+      "later": {
+       "n": 115,
+       "precision": 0.9652173913043478
+      },
+      "stress": {
+       "n": 115,
+       "precision": 1.0
+      }
+     },
+     "F30": {
+      "opportunities": 5985,
+      "claims": 28,
+      "claim_days": 8,
+      "claim_rate": 0.004678362573099415,
+      "precision": 1.0,
+      "median_A": 34.93333333333334,
+      "p10_A": 26.750000000000007,
+      "later": {
+       "n": 28,
+       "precision": 0.9642857142857143
+      },
+      "stress": {
+       "n": 28,
+       "precision": 1.0
+      }
+     },
+     "F45": {
+      "opportunities": 5985,
+      "claims": 3,
+      "claim_days": 1,
+      "claim_rate": 0.0005012531328320802,
+      "precision": 1.0,
+      "median_A": 47.516666666666666,
+      "p10_A": 43.516666666666666,
+      "later": {
+       "n": 3,
+       "precision": 1.0
+      },
+      "stress": {
+       "n": 3,
+       "precision": 1.0
+      }
+     },
+     "F60": {
+      "opportunities": 5985,
+      "claims": 0,
+      "claim_days": 0,
+      "claim_rate": 0.0,
+      "precision": null,
+      "median_A": null,
+      "p10_A": null,
+      "later": {
+       "n": 0,
+       "precision": null
+      },
+      "stress": {
+       "n": 0,
+       "precision": null
+      }
+     },
+     "S1": {
+      "opportunities": 5985,
+      "claims": 64,
+      "claim_days": 14,
+      "claim_rate": 0.010693400167084378,
+      "precision": 1.0,
+      "median_A": 30.35000000000001,
+      "p10_A": 20.825000000000003,
+      "later": {
+       "n": 64,
+       "precision": 0.96875
+      },
+      "stress": {
+       "n": 64,
+       "precision": 1.0
+      }
+     },
+     "S0.5": {
+      "opportunities": 5985,
+      "claims": 148,
+      "claim_days": 18,
+      "claim_rate": 0.024728487886382624,
+      "precision": 1.0,
+      "median_A": 22.558333333333334,
+      "p10_A": 15.340000000000007,
+      "later": {
+       "n": 148,
+       "precision": 0.9594594594594594
+      },
+      "stress": {
+       "n": 148,
+       "precision": 0.9932432432432432
+      }
+     }
+    }
+   }
+  },
+  "confirmation": {
+   "opportunities": 7924,
+   "days": 15,
+   "closest": [
+    [
+     "downtown-jackson",
+     "baptist-medical-center"
+    ],
+    [
+     "downtown-memphis",
+     "crittenden"
+    ],
+    [
+     "downtown-tupelo",
+     "union-county"
+    ]
+   ],
+   "rules": {
+    "F0": {
+     "opportunities": 7924,
+     "claims": 1200,
+     "claim_days": 15,
+     "claim_rate": 0.1514386673397274,
+     "precision": 0.7941666666666667,
+     "median_A": 20.35000000000001,
+     "p10_A": -26.559999999999995,
+     "later": {
+      "n": 1193,
+      "precision": 0.6001676445934618
+     },
+     "stress": {
+      "n": 1200,
+      "precision": 0.6525
+     },
+     "precision_interval": [
+      0.7376879285998156,
+      0.8510503622818655
+     ]
+    },
+    "F10": {
+     "opportunities": 7924,
+     "claims": 928,
+     "claim_days": 15,
+     "claim_rate": 0.1171125694093892,
+     "precision": 0.8383620689655172,
+     "median_A": 31.708333333333343,
+     "p10_A": -28.688333333333336,
+     "later": {
+      "n": 923,
+      "precision": 0.6294691224268689
+     },
+     "stress": {
+      "n": 928,
+      "precision": 0.7650862068965517
+     },
+     "precision_interval": [
+      0.7674322272088491,
+      0.9029962165032525
+     ]
+    },
+    "F20": {
+     "opportunities": 7924,
+     "claims": 737,
+     "claim_days": 15,
+     "claim_rate": 0.09300858152448259,
+     "precision": 0.8398914518317503,
+     "median_A": 45.31666666666668,
+     "p10_A": -30.756666666666653,
+     "later": {
+      "n": 732,
+      "precision": 0.6297814207650273
+     },
+     "stress": {
+      "n": 737,
+      "precision": 0.7910447761194029
+     },
+     "precision_interval": [
+      0.7551916412254909,
+      0.9156039359390383
+     ]
+    },
+    "F30": {
+     "opportunities": 7924,
+     "claims": 588,
+     "claim_days": 15,
+     "claim_rate": 0.07420494699646643,
+     "precision": 0.8486394557823129,
+     "median_A": 57.30833333333333,
+     "p10_A": -33.39999999999999,
+     "later": {
+      "n": 583,
+      "precision": 0.6329331046312179
+     },
+     "stress": {
+      "n": 588,
+      "precision": 0.8112244897959183
+     },
+     "precision_interval": [
+      0.7488446768285478,
+      0.9394553532435246
+     ]
+    },
+    "F45": {
+     "opportunities": 7924,
+     "claims": 438,
+     "claim_days": 15,
+     "claim_rate": 0.05527511357900051,
+     "precision": 0.8538812785388128,
+     "median_A": 77.21666666666667,
+     "p10_A": -54.17,
+     "later": {
+      "n": 433,
+      "precision": 0.651270207852194
+     },
+     "stress": {
+      "n": 438,
+      "precision": 0.8310502283105022
+     },
+     "precision_interval": [
+      0.7429537468583002,
+      0.9587685778399297
+     ]
+    },
+    "F60": {
+     "opportunities": 7924,
+     "claims": 353,
+     "claim_days": 15,
+     "claim_rate": 0.04454820797576981,
+     "precision": 0.8441926345609065,
+     "median_A": 88.55000000000001,
+     "p10_A": -54.69666666666667,
+     "later": {
+      "n": 348,
+      "precision": 0.6637931034482759
+     },
+     "stress": {
+      "n": 353,
+      "precision": 0.8328611898016998
+     },
+     "precision_interval": [
+      0.7177112827112827,
+      0.953904542840713
+     ]
+    },
+    "S1": {
+     "opportunities": 7924,
+     "claims": 317,
+     "claim_days": 14,
+     "claim_rate": 0.040005047955577994,
+     "precision": 0.8548895899053628,
+     "median_A": 86.48333333333335,
+     "p10_A": -48.80333333333333,
+     "later": {
+      "n": 312,
+      "precision": 0.7019230769230769
+     },
+     "stress": {
+      "n": 317,
+      "precision": 0.8454258675078864
+     },
+     "precision_interval": [
+      0.7409106526848174,
+      0.9558031361715957
+     ]
+    },
+    "S0.5": {
+     "opportunities": 7924,
+     "claims": 522,
+     "claim_days": 15,
+     "claim_rate": 0.06587582029278143,
+     "precision": 0.8697318007662835,
+     "median_A": 61.68333333333334,
+     "p10_A": -29.925000000000004,
+     "later": {
+      "n": 517,
+      "precision": 0.6847195357833655
+     },
+     "stress": {
+      "n": 522,
+      "precision": 0.8486590038314177
+     },
+     "precision_interval": [
+      0.7726222963229993,
+      0.9607932032916794
+     ]
+    }
+   },
+   "by_origin": {
+    "downtown-jackson": {
+     "F0": {
+      "opportunities": 1005,
+      "claims": 300,
+      "claim_days": 15,
+      "claim_rate": 0.29850746268656714,
+      "precision": 0.7766666666666666,
+      "median_A": 34.10000000000001,
+      "p10_A": -20.4,
+      "later": {
+       "n": 299,
+       "precision": 0.6421404682274248
+      },
+      "stress": {
+       "n": 300,
+       "precision": 0.65
+      }
+     },
+     "F10": {
+      "opportunities": 1005,
+      "claims": 255,
+      "claim_days": 15,
+      "claim_rate": 0.2537313432835821,
+      "precision": 0.8313725490196079,
+      "median_A": 46.39999999999999,
+      "p10_A": -11.566666666666663,
+      "later": {
+       "n": 255,
+       "precision": 0.6627450980392157
+      },
+      "stress": {
+       "n": 255,
+       "precision": 0.7254901960784313
+      }
+     },
+     "F20": {
+      "opportunities": 1005,
+      "claims": 219,
+      "claim_days": 15,
+      "claim_rate": 0.21791044776119403,
+      "precision": 0.863013698630137,
+      "median_A": 52.43333333333332,
+      "p10_A": -6.9666666666666615,
+      "later": {
+       "n": 219,
+       "precision": 0.684931506849315
+      },
+      "stress": {
+       "n": 219,
+       "precision": 0.771689497716895
+      }
+     },
+     "F30": {
+      "opportunities": 1005,
+      "claims": 186,
+      "claim_days": 15,
+      "claim_rate": 0.18507462686567164,
+      "precision": 0.8870967741935484,
+      "median_A": 60.51666666666666,
+      "p10_A": -4.683333333333323,
+      "later": {
+       "n": 186,
+       "precision": 0.6989247311827957
+      },
+      "stress": {
+       "n": 186,
+       "precision": 0.8225806451612904
+      }
+     },
+     "F45": {
+      "opportunities": 1005,
+      "claims": 144,
+      "claim_days": 14,
+      "claim_rate": 0.14328358208955225,
+      "precision": 0.9236111111111112,
+      "median_A": 77.39999999999999,
+      "p10_A": 4.783333333333339,
+      "later": {
+       "n": 144,
+       "precision": 0.7222222222222222
+      },
+      "stress": {
+       "n": 144,
+       "precision": 0.8888888888888888
+      }
+     },
+     "F60": {
+      "opportunities": 1005,
+      "claims": 120,
+      "claim_days": 14,
+      "claim_rate": 0.11940298507462686,
+      "precision": 0.925,
+      "median_A": 89.51666666666665,
+      "p10_A": 14.399999999999995,
+      "later": {
+       "n": 120,
+       "precision": 0.725
+      },
+      "stress": {
+       "n": 120,
+       "precision": 0.9083333333333333
+      }
+     },
+     "S1": {
+      "opportunities": 1005,
+      "claims": 76,
+      "claim_days": 13,
+      "claim_rate": 0.07562189054726368,
+      "precision": 0.9210526315789473,
+      "median_A": 116.17499999999998,
+      "p10_A": 19.016666666666666,
+      "later": {
+       "n": 76,
+       "precision": 0.7894736842105263
+      },
+      "stress": {
+       "n": 76,
+       "precision": 0.9078947368421053
+      }
+     },
+     "S0.5": {
+      "opportunities": 1005,
+      "claims": 135,
+      "claim_days": 14,
+      "claim_rate": 0.13432835820895522,
+      "precision": 0.9333333333333333,
+      "median_A": 82.81666666666666,
+      "p10_A": 14.48,
+      "later": {
+       "n": 135,
+       "precision": 0.7407407407407407
+      },
+      "stress": {
+       "n": 135,
+       "precision": 0.9037037037037037
+      }
+     }
+    },
+    "downtown-memphis": {
+     "F0": {
+      "opportunities": 3570,
+      "claims": 629,
+      "claim_days": 15,
+      "claim_rate": 0.1761904761904762,
+      "precision": 0.7440381558028617,
+      "median_A": 24.549999999999997,
+      "p10_A": -55.89,
+      "later": {
+       "n": 624,
+       "precision": 0.483974358974359
+      },
+      "stress": {
+       "n": 629,
+       "precision": 0.6581875993640699
+      }
+     },
+     "F10": {
+      "opportunities": 3570,
+      "claims": 512,
+      "claim_days": 15,
+      "claim_rate": 0.1434173669467787,
+      "precision": 0.796875,
+      "median_A": 36.79166666666667,
+      "p10_A": -65.965,
+      "later": {
+       "n": 507,
+       "precision": 0.5226824457593688
+      },
+      "stress": {
+       "n": 512,
+       "precision": 0.740234375
+      }
+     },
+     "F20": {
+      "opportunities": 3570,
+      "claims": 432,
+      "claim_days": 15,
+      "claim_rate": 0.12100840336134454,
+      "precision": 0.8009259259259259,
+      "median_A": 47.391666666666666,
+      "p10_A": -69.42666666666666,
+      "later": {
+       "n": 427,
+       "precision": 0.5456674473067916
+      },
+      "stress": {
+       "n": 432,
+       "precision": 0.7708333333333334
+      }
+     },
+     "F30": {
+      "opportunities": 3570,
+      "claims": 358,
+      "claim_days": 15,
+      "claim_rate": 0.10028011204481793,
+      "precision": 0.8128491620111732,
+      "median_A": 59.325,
+      "p10_A": -70.72166666666668,
+      "later": {
+       "n": 353,
+       "precision": 0.5609065155807366
+      },
+      "stress": {
+       "n": 358,
+       "precision": 0.7877094972067039
+      }
+     },
+     "F45": {
+      "opportunities": 3570,
+      "claims": 272,
+      "claim_days": 13,
+      "claim_rate": 0.0761904761904762,
+      "precision": 0.8051470588235294,
+      "median_A": 79.41666666666667,
+      "p10_A": -79.40166666666667,
+      "later": {
+       "n": 267,
+       "precision": 0.5842696629213483
+      },
+      "stress": {
+       "n": 272,
+       "precision": 0.7867647058823529
+      }
+     },
+     "F60": {
+      "opportunities": 3570,
+      "claims": 223,
+      "claim_days": 13,
+      "claim_rate": 0.06246498599439776,
+      "precision": 0.7937219730941704,
+      "median_A": 89.66666666666669,
+      "p10_A": -81.31,
+      "later": {
+       "n": 218,
+       "precision": 0.6146788990825688
+      },
+      "stress": {
+       "n": 223,
+       "precision": 0.7847533632286996
+      }
+     },
+     "S1": {
+      "opportunities": 3570,
+      "claims": 191,
+      "claim_days": 11,
+      "claim_rate": 0.05350140056022409,
+      "precision": 0.7958115183246073,
+      "median_A": 98.25000000000001,
+      "p10_A": -78.96666666666667,
+      "later": {
+       "n": 186,
+       "precision": 0.5967741935483871
+      },
+      "stress": {
+       "n": 191,
+       "precision": 0.7853403141361257
+      }
+     },
+     "S0.5": {
+      "opportunities": 3570,
+      "claims": 292,
+      "claim_days": 13,
+      "claim_rate": 0.08179271708683473,
+      "precision": 0.8013698630136986,
+      "median_A": 73.30000000000001,
+      "p10_A": -78.86666666666667,
+      "later": {
+       "n": 287,
+       "precision": 0.5749128919860628
+      },
+      "stress": {
+       "n": 292,
+       "precision": 0.7808219178082192
+      }
+     }
+    },
+    "downtown-tupelo": {
+     "F0": {
+      "opportunities": 3349,
+      "claims": 271,
+      "claim_days": 14,
+      "claim_rate": 0.08091967751567632,
+      "precision": 0.9298892988929889,
+      "median_A": 12.350000000000009,
+      "p10_A": 1.0,
+      "later": {
+       "n": 270,
+       "precision": 0.8222222222222222
+      },
+      "stress": {
+       "n": 271,
+       "precision": 0.6420664206642066
+      }
+     },
+     "F10": {
+      "opportunities": 3349,
+      "claims": 161,
+      "claim_days": 13,
+      "claim_rate": 0.0480740519558077,
+      "precision": 0.9813664596273292,
+      "median_A": 20.35000000000001,
+      "p10_A": 8.350000000000009,
+      "later": {
+       "n": 161,
+       "precision": 0.9130434782608695
+      },
+      "stress": {
+       "n": 161,
+       "precision": 0.906832298136646
+      }
+     },
+     "F20": {
+      "opportunities": 3349,
+      "claims": 86,
+      "claim_days": 10,
+      "claim_rate": 0.025679307255897284,
+      "precision": 0.9767441860465116,
+      "median_A": 28.916666666666668,
+      "p10_A": 13.958333333333343,
+      "later": {
+       "n": 86,
+       "precision": 0.9069767441860465
+      },
+      "stress": {
+       "n": 86,
+       "precision": 0.9418604651162791
+      }
+     },
+     "F30": {
+      "opportunities": 3349,
+      "claims": 44,
+      "claim_days": 4,
+      "claim_rate": 0.013138250223947446,
+      "precision": 0.9772727272727273,
+      "median_A": 45.65833333333333,
+      "p10_A": 13.315000000000008,
+      "later": {
+       "n": 44,
+       "precision": 0.9318181818181818
+      },
+      "stress": {
+       "n": 44,
+       "precision": 0.9545454545454546
+      }
+     },
+     "F45": {
+      "opportunities": 3349,
+      "claims": 22,
+      "claim_days": 2,
+      "claim_rate": 0.006569125111973723,
+      "precision": 1.0,
+      "median_A": 58.81666666666666,
+      "p10_A": 43.91000000000001,
+      "later": {
+       "n": 22,
+       "precision": 1.0
+      },
+      "stress": {
+       "n": 22,
+       "precision": 1.0
+      }
+     },
+     "F60": {
+      "opportunities": 3349,
+      "claims": 10,
+      "claim_days": 1,
+      "claim_rate": 0.002985965959988056,
+      "precision": 1.0,
+      "median_A": 75.33333333333334,
+      "p10_A": 51.824999999999996,
+      "later": {
+       "n": 10,
+       "precision": 1.0
+      },
+      "stress": {
+       "n": 10,
+       "precision": 1.0
+      }
+     },
+     "S1": {
+      "opportunities": 3349,
+      "claims": 50,
+      "claim_days": 7,
+      "claim_rate": 0.014929829799940281,
+      "precision": 0.98,
+      "median_A": 41.83333333333334,
+      "p10_A": 20.250000000000007,
+      "later": {
+       "n": 50,
+       "precision": 0.96
+      },
+      "stress": {
+       "n": 50,
+       "precision": 0.98
+      }
+     },
+     "S0.5": {
+      "opportunities": 3349,
+      "claims": 95,
+      "claim_days": 10,
+      "claim_rate": 0.028366676619886535,
+      "precision": 0.9894736842105263,
+      "median_A": 24.35000000000001,
+      "p10_A": 15.53666666666667,
+      "later": {
+       "n": 95,
+       "precision": 0.9368421052631579
+      },
+      "stress": {
+       "n": 95,
+       "precision": 0.9789473684210527
+      }
+     }
+    }
+   }
+  }
+ },
+ "selected_rule": null,
+ "confirmation_outcome": null,
+ "policy": {
+  "version": "m2-benefit-v1",
+  "snapshot_sha256": "efda699fb411e72c49374024e847834bfd225f580789d6140034e235234588ed",
+  "data_end": "2026-09-16T00:00:00Z",
+  "periods": {
+   "discovery": [
+    "2026-08-08T00:00:00Z",
+    "2026-09-02T00:00:00Z"
+   ],
+   "confirmation": [
+    "2026-09-02T00:00:00Z",
+    "2026-09-16T00:00:00Z"
+   ]
+  },
+  "slot_seconds": 900,
+  "evaluation_every_slots": 4,
+  "max_drive_minutes": 120,
+  "later_minutes": 60,
+  "stress_ratio": 1.2,
+  "rules": [
+   [
+    "F0",
+    "fixed",
+    0
+   ],
+   [
+    "F10",
+    "fixed",
+    10
+   ],
+   [
+    "F20",
+    "fixed",
+    20
+   ],
+   [
+    "F30",
+    "fixed",
+    30
+   ],
+   [
+    "F45",
+    "fixed",
+    45
+   ],
+   [
+    "F60",
+    "fixed",
+    60
+   ],
+   [
+    "S1",
+    "screen",
+    1.0
+   ],
+   [
+    "S0.5",
+    "screen",
+    0.5
+   ]
+  ],
+  "selection": {
+   "minimum_claims": 50,
+   "minimum_days": 5,
+   "minimum_precision": 0.9,
+   "minimum_lower_bound": 0.8
+  },
+  "confirmation": {
+   "minimum_claims": 20,
+   "minimum_days": 3,
+   "minimum_precision": 0.9
+  },
+  "bootstrap": {
+   "draws": 2000,
+   "seed": 20260926
+  }
+ },
+ "snapshot_sha256": "efda699fb411e72c49374024e847834bfd225f580789d6140034e235234588ed",
+ "profiles_sha256": "daa6dc17a320cf7df3cbddce0d40d2fcfdd55663039d88abcde06deae87b9a00",
+ "protocol_sha256": "f5ba00935fc75449cf15dd4c43fa44538b838f175761939ed219d06a06430ac3",
+ "code_sha256": "fb2a27d3030cd7d70ed9331acd567f630cfb1a7ed54d2671d0f5cdcb380ab6c4",
+ "python": "3.14.6",
+ "runtime_seconds": 19.9,
+ "generated_at": "2026-09-26T00:50:28.257332+00:00"
+}

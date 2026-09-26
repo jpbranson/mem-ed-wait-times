@@ -283,7 +283,10 @@ an arrival-time forecast nor a calibrated bound for that drive. The provisional
 movement screen is strictly greater than 10 minutes plus the changes for both
 the candidate and closest hospital. Missing support prevents passing the screen.
 Even a passing result **cannot enable a recommendation**: metric semantics and
-traffic uncertainty remain unverified. Code and schema enforce
+traffic uncertainty remain unverified. A pre-registered backtest (2026-09-26) found
+that claims passing this screen still held at arrival only about 85% of the time,
+and no fixed or scaled margin reached the 90% gate; see
+[benefit-rule results](m2-benefit-validation.md). Code and schema enforce
 `recommendations_enabled: false`. M5 now has an [offline development study](m5-validation.md);
 it does not change this policy or provide arrival-time forecasts.
 
