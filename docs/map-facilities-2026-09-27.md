@@ -98,8 +98,11 @@ existing roughly 5.5 MB page and within the project's current $5/month design.
   `main` with the documentation audit (`5738133`) at 18:12 UTC on 2026-09-27. The
   18:17 UTC hourly build (run 36340076534) passed 117 Python and 72 JavaScript tests and
   the exact public build/freshness check (20/20 current); an independent public check
-  passed at 18:21 UTC. The public page embeds the eight listings; its map markers were
-  not rechecked in a browser. No Lambda, schedule or gateway changed.
+  passed at 18:21 UTC. A browser check of the public page at 18:33 UTC found all 28
+  markers, including the eight squares, and Highland Hills' details opened without
+  changing the focus chart. Regional One, Le Bonheur Children's and the Memphis VA are
+  400–500 m apart and stack at the default zoom until zoomed in; the user deferred a
+  fix. No Lambda, schedule or gateway changed.
 - Release fix (2026-09-27 documentation audit): `scripts/check_public.mjs` and
   `gateway/scripts/local-check.mjs` had counted all 28 records, so the public check
   failed against the 20-facility `latest.json` ("Invalid latest artifact") and the

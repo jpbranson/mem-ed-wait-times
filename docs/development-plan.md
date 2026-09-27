@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-27 18:35 UTC (map-only ER directory published; regional hospitals' display deferred for more data; documentation audit; regional collector deployed; alerts)
+Last updated: 2026-09-27 18:36 UTC (public map checked; marker stacking fix deferred; map-only ER directory published; regional display deferred for more data)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -851,8 +851,12 @@ change. Offline study outputs do not alter existing record/storage contracts.
 ## Open decisions and immediate next work
 
 The eight map-only ER listings were published on 2026-09-27 by the 18:17 UTC build
-(run 36340076534); look at the public map's markers once in a browser, since only the
-local build was reviewed that way. The audit found that
+(run 36340076534) and checked on the public map (progress log). Known issue, fix
+deferred by the user on 2026-09-27: campuses a few hundred meters apart (Regional One,
+Le Bonheur Children's and the Memphis VA; Baptist Memphis and Baptist Children's)
+stack at the default zoom, so mouse users must zoom in to reach each one; keyboard
+and screen-reader users reach every marker. A fix would spread overlapping markers
+at each zoom. The audit found that
 `scripts/check_public.mjs` (the workflow's final public check) and
 `gateway/scripts/local-check.mjs` counted all 28 records, so the public check failed
 against the 20-facility `latest.json`; both now keep `collection_enabled` records
@@ -989,7 +993,7 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
-| 2026-09-27 UTC | M0 registry / M3 map directory (release) | At the user's request, the map directory (`8dca952`) and the documentation audit (`5738133`) were committed separately and pushed to `main` at 18:12 UTC. The 18:17 UTC EventBridge dispatch (run 36340076534) built `5738133`: 117 Python and 72 JS tests and the exact public build/freshness check passed (20/20 current). An independent public check passed at 18:21 UTC (20/20 current, recommendations disabled), and the public page embeds the eight map-only listings and their map area groups while its facility registry keeps 20. The public map's markers were not rechecked in a browser. [Evidence](map-facilities-2026-09-27.md#validation-and-release) | Deployed 2026-09-27 to the S3 website; no Lambda, schedule or gateway change |
+| 2026-09-27 UTC | M0 registry / M3 map directory (release) | At the user's request, the map directory (`8dca952`) and the documentation audit (`5738133`) were committed separately and pushed to `main` at 18:12 UTC. The 18:17 UTC EventBridge dispatch (run 36340076534) built `5738133`: 117 Python and 72 JS tests and the exact public build/freshness check passed (20/20 current). An independent public check passed at 18:21 UTC (20/20 current, recommendations disabled), and the public page embeds the eight map-only listings and their map area groups while its facility registry keeps 20. A browser check of the public page at 18:33 UTC (read from the page's elements; screenshots were unavailable) found all 28 markers inside the map, the eight squares labeled with their check date, and Highland Hills' details opening without changing the focus chart. Regional One, Le Bonheur Children's and the Memphis VA, 400–500 m apart, stack on one pixel at the default zoom, as Baptist Memphis and Baptist Children's have since 2026-09-26; the user deferred a fix. [Evidence](map-facilities-2026-09-27.md#validation-and-release) | Deployed 2026-09-27 to the S3 website; no Lambda, schedule or gateway change |
 | 2026-09-27 UTC | M0/M1 hourly build trigger | The user confirmed a re-created email subscription on SNS topic `dashboard-dispatch-alerts` (1 confirmed, 0 pending at 17:41 UTC), so alarm `dashboard-dispatch-failed` now reaches someone. The workflow's `schedule:` trigger was removed at the user's request. Before removal, 89/89 hourly EventBridge dispatches from 01:17 UTC on 2026-09-24 through 17:17 UTC on 2026-09-27 had succeeded; the backup cron ran 19 times, last at 14:05 UTC. [Workflow](../.github/workflows/dashboard.yml), [trigger evidence](production-followup-2026-09-23.md#hourly-dispatch-through-eventbridge) | Pushed to `main` alone (`ae0f20f`); GitHub reads schedule triggers from the default branch, so no build is needed. EventBridge dispatch and manual runs continue |
 | 2026-09-27 UTC | M0 operations (alerts) | At the user's request: log metric filter `regional-facility-failures`; alarms `regional-collector-failed-run`, `regional-collector-facility-failing`, `regional-collector-stopped`, `baptist-collector-failed-run` and `baptist-collector-stopped`, all emailing topic `dashboard-dispatch-alerts` (display name "ED wait alerts"), beside the existing `dashboard-dispatch-failed`; a new email subscription for the user's address created at 17:31:38 UTC. The new alarms evaluated to `OK` within minutes. [Regional record](regional-collector.md#deployment-2026-09-27), [M0 operator checks](m0-operations.md#operator-checks) | Deployed 2026-09-27; no email is delivered until the user confirms the subscription |
 | 2026-09-27 UTC | M0 additional sources (deployment) | At the user's request, Claude ran the deployment steps with the local AWS CLI after read-only checks found no existing resources: role `ed-wait-regional-collector` (Lambda logging plus `s3:PutObject` on the two `er_publications` prefixes only), log group with 30-day retention, function `ed-wait-regional` (Python 3.14, 128 MB, 60 s, retries off) from commit `9691589` (0.66 MB, `CodeSha256` verified), and rule `regional_15` (every 15 minutes, enabled 17:20:39 UTC). The manual run at 17:19:41 UTC and the first scheduled run at 17:21:06 UTC each collected all eight facilities (1,810 and 1,472 ms), with no 403 from AWS; the stored rows passed the schema and CloudWatch showed the INFO summary lines. [Record](regional-collector.md#deployment-2026-09-27) | Deployed 2026-09-27 in `us-east-1`; no failure alarm configured |
