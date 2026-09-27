@@ -134,8 +134,8 @@ relevant steps when changing the collector, compactor, or their contracts again.
 - Since 2026-09-27, alarm `baptist-collector-failed-run` fires on any Lambda `Errors`
   in a 15-minute period (the handler raises only when every facility fails, or on a
   crash), and `baptist-collector-stopped` fires after an hour without invocations.
-  Both email SNS topic `dashboard-dispatch-alerts`, which delivers only to confirmed
-  subscriptions; a new one was created for the user at 17:31:38 UTC that day.
+  Both email SNS topic `dashboard-dispatch-alerts`; the user confirmed a new email
+  subscription to it that day.
   Disable `baptist-collector-stopped` actions before pausing `trigger_15` on purpose.
 
 The 30-minute threshold is provisional, informed by the verified 15-minute

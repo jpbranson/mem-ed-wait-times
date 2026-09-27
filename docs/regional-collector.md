@@ -201,8 +201,7 @@ also succeeded for all eight facilities in 1,472 ms.
 
 At the user's request the alarms above were added, the alert topic was given the
 display name "ED wait alerts", and a new email subscription (the user's address)
-was created at 17:31:38 UTC. It delivers nothing until the user confirms it from
-AWS's email. The facility alarm also fires if Forrest City shows its `-1` sentinel
+was created at 17:31:38 UTC; the user confirmed it the same day. The facility alarm also fires if Forrest City shows its `-1` sentinel
 for an hour, since an invalid widget fails that facility.
 
 ## Deployment steps
