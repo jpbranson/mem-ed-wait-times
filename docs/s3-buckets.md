@@ -458,6 +458,15 @@ Stale, missing, collection-failure, and refresh-failure labels can coexist.
 Older readings stay visible as last published readings with ages and timestamps.
 No build timestamp is used as an observation timestamp.
 
+The `health` object (added 2026-09-27; optional in the schema, so older
+artifacts still validate) is read by the project tracker. `status` is `ok` when
+every facility would be labeled recently collected at generation time, `warn`
+when some would, and `fail` when none would. `last_success_at` is the newest
+successful observation (the source range end), `expect_every` the expected
+collection interval, and `detail` the count, such as `20/20 facilities current`.
+The tracker judges the age of `last_success_at` itself, so a collector that stops
+running, or runs without collecting anything, reads as stale.
+
 Publication reads the previous artifact and merges successes and attempts
 independently by timestamp. It uses S3 `IfMatch`/`IfNoneMatch` complete replacements
 with bounded conflict retries, protecting against out-of-order invocations.

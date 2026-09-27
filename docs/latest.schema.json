@@ -100,6 +100,37 @@
         }
       }
     },
+    "health": {
+      "description": "Status for the project tracker. Optional: artifacts before 2026-09-27 lack it. Current means the dashboard would label the facility recently collected at generation time.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "last_success_at",
+        "expect_every",
+        "detail"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "warn",
+            "fail"
+          ]
+        },
+        "last_success_at": {
+          "$ref": "#/$defs/nullableTime"
+        },
+        "expect_every": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*m$"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "facilities": {
       "type": "array",
       "items": {

@@ -43,6 +43,21 @@ class LatestTests(unittest.TestCase):
         self.assertEqual(after["facilities"][0]["last_success"]["wait_minutes"], 0)
         self.assertEqual(after["facilities"][0]["reporting_state"], "reporting")
 
+    def test_health_counts_facilities_the_dashboard_labels_recently_collected(self):
+        rows = [record(), record("desoto", observed="2026-09-14T00:00:09+00:00")]
+
+        def health(generated, desoto="success"):
+            attempts = {"memphis": attempt(), "desoto": attempt(state=desoto)}
+            return build_latest(None, rows, attempts, self.facilities, generated_at=generated)["health"]
+
+        self.assertEqual(health("2026-09-14T00:10:00Z"), {"status": "ok", "last_success_at": "2026-09-14T00:00:09+00:00",
+                                                          "expect_every": "15m", "detail": "2/2 facilities current"})
+        partial = health("2026-09-14T00:10:00Z", desoto="failed")
+        self.assertEqual((partial["status"], partial["detail"]), ("warn", "1/2 facilities current; 1 failed the latest collection"))
+        self.assertEqual(health("2026-09-14T00:30:09Z")["status"], "fail")  # desoto is exactly 1800 s old: stale
+        never = self.build()["health"]
+        self.assertEqual((never["status"], never["last_success_at"]), ("fail", None))
+
     def test_conditional_publication_retry_cache_and_failed_write_retention(self):
         s3 = MemoryS3()
         s3.conflict_once = True
@@ -68,6 +83,7 @@ class LatestTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "failure artifact published"):
                 collector.lambda_handler({}, None)
         self.assertEqual(s3.json("web", "data/latest.json")["coverage"]["failed_latest_attempt"], 20)
+        self.assertEqual(s3.json("web", "data/latest.json")["health"]["status"], "fail")
         self.assertTrue(any(k.startswith("operations/collection/") for b, k in s3.objects))
         self.assertFalse(any(k.startswith("raw/") for b, k in s3.objects))
 
