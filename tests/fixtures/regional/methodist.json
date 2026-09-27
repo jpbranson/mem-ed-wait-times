@@ -1,0 +1,94 @@
+{
+  "OnMyWayDepartments": [
+    {
+      "Name": "Methodist Minor Medical Center Cordova",
+      "WaitTime": 39,
+      "WaitTimeLower": null,
+      "MaxValueHit": null,
+      "IsEDDep": false,
+      "IsASAP": false,
+      "WaitTimeDisplayString": "3 patients currently waiting",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist Minor Medical Center Winchester",
+      "WaitTime": 9,
+      "WaitTimeLower": null,
+      "MaxValueHit": null,
+      "IsEDDep": false,
+      "IsASAP": false,
+      "WaitTimeDisplayString": "0 patients currently waiting",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist Minor Medical Center Union",
+      "WaitTime": 6,
+      "WaitTimeLower": null,
+      "MaxValueHit": null,
+      "IsEDDep": false,
+      "IsASAP": false,
+      "WaitTimeDisplayString": "0 patients currently waiting",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist University Emergency Department",
+      "WaitTime": 20,
+      "WaitTimeLower": 5,
+      "MaxValueHit": false,
+      "IsEDDep": true,
+      "IsASAP": true,
+      "WaitTimeDisplayString": "",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist Germantown Emergency",
+      "WaitTime": 25,
+      "WaitTimeLower": 10,
+      "MaxValueHit": false,
+      "IsEDDep": true,
+      "IsASAP": true,
+      "WaitTimeDisplayString": "",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist South Emergency",
+      "WaitTime": 105,
+      "WaitTimeLower": 60,
+      "MaxValueHit": false,
+      "IsEDDep": true,
+      "IsASAP": true,
+      "WaitTimeDisplayString": "",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist North Emergency",
+      "WaitTime": 115,
+      "WaitTimeLower": 55,
+      "MaxValueHit": false,
+      "IsEDDep": true,
+      "IsASAP": true,
+      "WaitTimeDisplayString": "",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist Olive Branch Emergency",
+      "WaitTime": 30,
+      "WaitTimeLower": 15,
+      "MaxValueHit": false,
+      "IsEDDep": true,
+      "IsASAP": true,
+      "WaitTimeDisplayString": "",
+      "CanShowWaitInfo": true
+    },
+    {
+      "Name": "Methodist Minor Medical Center Olive Branch",
+      "WaitTime": 4,
+      "WaitTimeLower": null,
+      "MaxValueHit": null,
+      "IsEDDep": false,
+      "IsASAP": false,
+      "WaitTimeDisplayString": "0 patients currently waiting",
+      "CanShowWaitInfo": true
+    }
+  ]
+}

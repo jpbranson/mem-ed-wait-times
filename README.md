@@ -60,12 +60,18 @@ EventBridge rule dispatches the workflow hourly; its first four dispatches
   diagnostics, calendar/profile candidates, empirical intervals, frozen gates and calibration.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
 - [Route response schema](docs/routes.schema.json): transient TomTom timing and traffic delay.
+- [Regional publication schema](docs/er-publication.schema.json): ranges, arrival
+  slots, a numeric wait and a pledge from the regional collector (local, not deployed).
 - [Development instructions](AGENTS.md): how to keep the plan and data
   documentation aligned with implementation.
 
 ## Source entry points
 
 - [Collector](mem-ed-lambda.py)
+- [Regional ER publication collector](edwait/regional_collector.py) and
+  [operation/validation notes](docs/regional-collector.md): five Methodist wait
+  ranges, two Saint Francis slot listings, and Forrest City's wait/pledge
+  (locally validated; separate record contract; not deployed)
 - [Daily compactor](lambda_function.py)
 - [Shared historical reader](edwait/data.py) and [facility registry](edwait/facilities.json)
 - [Latest publisher](edwait/latest.py) and [browser refresh](dashboard/latest.mjs)

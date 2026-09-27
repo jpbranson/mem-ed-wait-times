@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-26 02:55 UTC (evening of September 25 America/Chicago)
+Last updated: 2026-09-27 16:15 UTC (regional collector)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -20,6 +20,11 @@ ARIMA pilots, a v2 candidate study scored development, froze its selections and
 gates, then scored calibration. Only Collierville at 60 minutes remains eligible for
 the final holdout, which the user chose to keep reserved while more data is
 collected; no public forecasts exist.
+A separate eight-facility regional collector is implemented and locally validated:
+five Methodist wait ranges, two Saint Francis arrival-slot listings, and Forrest
+City's numeric widget plus service pledge. Its typed records and diagnostics use
+separate storage prefixes; it is not deployed, scheduled, or integrated into the
+map/analytics. [Operation and validation](regional-collector.md).
 Website builds are now also dispatched hourly by a user-configured AWS EventBridge
 rule because GitHub cron proved unreliable. All 50 hourly dispatches from 01:17 UTC
 on 2026-09-24 through 02:17 UTC on 2026-09-26 produced successful builds. The backup
@@ -71,6 +76,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Component | Current behavior | Reference |
 | --- | --- | --- |
 | Collection | Uses 20 registry slugs; preserves raw observations, writes attempt summaries, and conditionally publishes latest readings and failures | [Collector](../mem-ed-lambda.py), [publisher](../edwait/latest.py) |
+| Regional published information (local) | Separate collector for eight additional ERs; preserves ranges, absolute check-in slots, Forrest City's numeric widget and service targets as distinct metrics, with invalid/unavailable states and per-facility diagnostics (error code, collector-defined detail, HTTP status, run duration). All eight live sources passed two smoke tests; production activation (steps written, not run) and presentation remain pending | [Collector and commented research](../edwait/regional_collector.py), [contract/validation](regional-collector.md) |
 | Compaction | Concatenates raw without rewriting provenance; attaches a fingerprint of copied raw objects | [Compactor](../lambda_function.py) |
 | Shared history | Selects one source per UTC batch-date partition, validates and deduplicates by facility/metric, reports coverage/gaps/rejections | [Reader](../edwait/data.py) |
 | Registry | Stable slugs, verified names/state groupings, timezone/source dates; 2026-09-23 official evidence for active status, general-emergency service and explicit age groups, with per-facility `destination_evidence`; OpenStreetMap `campus_point` fallbacks labeled "ER entrance unconfirmed"; `emergency_entrance` null until reviewed via `python -m edwait.entrances` | [Registry](../edwait/facilities.json), [destination evidence](m2-destinations-2026-09-23.md) |
@@ -81,7 +87,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Offline forecasting | Frozen 107,257-record snapshot; four simple benchmarks, ARIMA(1,0,0)/(1,1,0), Fourier-regressor ARIMA and a profile-persistence model with trailing empirical 80/95% intervals. Development and calibration scored under a frozen selection; one pair (Collierville 60 min) is holdout-eligible; holdout unscored; no public forecasts | [Protocol and amendment](m5-study-protocol.md), [benchmarks](m5-validation.md), [ARIMA pilot](m5-arima-validation.md), [candidate study](m5-candidates-validation.md), [freeze](m5-freeze.json) |
 | Dashboard | Full-width dark chart canvas with all 20 hospitals and an adjacent legend; shared 24-hour/seven-day controls fit the overview y-axis to visible lines; responsive individual charts below; an M3 difference-from-usual heatmap links rows to the focus chart, with a campus map and replay below it (deployed 2026-09-26); locally served Inter and a 16 px text minimum; details in disclosures | [Dashboard](../dashboard/index.qmd), [overview renderer](../dashboard/overview.py), [overview controls](../dashboard/overview.mjs), [heatmap](../dashboard/heatmap.mjs), [application](../dashboard/app.mjs) |
 | Deployment | M0/M1, M2 static assets and the M3 heatmap deployed to S3 (latest `36d89bf` via GitHub Actions run 35833123203 at 07:44 UTC 2026-09-23, after an earlier direct publication of `fa842c8`); both Lambda packages updated. Minute-17 hourly/manual workflow, serialized deployments and exact public build/freshness checks published and manually validated on 2026-09-23 UTC; `data/*` protected; Lambda schedules unchanged. EventBridge rule `dashboard_hourly` dispatches the workflow at minute 17 (user-configured 2026-09-24 UTC; dispatched runs at 01:17–04:17 UTC all succeeded). M4 (`8242ad1`) was first published by the 03:17 UTC dispatch (run 35950813345), and an independent public check passed at 04:26 UTC; GitHub cron retained as a backup until about a day of hourly delivery is observed | [AWS release](aws-deployment-2026-09-22.md), [follow-up](production-followup-2026-09-23.md), [workflow](../.github/workflows/dashboard.yml) |
-| Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json) |
+| Data documentation | Raw provenance, compaction metadata, attempts/latest, website-owned comparison/travel schemas, the local regional-collector contract, schedules, and dated verification | [S3 reference](s3-buckets.md), [raw schema](ed-wait.schema.json), [latest schema](latest.schema.json), [comparison schema](comparisons.schema.json), [travel schema](travel.schema.json), [regional schema](er-publication.schema.json) and [collector notes](regional-collector.md) |
 
 Implementation and production deployment are recorded separately. Public artifact
 and refresh checks passed for the 2026-09-22 AWS release. The first updated
@@ -131,6 +137,11 @@ verification in the S3 reference retains its own date and narrower scope.
   the product does not have a complete inventory of all regional emergency departments.
 - Treat `observed_at` as collection time. It does not establish when the hospital
   last changed its published metric. Request latency is operational telemetry.
+- Regional `er_publications` observations retain bounds, slot timestamps,
+  Forrest City's numeric widget and targets in a separate typed contract. Do not
+  substitute midpoints, minutes until a check-in slot, pledge targets or that
+  widget for Baptist `CV_ED_Wait`. The regional roster
+  is independent of the Baptist roster and its analyses.
 - Historical percentiles and bands describe published observations. They do not
   describe the distribution of individual patient waits or hospital care quality.
 - Preserve reported zero values until source evidence establishes their meaning.
@@ -827,6 +838,17 @@ change. Offline study outputs do not alter existing record/storage contracts.
 
 ## Open decisions and immediate next work
 
+The separate regional publication collector is locally validated for all eight
+publishers and was hardened for deployment on 2026-09-27 (progress log). The user
+decided the same day that the sources' terms are acceptable and that it runs every
+15 minutes like the Baptist collector; the tested
+[deployment steps](regional-collector.md#deployment-steps-not-yet-run) cover
+packaging, a write-only role, a function with retries off, one manual run from AWS
+and the schedule. Explicit presentation of ranges, check-in slots, the Forrest City
+widget and targets follows. Its records cannot enter existing numeric wait
+comparisons without a separate metric-aware design. No new collection schedule
+or public artifact is active. [Validation and cost estimate](regional-collector.md).
+
 | Question | Needed by | Next action |
 | --- | --- | --- |
 | What does each current upstream wait value mean, including zero? | M0 interpretation; required before M2 recommendations | Current emergency/location pages reviewed 2026-09-14 confirm published waits and triage guidance but do not establish this API's averaging/update/sentinel contract; preserve zeros and label uncertainty until confirmed. 2026-09-26: the API response carries no timestamp or caching headers; an inquiry to Baptist is drafted for the user to send ([draft](m2-metric-inquiry-2026-09-26.md), not sent) |
@@ -886,6 +908,9 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-27 UTC | Schedule the regional collector every 15 minutes, the Baptist collector's cadence, and proceed on the sources' current terms | User decision after reviewing the collector and the robots.txt findings. Matching cadences keeps both collections aligned in time. About 2,880 runs and 29 MB a month, roughly $0.03 after free allowances, within the $5/month limit |
+| 2026-09-27 UTC | Regional collector contract refinements before first deployment: count Saint Francis slots returned past the requested window (`slots_beyond_window`) instead of failing the facility; store only parsed slot fields and Forrest City's trimmed widget/pledge text as evidence; record a collector-defined `error_detail`, `http_status` and run `duration_ms`; measure latency as HTTP time only; turn off Lambda retries at deployment | User-approved hardening after the documentation audit. A full day's listing is a plausible reason for later slots and should not drop the reading. Diagnostics must separate a source refusing AWS (403) from an outage without storing source text. Nothing had been deployed or stored, so the contract could change without migration. A failed run retried twice would triple requests to a source that may be blocking |
+| 2026-09-27 UTC | Add a standalone eight-facility regional collector with research comments and a typed `er_publications` contract; keep ranges, check-in slots and service pledges distinct from `CV_ED_Wait` | User requested collection for the other publishers. Separate raw/operations prefixes prevent clinical and unit conflation, preserve source values and invalid/unavailable states, and avoid changing Baptist history/compaction/latest. No new dependencies or deployed infrastructure. A 15-minute, 128 MB/60-second scenario is approximately $0.40/month incremental before free allowances; actual deployment must fit the $5/month total budget. [Design/evidence](regional-collector.md) |
 | 2026-09-26 UTC | M2 gateway rate limits in the Durable Object: per client network (IPv4 address or IPv6 /64) 4 comparisons per 10 minutes and 20 per UTC date; all clients 1,000 provider requests per UTC date; all configurable, counted only when a comparison reserves requests; clients identified by an HMAC under a salt replaced each UTC date | The deployed gateway had no per-client limit, so one scripted client could spend the month's 20,000 requests. Cloudflare rate-limiting rules need a zone, which a free `workers.dev` address lacks, and the object already serializes comparisons and holds the ledger. IPv6 subscribers can rotate addresses within a /64, and per-address limits cannot stop wider rotation, so the daily cap bounds any one day at about 5% of the month. Daily salts keep identifiers from linking a client across dates and store no address |
 | 2026-09-26 UTC | Keep total project cost under $5 per month; estimate cost before adding any service, schedule or data volume, and never enable paid tiers (TomTom prepaid credit, Cloudflare Workers Paid) | User requirement. Measured: August $0.07, September 1–25 $0.17, all S3 requests (hourly builds read history); Lambda, EventBridge, SNS, the alarm and 1.7 GB/week egress were within free allowances; the public repo's Actions minutes are free. Main risk is S3 egress if traffic grows (5.5 MB page, 100 GB/month free). AWS Budget `mem-ed-wait-times-monthly` ($3, all costs) created 2026-09-26 at the user's request: email alerts at 80% and 100% actual and 100% forecast (September at creation: $0.17 actual, $0.31 forecast). It warns but cannot cap spending |
 | 2026-09-26 UTC | M3 map: place hospitals at campus centers with MapLibre HTML-button markers colored by the heatmap's own bins, replay the shared window with an outline in the heatmap, and frame views with the existing area groups | Reuses validated values and colors, so map and heatmap cannot disagree; buttons keep markers keyboard- and screen-reader-accessible; area views separate the dense Memphis cluster; no new artifact or contract. Lazy loading keeps the opening chart first |
@@ -931,6 +956,8 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-27 UTC | M0 additional sources (hardening) | At the user's request, `edwait/regional_collector.py` gained attempt `error_detail` (fixed phrases only), `http_status` and summary `duration_ms`; non-JSON bodies count as invalid responses; slots past the window are counted; evidence keeps parsed slot fields and trimmed Forrest City text; latency is HTTP time only; INFO/WARNING logs; a User-Agent with the repository URL; `--output` creates its folder. Schema and docs updated, with tested deployment steps (package built locally, 16.8 MB). 25 collector tests (6 new; every parser status validated against the schema) and 117 Python / 72 JS tests passed. A live batch at 15:53 UTC collected all eight facilities in 2,153 ms with nine schema-valid rows. [Validation and steps](regional-collector.md) | Local only; nothing deployed, stored in S3 or scheduled |
+| 2026-09-27 UTC | M0 additional sources | Added `edwait/regional_collector.py` with commented research, local CLI, independent Lambda storage handler, public-source fixtures and typed schema. 110 Python tests passed, including 19 focused collector tests; the 14:54 UTC live batch collected nine schema-valid observations across all eight facilities. Earlier Forrest City HTTP failures and negative sentinel were retained as separate failure evidence. [Operation/validation](regional-collector.md) | Local only; no S3 writes, function changes or schedule activation; map and analytics integration remain pending |
 | 2026-09-26 UTC | M2 gateway rate limits | `gateway/src/gate.mjs` checks per-client burst/daily limits and an all-client daily cap in the ledger transaction; `handler.mjs` derives the client network from `CF-Connecting-IP`; new codes `client_rate_limited` and `daily_budget_exhausted` (429) with their own page messages; four new `wrangler.toml` settings. 71 JS / 90 Python tests passed (three new gateway tests); 13/13 `wrangler dev` checks, including both limits across a restart with no provider call; bundle 20.67 KiB. [Evidence](m2-operations.md#cloudflare-gateway) | Local only; the live Worker predates it and needs `npx wrangler deploy` by the account owner; page messages publish with the next build after a push |
 | 2026-09-26 UTC | Documentation status sync | Status, roadmap, M2/M3 sections, open decisions and next checkpoint now reflect the deployed gateway and M3 map (rows below). Checked at 02:25 UTC: `/api/routes/status` returned `available: true` and `geo.mjs`/`geo-map.mjs` served through the `workers.dev` address; 50/50 hourly dispatches through 02:17 UTC succeeded (plus one manual dispatch at 01:50); the alarm topic still had no subscriptions. Earlier rows stay as recorded | Documentation only |
 | 2026-09-26 UTC | M2 gateway | Added `gateway/` (Worker, SQLite Durable Object, pinned wrangler 4.141.0, local-check harness), `tests/gateway.test.mjs`, additive `travel.json` `arrival_point` with schema/test updates, and the Cloudflare mention in the page's privacy line. 84 Python and 60 JS tests passed; 11/11 mock checks in `wrangler dev`; browser Compare through the served page returned 18 rows with no console errors; one live comparison returned 18/18 routes in 4.6 s. [Evidence](m2-operations.md#cloudflare-gateway) | Local only; not deployed. No Cloudflare account, secret or route exists |

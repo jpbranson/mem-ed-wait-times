@@ -1,0 +1,47 @@
+{
+  "data": [
+    {
+      "id": "18",
+      "type": "schedules",
+      "attributes": {
+        "active": true,
+        "age-limit-direction": null,
+        "age-limit-threshold": null,
+        "hours": null,
+        "name": "",
+        "schedule-type": "online",
+        "service": {
+          "id": 36,
+          "name": "Emergency Room",
+          "permalink": "emergency-room"
+        },
+        "service-id": 36,
+        "sort-order": 9999,
+        "time-zone-name": "America/Chicago",
+        "appointment-types": [],
+        "schedule-contexts": [
+          {
+            "id": 1,
+            "name": "Patient"
+          }
+        ],
+        "hidden": false,
+        "launched-on": "2010-10-07",
+        "force-deactivation": false,
+        "remote-schedule": false,
+        "add-to-waitlist": false
+      },
+      "relationships": {
+        "facility": {
+          "data": {
+            "type": "facilities",
+            "id": "953125690"
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "record-count": 1
+  }
+}
