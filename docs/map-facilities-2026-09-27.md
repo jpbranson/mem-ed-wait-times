@@ -1,6 +1,7 @@
 # Memphis-area ERs without published wait information
 
-Reviewed: 2026-09-27. Implemented locally; not deployed.
+Reviewed: 2026-09-27. Published on 2026-09-27 by the 18:17 UTC build
+([release](#validation-and-release)).
 
 The user requested that ERs without published waits still appear on maps. These
 eight additions follow the Memphis-area search, including communities roughly
@@ -81,8 +82,8 @@ existing roughly 5.5 MB page and within the project's current $5/month design.
 ## Validation and release
 
 - 91 Python tests and 72 JavaScript tests passed on 2026-09-27 (before the regional
-  collector's 19 Python tests were added; the full suite now runs 111 with the release
-  fix below), including collection
+  collector's 19 Python tests were added; the full suite ran 111 with the release fix
+  below and 117 at release), including collection
   roster separation, source/coordinate completeness, travel exclusion, generated
   HTML membership, map selection, missing history, and replay status separation.
 - Quarto successfully rendered the dashboard using the existing cached history.
@@ -93,8 +94,12 @@ existing roughly 5.5 MB page and within the project's current $5/month design.
   not enabled for this review. The map's eight focused tests also passed after
   checking that lost history clears old period colors while preserving square status.
 - Exact source diff and whitespace review passed.
-- Local implementation only. Publishing requires the normal source/release flow;
-  no Lambda, S3, gateway, schedule or public website was changed in this work.
+- Released through the normal source flow: committed as `8dca952` and pushed to
+  `main` with the documentation audit (`5738133`) at 18:12 UTC on 2026-09-27. The
+  18:17 UTC hourly build (run 36340076534) passed 117 Python and 72 JavaScript tests and
+  the exact public build/freshness check (20/20 current); an independent public check
+  passed at 18:21 UTC. The public page embeds the eight listings; its map markers were
+  not rechecked in a browser. No Lambda, schedule or gateway changed.
 - Release fix (2026-09-27 documentation audit): `scripts/check_public.mjs` and
   `gateway/scripts/local-check.mjs` had counted all 28 records, so the public check
   failed against the 20-facility `latest.json` ("Invalid latest artifact") and the

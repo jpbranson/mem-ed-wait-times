@@ -34,7 +34,7 @@ when validating latest artifacts, as shown in [contract tests](../tests/test_con
 
 ### Facility directory versus wait observations
 
-The 2026-09-27 local [map-directory addition](map-facilities-2026-09-27.md)
+The [map-directory addition](map-facilities-2026-09-27.md), published on 2026-09-27,
 adds eight ERs labeled **No published wait time** to `edwait/facilities.json`.
 Each has `collection_enabled: false` and a dated `wait_time_reporting` finding.
 The full directory contains 28 facilities; the default `registry()` and collection
@@ -172,7 +172,7 @@ service and explicit age evidence and an OpenStreetMap `campus_point`; 18 adult
 and 4 child destinations are travel-eligible through labeled campus centers, and
 Leake's active status stays `unknown` ([evidence](m2-destinations-2026-09-23.md)).
 `coordinates` and `emergency_entrance` remain null for every record. The eight
-local map-only records (`collection_enabled: false`, with `wait_time_reporting`
+map-only records (`collection_enabled: false`, with `wait_time_reporting`
 and `map_note`; see above) are never collected and are always travel-ineligible.
 Regions are states for display, not verified clinical service areas.
 

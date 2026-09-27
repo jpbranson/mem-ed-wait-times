@@ -215,7 +215,7 @@ general service applicability, not individual clinical suitability or diversion.
 (The Memphis values above are placeholders, not a reviewed entrance.) Place the
 point where a vehicle stops for the general ER, not an ambulance-only bay or a
 separate obstetric/pediatric unit, and describe the evidence in `--label`/`--note`.
-`set` validates with the same rule as eligibility before writing. With the local
+`set` validates with the same rule as eligibility before writing. With the
 2026-09-27 map-only directory, `list` and `geojson` also include eight map-only
 campuses; they are never routed, so review entrances only for the 20 collection
 facilities. After editing,

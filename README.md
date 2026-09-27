@@ -63,7 +63,7 @@ day once failed dispatches could email the user.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
 - [Route response schema](docs/routes.schema.json): transient TomTom timing and traffic delay.
 - [Map-only ER directory](docs/map-facilities-2026-09-27.md): eight Memphis-area ERs
-  without published waits, their dated evidence and square map markers (local, not deployed).
+  without published waits, their dated evidence and square map markers (published 2026-09-27).
 - [Regional publication schema](docs/er-publication.schema.json): ranges, arrival
   slots and a numeric wait from the regional collector (deployed 2026-09-27).
 - [Development instructions](AGENTS.md): how to keep the plan and data
@@ -116,7 +116,7 @@ percentile movement over 15 minutes to 2 hours across 28 past days).
 Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
 Every workflow build runs both test suites and an exact public build/freshness check;
-the 14:17 UTC build of `1d2331c` on 2026-09-27 passed 90 Python and 71 JavaScript
+the 18:17 UTC build of `5738133` on 2026-09-27 passed 117 Python and 72 JavaScript
 tests. Desktop/mobile browser evidence remains in the dated validation records above. These describe published observations, not an
 individual patient's wait or hospital care quality.
 
