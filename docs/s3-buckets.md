@@ -32,6 +32,18 @@ when validating latest artifacts, as shown in [contract tests](../tests/test_con
 
 ## Data bucket: `mem-ed-wait-times`
 
+### Facility directory versus wait observations
+
+The 2026-09-27 local [map-directory addition](map-facilities-2026-09-27.md)
+adds eight ERs labeled **No published wait time** to `edwait/facilities.json`.
+Each has `collection_enabled: false` and a dated `wait_time_reporting` finding.
+The full directory contains 28 facilities; the default `registry()` and collection
+roster remain the original 20. The built HTML embeds the eight listings separately
+for map display; they create no raw rows, collection attempts, latest entries,
+comparisons or travel entries. No new S3 object, schedule, or observation-schema
+change is required. The six-field [raw schema](ed-wait.schema.json) remains
+unchanged: an absent public wait is metadata, not a numeric observation.
+
 ### Object layout and encoding
 
 The separate [regional collector](regional-collector.md), deployed 2026-09-27 as
@@ -122,8 +134,9 @@ Actual record from the first inspected raw object:
 
 ### Facilities
 
-The [facility registry](../edwait/facilities.json) supplies these 20 stable slugs,
-all of which appeared in the 2026-09-11 samples:
+The [facility registry](../edwait/facilities.json)'s 20 collection-enabled records
+(`registry()`) supply these stable slugs, all of which appeared in the 2026-09-11
+samples:
 
 ```text
 arlington
@@ -156,8 +169,10 @@ and [Leake page](https://www.baptistonline.org/locations/leake) on 2026-09-14.
 comparison timezone for these locations. Each entry records source URL and
 verification date. Coordinates, entrance, age/service applicability, active
 status, and travel verification remain explicit null/unknown values; none is
-eligible for travel comparisons on this registry alone. Regions are states for
-display, not verified clinical service areas.
+eligible for travel comparisons on this registry alone. The eight local map-only
+records (`collection_enabled: false`, with `wait_time_reporting` and `map_note`;
+see above) are never collected and are always travel-ineligible. Regions are
+states for display, not verified clinical service areas.
 
 A failed facility request is logged and omitted from raw readings but recorded
 in the attempt summary and latest artifact. A batch can contain fewer facilities.

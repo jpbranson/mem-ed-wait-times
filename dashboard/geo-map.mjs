@@ -51,7 +51,7 @@ export async function createGeoMap({container, points, onSelect, onStatus}) {
         button.className=`geo-marker geo-${entry.kind} heat-${entry.band}${selected ? " selected" : ""}`;
         button.textContent=entry.glyph;
         button.title=entry.label;
-        button.setAttribute("aria-label",`${entry.label}. Show in focus chart`);
+        button.setAttribute("aria-label",`${entry.label}. ${entry.kind==="unpublished" ? "Show facility details" : "Show in focus chart"}`);
         button.setAttribute("aria-pressed",String(selected));
       }
     }

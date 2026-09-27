@@ -65,6 +65,8 @@ def arrival(facility):
 def eligibility(facility, age_group, now):
     """Only trusted registry metadata can enable a destination. Campus points are an
     explicitly labeled fallback (user decision 2026-09-23) until an entrance is reviewed."""
+    if facility.get("collection_enabled") is False:
+        return "No published wait time · map only"
     if age_group not in ("adult", "child"):
         return "Choose an age group"
     if facility.get("active_status") != "active":

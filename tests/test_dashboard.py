@@ -1,3 +1,4 @@
+import json
 import re
 import unittest
 from pathlib import Path
@@ -25,6 +26,13 @@ class DashboardTests(unittest.TestCase):
         self.assertIn('id="hospital-select"', html)
         registry = re.search(r'id="facility-registry">(.*?)</script>', html).group(1)
         self.assertIn('"short_name": "Mississippi Baptist"', registry)
+        self.assertEqual(len(json.loads(registry)), 20)
+        directory = json.loads(re.search(r'id="map-only-facilities">(.*?)</script>', html).group(1))
+        self.assertEqual(len(directory), 8)
+        self.assertTrue(all(f["wait_time_reporting"]["status"] == "not_published" for f in directory))
+        map_areas = json.loads(re.search(r'id="map-area-groups">(.*?)</script>', html).group(1))
+        self.assertEqual(len(map_areas[0]["slugs"]), 28)
+        self.assertNotIn('<option value="le-bonheur-childrens"', html)
 
     def test_every_browser_module_is_published(self):
         # Quarto copies only listed resources; a missing import breaks the deployed page.

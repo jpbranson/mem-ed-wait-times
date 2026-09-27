@@ -51,8 +51,10 @@ def validate_record(row):
     return row
 
 
-def registry():
-    return json.loads(Path(__file__).with_name("facilities.json").read_text(encoding="utf-8"))["facilities"]
+def registry(*, include_map_only=False):
+    """Collection roster by default; opt in to the full directory for map displays."""
+    facilities = json.loads(Path(__file__).with_name("facilities.json").read_text(encoding="utf-8"))["facilities"]
+    return facilities if include_map_only else [f for f in facilities if f.get("collection_enabled") is True]
 
 
 SHORT_NAMES = {"arlington": "Arlington", "childrens": "Children's", "nea": "NEA Baptist",

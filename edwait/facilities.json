@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "notes": "Region is a state-level display grouping, not a clinical service area or routing group. API slugs retain collection provenance. Destination status, general-emergency service and explicitly supported age groups were checked against official Baptist pages on 2026-09-23 (docs/m2-destinations-2026-09-23.md). campus_point is an OpenStreetMap hospital-campus center used, by user decision on 2026-09-23, as a labeled routing fallback while emergency_entrance is null. Add reviewed entrances with scripts/set_entrance.py; an entrance always replaces the campus fallback.",
+  "notes": "Region is a state-level display grouping, not a clinical service area or routing group. API slugs retain collection provenance. Destination status, general-emergency service and explicitly supported age groups were checked against official Baptist pages on 2026-09-23 (docs/m2-destinations-2026-09-23.md). campus_point is an OpenStreetMap hospital-campus center used, by user decision on 2026-09-23, as a labeled routing fallback while emergency_entrance is null. Add reviewed entrances with scripts/set_entrance.py; an entrance always replaces the campus fallback. The full directory includes map-only emergency departments reviewed on 2026-09-27 (docs/map-facilities-2026-09-27.md). Only collection_enabled=true records belong to the collector, wait feeds, analyses and travel comparisons. not_published is a dated finding from official public pages, not a zero wait or a collection outage. New map-only campus points do not establish routing eligibility.",
   "facilities": [
     {
       "slug": "arlington",
@@ -33,7 +33,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/node/11382331289",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Freestanding ER, department of Baptist Memphis; transfers for higher care"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "childrens",
@@ -66,7 +67,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/node/5464768674",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Pediatric-only ER (10 bays, 24/7); no ER upper age limit published"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "collierville",
@@ -98,7 +100,8 @@
         "status_source_url": "https://www.baptistonline.org/locations/collierville",
         "osm_campus_url": "https://www.openstreetmap.org/way/635396682",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22); official text: 'Emergency parking is on the north side of the building.'"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "huntingdon",
@@ -130,7 +133,8 @@
         "status_source_url": "https://www.baptistonline.org/locations/carroll-county",
         "osm_campus_url": "https://www.openstreetmap.org/way/497053171",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "memphis",
@@ -163,7 +167,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/496445813",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Separate Children's pediatric ER and Women's maternity triage on campus"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "tipton",
@@ -195,7 +200,8 @@
         "status_source_url": "https://www.baptistonline.org/locations/tipton/services",
         "osm_campus_url": "https://www.openstreetmap.org/way/496456919",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "union-city",
@@ -228,7 +234,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/relation/21370174",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Services page gives the ED as 1202 Bishop Street"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "crittenden",
@@ -260,7 +267,8 @@
         "status_source_url": "https://www.baptistonline.org/locations/crittenden/services",
         "osm_campus_url": "https://www.openstreetmap.org/way/903252955",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22); official text: ER shares a vestibule with the main outpatient entrance"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "nea",
@@ -293,7 +301,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/348360939",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Official ZIP differs between pages (72405/72401)"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "anderson",
@@ -327,7 +336,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/485544180",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "No OSM emergency entrance; Anderson-South (1102 Constitution Ave) has no ER."
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "baptist-medical-center-attala",
@@ -360,7 +370,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/487489045",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "child unclear (PALS credential only)"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "booneville",
@@ -393,7 +404,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/486584444",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Official address inconsistent: Hospital St vs Hospital Drive.; child unclear"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "calhoun",
@@ -426,7 +438,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/590809280",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Official page embedded coordinates ~3 km off OSM polygon.; child unclear"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "desoto",
@@ -460,7 +473,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/375951854",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Separate obstetrics ER in the Women's Pavilion"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "golden-triangle",
@@ -493,7 +507,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/486405708",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "child unclear"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "baptist-medical-center-leake",
@@ -526,7 +541,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/486275366",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Current pages say Level IV ED but not 24/7; 24-hour wording only in 2024 news; absent from /services/emergency list"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "north-mississippi",
@@ -559,7 +575,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/590587453",
         "entrance": "Unconfirmed OpenStreetMap candidate only; not used",
         "entrance_candidate_url": "https://www.openstreetmap.org/node/10027720705"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "union-county",
@@ -592,7 +609,8 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/486684275",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Separate obstetric ED"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "baptist-medical-center-yazoo",
@@ -624,7 +642,8 @@
         "status_source_url": "https://www.baptistonline.org/locations/yazoo/services",
         "osm_campus_url": "https://www.openstreetmap.org/way/487437455",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)"
-      }
+      },
+      "collection_enabled": true
     },
     {
       "slug": "baptist-medical-center",
@@ -658,6 +677,345 @@
         "osm_campus_url": "https://www.openstreetmap.org/way/485669879",
         "entrance": "No emergency-specific entrance in official pages or OpenStreetMap (Overpass data 2026-09-22)",
         "notes": "Separate OB ED (OBED) at Baptist for Women"
+      },
+      "collection_enabled": true
+    },
+    {
+      "slug": "highland-hills",
+      "display_name": "Highland Hills Medical Center",
+      "region": "Mississippi",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://highlandhillsmc.com/er/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://highlandhillsmc.com/er/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy. The ER page gives general guidance that a visit may take several hours, not a current wait estimate."
+      },
+      "map_note": "24/7 emergency department",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 34.6246213,
+        "longitude": -89.9563835,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/way/486893533",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "401 Getwell Dr, Senatobia, MS 38668",
+        "status_source_url": "https://highlandhillsmc.com/er/",
+        "osm_campus_url": "https://www.openstreetmap.org/way/486893533",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Map listing only; age applicability and travel eligibility have not been reviewed."
+      }
+    },
+    {
+      "slug": "regional-one",
+      "display_name": "Regional One Health – Regional Medical Center",
+      "region": "Tennessee",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.regionalonehealth.org/main-campus/regional-medical-center/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.regionalonehealth.org/main-campus/regional-medical-center/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "Emergency department and trauma center",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 35.1419953,
+        "longitude": -90.0305622,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/relation/21086410",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "877 Jefferson Ave, Memphis, TN 38103",
+        "status_source_url": "https://www.regionalonehealth.org/main-campus/regional-medical-center/",
+        "osm_campus_url": "https://www.openstreetmap.org/relation/21086410",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Map listing only; age applicability and travel eligibility have not been reviewed."
+      }
+    },
+    {
+      "slug": "le-bonheur-childrens",
+      "display_name": "Le Bonheur Children's Hospital",
+      "region": "Tennessee",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.lebonheur.org/your-visit/preparing-for-your-visit/emergency-room/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.lebonheur.org/your-visit/preparing-for-your-visit/emergency-room/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "Pediatric emergency department · children",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 35.1457333,
+        "longitude": -90.030748,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/relation/21075529",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [
+        "child"
+      ],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "848 Adams Ave, Memphis, TN 38103",
+        "status_source_url": "https://www.lebonheur.org/your-visit/preparing-for-your-visit/emergency-room/",
+        "osm_campus_url": "https://www.openstreetmap.org/relation/21075529",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Map listing only; child age applicability reflects this pediatric ED; travel eligibility has not been reviewed."
+      }
+    },
+    {
+      "slug": "memphis-va",
+      "display_name": "Lt. Col. Luke Weathers, Jr. VA Medical Center",
+      "region": "Tennessee",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.va.gov/memphis-health-care/locations/lt-col-luke-weathers-jr-va-medical-center/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.va.gov/memphis-health-care/locations/lt-col-luke-weathers-jr-va-medical-center/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "VA emergency department · eligibility requirements apply",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 35.1430691,
+        "longitude": -90.0261207,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/relation/21086412",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "116 N Pauline St, Memphis, TN 38104",
+        "status_source_url": "https://www.va.gov/memphis-health-care/locations/lt-col-luke-weathers-jr-va-medical-center/",
+        "osm_campus_url": "https://www.openstreetmap.org/relation/21086412",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "OSM uses the older Memphis VA Medical Center name and Jefferson Avenue campus address; the official page supplies the current name and Pauline Street address."
+      }
+    },
+    {
+      "slug": "alliance-healthcare",
+      "display_name": "Alliance HealthCare System",
+      "region": "Mississippi",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.alliancehcs.org/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.alliancehcs.org/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "24/7 emergency department",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 34.7867524,
+        "longitude": -89.4162494,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/way/875017011",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "1430 Highway 4 E, Holly Springs, MS 38635",
+        "status_source_url": "https://www.alliancehcs.org/",
+        "osm_campus_url": "https://www.openstreetmap.org/way/875017011",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Map listing only; age applicability and travel eligibility have not been reviewed."
+      }
+    },
+    {
+      "slug": "crossridge",
+      "display_name": "St. Bernards CrossRidge Community Hospital",
+      "region": "Arkansas",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.stbernards.info/locations/profile/st-bernards-crossridge-community-hospital/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.stbernards.info/locations/profile/st-bernards-crossridge-community-hospital/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "24/7 emergency department",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 35.2197151,
+        "longitude": -90.7863027,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/way/452343585",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "310 Falls Blvd, Wynne, AR 72396",
+        "status_source_url": "https://www.stbernards.info/locations/profile/st-bernards-crossridge-community-hospital/",
+        "osm_campus_url": "https://www.openstreetmap.org/way/452343585",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Map listing only; age applicability and travel eligibility have not been reviewed."
+      }
+    },
+    {
+      "slug": "smc-regional",
+      "display_name": "SMC Regional Medical Center",
+      "region": "Arkansas",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.mchsys.org/",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.mchsys.org/"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "Rural emergency hospital · 24/7 emergency department",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 35.6994888,
+        "longitude": -89.975748,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/way/452144552",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "611 W Lee Ave, Osceola, AR 72370",
+        "status_source_url": "https://www.mchsys.org/",
+        "osm_campus_url": "https://www.openstreetmap.org/way/452144552",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Map listing only; age applicability and travel eligibility have not been reviewed."
+      }
+    },
+    {
+      "slug": "lauderdale-community",
+      "display_name": "Lauderdale Community Hospital",
+      "region": "Tennessee",
+      "timezone": "America/Chicago",
+      "official_source_url": "https://www.lauderdalehospital.org/getpage.php?name=Emergency_Services&sub=Services",
+      "verified_on": "2026-09-27",
+      "collection_enabled": false,
+      "wait_time_reporting": {
+        "status": "not_published",
+        "label": "No published wait time",
+        "checked_on": "2026-09-27",
+        "source_urls": [
+          "https://www.lauderdalehospital.org/getpage.php?name=Emergency_Services&sub=Services"
+        ],
+        "notes": "No public current wait estimate, range or ER arrival scheduler found on the reviewed official pages. This is a dated search finding, not a permanent hospital-confirmed policy."
+      },
+      "map_note": "24/7 emergency department",
+      "coordinates": null,
+      "campus_point": {
+        "latitude": 35.7451256,
+        "longitude": -89.5498368,
+        "label": "Hospital campus center · ER entrance unconfirmed",
+        "source_url": "https://www.openstreetmap.org/way/496476114",
+        "source_checked_on": "2026-09-27"
+      },
+      "emergency_entrance": null,
+      "service_applicability": [
+        "general_emergency"
+      ],
+      "age_applicability": [],
+      "active_status": "active",
+      "travel_verified_on": null,
+      "destination_evidence": {
+        "checked_on": "2026-09-27",
+        "address": "340 Asbury Ave, Ripley, TN 38063",
+        "status_source_url": "https://www.lauderdalehospital.org/getpage.php?name=Emergency_Services&sub=Services",
+        "osm_campus_url": "https://www.openstreetmap.org/way/496476114",
+        "entrance": "Campus center only; emergency entrance not reviewed",
+        "notes": "Official address is 340 Asbury Avenue; OSM lists 326 Asbury Avenue for the same hospital campus. Near the 50-mile radius boundary; driving distance is longer."
       }
     }
   ]

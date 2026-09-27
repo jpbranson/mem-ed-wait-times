@@ -5,7 +5,7 @@ import {bandOf, binHeatmap, span} from "./heatmap.mjs";
 import {escape, signed} from "./comparisons.mjs";
 
 // Direction is carried by a glyph as well as color.
-export const glyphs = {above:"▲", below:"▼", near:"●", unsupported:"?", empty:"–"};
+export const glyphs = {above:"▲", below:"▼", near:"●", unsupported:"?", empty:"–", unpublished:"□"};
 const STEP_MS = 700;
 
 export function markerState(cell) {
@@ -16,14 +16,19 @@ export function markerState(cell) {
 }
 
 // One entry per hospital with a campus point, for the replayed period.
-export function snapshot(model, index, expected) {
+export function snapshot(model, index, expected, mapOnly=[]) {
   const places=new Map(expected.filter(f=>f.campus).map(f=>[f.slug,f.campus]));
-  const period={start:model.start+index*model.binMs};
-  return model.rows.filter(row=>places.has(row.slug)).map(row=>{
+  const period=model ? {start:model.start+index*model.binMs} : null;
+  const rows=model?.rows ?? expected.map(f=>({slug:f.slug,name:f.short_name ?? f.display_name,full:f.display_name,cells:[]}));
+  const entries=rows.filter(row=>places.has(row.slug)).map(row=>{
     const state=markerState(row.cells[index]);
     return {slug:row.slug,name:row.name,full:row.full,...places.get(row.slug),...state,
-      label:`${row.full}: ${state.text}, ${span(period,model.binMs)}`};
+      label:`${row.full}: ${state.text}${model ? `, ${span(period,model.binMs)}` : ""}`};
   });
+  // Directory status is a dated finding, not a reading in the replayed period.
+  return entries.concat(mapOnly.filter(f=>f.campus).map(f=>({slug:f.slug,name:f.display_name,full:f.display_name,
+    ...f.campus,kind:"unpublished",band:"empty",glyph:glyphs.unpublished,text:"No published wait time",
+    label:`${f.display_name}: No published wait time · ${f.map_note} · checked ${f.wait_time_reporting.checked_on}`})));
 }
 
 // Keep the replayed period across rebuilds while it stays in the window; otherwise the latest.
@@ -35,30 +40,39 @@ export function resolveIndex(model, {start=null, follow=true}={}) {
 
 const loadMap=options=>import("./geo-map.mjs").then(module=>module.createGeoMap(options));
 
-export function mountGeo(root, {expected, areas=[], onSelect=()=>{}, onPeriod=()=>{}, createMap=loadMap,
+export function mountGeo(root, {expected, mapOnly=[], areas=[], onSelect=()=>{}, onPeriod=()=>{}, createMap=loadMap,
   Observer=globalThis.IntersectionObserver, every=(fn,ms)=>setInterval(fn,ms), cancel=id=>clearInterval(id)}) {
   const slider=root.querySelector(".geo-slider"), play=root.querySelector(".geo-play"), latest=root.querySelector(".geo-latest");
   const period=root.querySelector(".geo-period"), container=root.querySelector(".geo-map"), status=root.querySelector(".geo-status");
   const view=root.querySelector(".geo-area");
+  const selection=root.querySelector(".geo-selection"), points=[...expected,...mapOnly];
+  let directoryFocus=null;
   let model=null, index=null, start=null, follow=true, focus=null, map=null, pending=false, timer=null, lastKey="";
-  // Views reuse the area groups (all hospitals, states, 50 km neighbor groups) to separate
-  // clusters such as the Memphis area's seven campuses.
+  // Map views include the full directory; analytical area groups keep the collection roster.
   view.innerHTML=areas.map(a=>`<option value="${escape(a.key)}">${escape(a.label)}</option>`).join("");
-  const framed=()=>areas.find(a=>a.key===view.value)?.slugs ?? expected.map(f=>f.slug);
+  const framed=()=>areas.find(a=>a.key===view.value)?.slugs ?? points.map(f=>f.slug);
   view.addEventListener("change",()=>map?.fit(framed()));
+  const updateMap=()=>map?.update(snapshot(model,index,expected,mapOnly),directoryFocus ?? focus);
+  function select(slug) {
+    const facility=mapOnly.find(f=>f.slug===slug);
+    directoryFocus=facility ? slug : null;
+    if(selection) selection.innerHTML=facility ? `<strong>${escape(facility.display_name)}</strong> · No published wait time<br>${escape(facility.address)} · ${escape(facility.map_note)}<br>No public wait estimate or ER arrival scheduler found on reviewed pages · checked ${escape(facility.wait_time_reporting.checked_on)} · <a href="${escape(facility.official_source_url)}">Hospital website</a>` : "";
+    updateMap();
+    if(!facility) onSelect(slug);
+  }
 
   function show() {
     const ready=!!model;
     slider.disabled=play.disabled=!ready;
     latest.disabled=!ready || follow;
-    if(!ready) { period.textContent="No history to replay"; onPeriod(null); return; }
+    if(!ready) { period.textContent="No history to replay"; onPeriod(null); updateMap(); return; }
     const text=span({start:model.start+index*model.binMs},model.binMs);
     slider.max=String(model.columns-1);
     slider.value=String(index);
     slider.setAttribute("aria-valuetext",text);
     period.textContent=follow ? `${text} · latest` : text;
     onPeriod(index);
-    map?.update(snapshot(model,index,expected),focus);
+    updateMap();
   }
   function stop() {
     if(timer!==null) { cancel(timer); timer=null; }
@@ -82,11 +96,11 @@ export function mountGeo(root, {expected, areas=[], onSelect=()=>{}, onPeriod=()
     if(map || pending) return;
     pending=true; status.textContent="Loading map…";
     try {
-      map=await createMap({container,points:expected.filter(f=>f.campus),onSelect,
+      map=await createMap({container,points:points.filter(f=>f.campus),onSelect:select,
         onStatus:message=>{ status.textContent=message; }});
       status.textContent="";
       if(view.value && view.value!==areas[0]?.key) map.fit(framed());
-      if(model) map.update(snapshot(model,index,expected),focus);
+      updateMap();
     } catch { status.textContent="Map unavailable · the heatmap above shows the same values"; }
     finally { pending=false; }
   }
@@ -101,7 +115,9 @@ export function mountGeo(root, {expected, areas=[], onSelect=()=>{}, onPeriod=()
     render(context, hours, selected) {
       const key=JSON.stringify([context?.generated_at,hours,selected]);
       if(key===lastKey) return;
-      lastKey=key; focus=selected;
+      lastKey=key;
+      if(focus!==selected) { directoryFocus=null; if(selection) selection.innerHTML=""; }
+      focus=selected;
       if(!context) { stop(); model=null; show(); return; }
       const previous=model;
       model=binHeatmap(context,expected,hours);

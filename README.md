@@ -60,6 +60,8 @@ EventBridge rule dispatches the workflow hourly; its first four dispatches
   diagnostics, calendar/profile candidates, empirical intervals, frozen gates and calibration.
 - [Travel context schema](docs/travel.schema.json): eligibility and historical wait movement.
 - [Route response schema](docs/routes.schema.json): transient TomTom timing and traffic delay.
+- [Map-only ER directory](docs/map-facilities-2026-09-27.md): eight Memphis-area ERs
+  without published waits, their dated evidence and square map markers (local, not deployed).
 - [Regional publication schema](docs/er-publication.schema.json): ranges, arrival
   slots and a numeric wait from the regional collector (deployed 2026-09-27).
 - [Development instructions](AGENTS.md): how to keep the plan and data

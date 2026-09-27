@@ -41,7 +41,9 @@ async function freePort() {
   return port;
 }
 
-const expected = JSON.parse(await readFile(join(root, "edwait", "facilities.json"), "utf8")).facilities;
+// Only collection-enabled records reach travel.json (as registry() in edwait/data.py).
+const expected = JSON.parse(await readFile(join(root, "edwait", "facilities.json"), "utf8")).facilities
+  .filter(f => f.collection_enabled === true);
 const travel = validateTravel(JSON.parse(await readFile(join(site, "travel.json"), "utf8")), expected);
 if (!availableContext(travel, Date.now()) || !travel.facilities.every(f => "arrival_point" in f)) {
   console.error("dashboard/_site/travel.json is missing arrival points or older than two hours: run " +

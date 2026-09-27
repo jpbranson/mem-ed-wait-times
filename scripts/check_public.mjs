@@ -8,7 +8,9 @@ import {validateContext, contextAvailable} from '../dashboard/comparisons.mjs';
 import {validateTravel, availableContext} from '../dashboard/travel.mjs';
 
 const base = 'https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/';
-const expected = JSON.parse(await readFile(new URL('../edwait/facilities.json', import.meta.url))).facilities;
+// Only collection-enabled records have feed, comparison and travel entries (as registry()).
+const expected = JSON.parse(await readFile(new URL('../edwait/facilities.json', import.meta.url))).facilities
+  .filter(f => f.collection_enabled === true);
 const args = process.argv.slice(2);
 const output = args.includes('--output') ? args[args.indexOf('--output') + 1] : null;
 const after = args.includes('--expect-context-after') ? Date.parse(args[args.indexOf('--expect-context-after') + 1]) : null;

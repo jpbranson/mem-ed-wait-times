@@ -48,7 +48,9 @@ if(typeof document!=="undefined" && document.getElementById("hospital-select")) 
     document.querySelector(".focus-stage").scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
   };
   const heatmap=mountHeatmap(document.getElementById("heatmap-stage"),{expected,onSelect:focusOn});
-  const geo=mountGeo(document.getElementById("heatmap-stage"),{expected,areas:areaGroups,onSelect:focusOn,onPeriod:index=>heatmap.mark(index)});
+  const mapOnly=JSON.parse(document.getElementById("map-only-facilities").textContent);
+  const mapAreas=validateAreas(JSON.parse(document.getElementById("map-area-groups").textContent),[...expected,...mapOnly]);
+  const geo=mountGeo(document.getElementById("heatmap-stage"),{expected,mapOnly,areas:mapAreas,onSelect:focusOn,onPeriod:index=>heatmap.mark(index)});
   function render() {
     const now=Date.now();
     travel.render();

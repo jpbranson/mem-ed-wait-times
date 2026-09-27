@@ -17,13 +17,14 @@ class Element extends EventTarget {
   fire(type) {this.dispatchEvent(new Event(type));}
 }
 const areas=[{key:"all",label:"All hospitals",slugs:["a","b","c"]},{key:"pair",label:"A & <B>",slugs:["a","b"]}];
-function fixture({createMap}={}) {
-  const elements=new Map(), updates=[], periods=[], timers=[], fits=[];
+function fixture({createMap,mapOnly=[]}={}) {
+  const elements=new Map(), updates=[], periods=[], timers=[], fits=[], selections=[];
+  let mapOptions;
   const root={querySelector(selector){if(!elements.has(selector)) elements.set(selector,new Element());return elements.get(selector);}};
   const map={update(entries,focus){updates.push({entries,focus});},fit(slugs){fits.push(slugs);}};
-  const geo=mountGeo(root,{expected,areas,Observer:null,onPeriod:index=>periods.push(index),
-    createMap:createMap ?? (async()=>map),every:(fn)=>{timers.push(fn);return timers.length;},cancel:id=>{timers[id-1]=null;}});
-  return {geo,get:s=>root.querySelector(s),updates,periods,timers,fits};
+  const geo=mountGeo(root,{expected,mapOnly,areas,Observer:null,onPeriod:index=>periods.push(index),onSelect:slug=>selections.push(slug),
+    createMap:createMap ?? (async options=>{mapOptions=options;return map;}),every:(fn)=>{timers.push(fn);return timers.length;},cancel:id=>{timers[id-1]=null;}});
+  return {geo,get:s=>root.querySelector(s),updates,periods,timers,fits,selections,select:slug=>mapOptions.onSelect(slug),points:()=>mapOptions.points};
 }
 const settled=()=>new Promise(resolve=>setImmediate(resolve));
 
@@ -124,4 +125,35 @@ test("a map failure leaves the heatmap as the fallback",async()=>{
   assert.match(f.get(".geo-status").textContent,/Map unavailable/);
   f.geo.render(context(),168,"a");
   assert.equal(f.get(".geo-slider").disabled,false);
+});
+
+test("unpublished facilities stay distinct from missing readings throughout replay and loss of history",async()=>{
+  const mapOnly=[{slug:"directory",display_name:"Pediatric <ER>",campus:{latitude:35,longitude:-90},
+    address:"10 Main St",map_note:"Pediatric emergency department · children",official_source_url:"https://example.org/er",
+    wait_time_reporting:{status:"not_published",checked_on:"2026-09-27"}}];
+  const f=fixture({mapOnly});
+  await settled();
+  assert.deepEqual(f.points().map(p=>p.slug),["a","b","directory"]);
+  const initial=f.updates.at(-1).entries.at(-1);
+  assert.equal(initial.kind,"unpublished");
+  assert.equal(initial.text,"No published wait time");
+  assert.match(initial.label,/checked 2026-09-27/);
+  assert.equal(initial.glyph,"□");
+  f.geo.render(context(),168,"a");
+  f.get(".geo-slider").value="166";
+  f.get(".geo-slider").fire("input");
+  assert.deepEqual(f.updates.at(-1).entries.at(-1),initial);
+  assert.equal(f.updates.at(-1).entries[1].kind,"empty");
+  f.select("directory");
+  assert.deepEqual(f.selections,[],"map-only selection must not enter the wait chart");
+  assert.equal(f.updates.at(-1).focus,"directory");
+  assert.match(f.get(".geo-selection").innerHTML,/Pediatric &lt;ER&gt;.*No published wait time/);
+  assert.match(f.get(".geo-selection").innerHTML,/10 Main St/);
+  assert.match(f.get(".geo-selection").innerHTML,/https:\/\/example.org\/er/);
+  f.geo.render(null,168,"a");
+  assert.deepEqual(f.updates.at(-1).entries.at(-1),initial);
+  assert.ok(f.updates.at(-1).entries.slice(0,-1).every(e=>e.kind==="empty"),"lost history clears old period colors");
+  f.select("b");
+  assert.deepEqual(f.selections,["b"]);
+  assert.equal(f.get(".geo-selection").innerHTML,"");
 });
