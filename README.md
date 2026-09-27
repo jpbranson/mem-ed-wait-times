@@ -5,9 +5,10 @@ facilities, stores historical batches in S3, and renders a Quarto dashboard.
 
 **[Open the dashboard](https://mem-ed-wait-times-dashboard.s3.us-east-1.amazonaws.com/index.html).**
 M0 (data and freshness) and M1 (hospital self-comparisons) were deployed on
-2026-09-22. M2's map and illustrative travel interface are published; real routing
-and recommendations remain disabled. M3's difference-from-usual heatmap is
-published and an offline relationship study found no confirmed pair association. M4's area counts and
+2026-09-22. M2's map and illustrative travel interface are published; routing runs
+only through a gateway address that is not linked publicly, and recommendations
+remain disabled. M3's difference-from-usual heatmap and campus map with replay are
+published, and an offline relationship study found no confirmed pair association. M4's area counts and
 wait-stability summaries were deployed on 2026-09-24; its historical-alternatives
 replay waits on M2. M5's offline forecast
 study has scored development and calibration under a frozen selection; one hospital/horizon
@@ -20,8 +21,9 @@ successful updated GitHub build and public desktop/mobile review. The approved
 workflow mitigation moves the hourly cron to minute 17 and verifies public
 freshness/build artifacts after publication. GitHub's scheduled delivery proved
 unreliable (runs 3–9 hours apart on 2026-09-23), so since 2026-09-24 UTC an AWS
-EventBridge rule dispatches the workflow hourly; its first four dispatches
-(01:17–04:17 UTC) all produced successful builds.
+EventBridge rule dispatches the workflow hourly; all 89 dispatches through 17:17 UTC
+on 2026-09-27 produced successful builds, and the backup GitHub cron was removed that
+day once failed dispatches could email the user.
 
 ## Project documentation
 
@@ -42,7 +44,7 @@ EventBridge rule dispatches the workflow hourly; its first four dispatches
 - [M1 operations](docs/m1-operations.md): environment setup, local preview,
   preparation, website publication, and release checks.
 - [M2 operations](docs/m2-operations.md) and [validation](docs/m2-validation.md): free
-  routing prototype, local review, privacy, and unresolved activation gates.
+  routing prototype, Cloudflare gateway, local review, privacy, and unresolved activation gates.
 - [M2 readiness follow-up](docs/m2-readiness-2026-09-23.md): live TomTom check,
   remaining destination/metric evidence, and free hosting design.
 - [M2 destination evidence](docs/m2-destinations-2026-09-23.md): official status,
@@ -113,9 +115,9 @@ typical count, and a per-hospital typical-change graphic (median and 90th
 percentile movement over 15 minutes to 2 hours across 28 past days).
 Explanations, tables, and operator diagnostics are expandable.
 Inter is served locally with a 16 CSS px (12 pt) minimum, including chart labels.
-Release checks passed 64 Python and 41 JavaScript tests on 2026-09-23, plus public data/asset
-and live-refresh checks; earlier desktop/mobile browser evidence remains in the
-dated validation records above. These describe published observations, not an
+Every workflow build runs both test suites and an exact public build/freshness check;
+the 14:17 UTC build of `1d2331c` on 2026-09-27 passed 90 Python and 71 JavaScript
+tests. Desktop/mobile browser evidence remains in the dated validation records above. These describe published observations, not an
 individual patient's wait or hospital care quality.
 
 M2's published Drive + wait prototype includes a labeled example. Its local
@@ -133,8 +135,9 @@ M2 remains in progress; recommendations and public routing are not enabled.
 The page enables Compare only when `GET /api/routes/status` confirms a gateway,
 so the static S3 site never posts coordinates. A free
 [Cloudflare Workers gateway](docs/m2-operations.md#cloudflare-gateway) serving the
-page and routing at one origin was deployed on 2026-09-26 at an address that is not
-linked publicly until the remaining M2 gates pass.
+page and routing at one origin, with per-client and daily rate limits, was deployed
+on 2026-09-26 at an address that is not linked publicly until the remaining M2 gates
+pass. Drive + wait rows can be sorted by drive time, published wait or their sum.
 See [M2 setup](docs/m2-operations.md#preparation-and-local-review) for local key
 configuration and preview commands. Representative hospital-route validation remains pending.
 The free origin map and Use my location work independently of routing eligibility

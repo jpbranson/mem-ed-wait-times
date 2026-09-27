@@ -3,7 +3,9 @@
 M2 remains in progress. This record documents the destination research that the
 registry's travel gates require, and the user's later decision the same day to
 route to labeled campus centers until emergency entrances are reviewed. No
-recommendation gate was relaxed and no public routing service exists.
+recommendation gate was relaxed and no public routing service existed then (a
+gateway was deployed at an unlinked address on 2026-09-26; see
+[M2 operations](m2-operations.md#cloudflare-gateway)).
 
 ## Method
 
@@ -127,7 +129,7 @@ Separately, the browser now asks `GET /api/routes/status` before enabling Compar
 Static S3 hosting has no such endpoint, so even a future eligible destination
 cannot cause the public page to post a user's coordinates to S3. The local review
 server answers from its configured key; a future public gateway must implement the
-same probe. Tests cover the probe, the S3 error case and the local server response.
+same probe (the Cloudflare gateway deployed on 2026-09-26 does). Tests cover the probe, the S3 error case and the local server response.
 
 ## Leake recheck — 2026-09-26 UTC
 

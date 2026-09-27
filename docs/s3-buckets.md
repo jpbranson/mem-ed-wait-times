@@ -167,12 +167,14 @@ and state-level region groupings were checked against Baptist's
 and [Leake page](https://www.baptistonline.org/locations/leake) on 2026-09-14.
 `huntingdon` remains the source slug for Carroll County. `America/Chicago` is the
 comparison timezone for these locations. Each entry records source URL and
-verification date. Coordinates, entrance, age/service applicability, active
-status, and travel verification remain explicit null/unknown values; none is
-eligible for travel comparisons on this registry alone. The eight local map-only
-records (`collection_enabled: false`, with `wait_time_reporting` and `map_note`;
-see above) are never collected and are always travel-ineligible. Regions are
-states for display, not verified clinical service areas.
+verification date. Since 2026-09-23 each also records official active-status,
+service and explicit age evidence and an OpenStreetMap `campus_point`; 18 adult
+and 4 child destinations are travel-eligible through labeled campus centers, and
+Leake's active status stays `unknown` ([evidence](m2-destinations-2026-09-23.md)).
+`coordinates` and `emergency_entrance` remain null for every record. The eight
+local map-only records (`collection_enabled: false`, with `wait_time_reporting`
+and `map_note`; see above) are never collected and are always travel-ineligible.
+Regions are states for display, not verified clinical service areas.
 
 A failed facility request is logged and omitted from raw readings but recorded
 in the attempt summary and latest artifact. A batch can contain fewer facilities.
@@ -264,7 +266,9 @@ No exception text or upstream response body is published.
 
 ## Website bucket: `mem-ed-wait-times-dashboard`
 
-Deployed output through M1 and the M2 static interface (verified 2026-09-22):
+Deployed output through M1 and the M2 static interface (verified 2026-09-22; later
+modules are dated in their comments). A read-only root listing on 2026-09-27 matched
+these names, plus Quarto's generated `search.json`:
 
 ```text
 s3://mem-ed-wait-times-dashboard/
@@ -393,26 +397,26 @@ ignores the field. The two context files have independent atomic replacements an
 Correction 2026-09-24 UTC: earlier `absolute_change_p90` values were read from
 unsorted changes and were not true percentiles; preparation now sorts first. The
 shape is unchanged ([details](m4-validation.md#m2-movement-correction)).
-This static artifact and the prototype interface were published on 2026-09-22;
-the routing service is still local-only.
+This static artifact and the prototype interface were published on 2026-09-22.
+Routing is served only by the local review server and, since 2026-09-26, the
+unlinked Cloudflare gateway described below.
 
 No origin, route response, precise location, or routing log is written to S3.
 The TomTom integration uses a transient [v2 route response](routes.schema.json)
-from local `POST /api/routes`; it is not an S3 artifact. It returns timing,
+from `POST /api/routes` (local review server or gateway); it is not an S3 artifact. It returns timing,
 distance, requested traffic mode, and nullable delay, with no origins, keys, or
 geometry. The ignored local `.cache/tomtom-usage.sqlite3` file stores only a
 `requests(day, calls)` table of UTC dates and reserved request counts. Preserve
 this usage counter across restarts; it is outside the served website directory.
-No provider key is included in website files or collector configuration. Future
-public gateway storage remains a separate deployment decision.
-`POST /api/routes` and its `GET /api/routes/status` availability probe exist only
-in the local review server; static S3 hosting does not supply them, so the public
-page keeps Compare disabled. A Cloudflare Worker gateway (`gateway/`, deployed
+No provider key is included in website files or collector configuration.
+Static S3 hosting does not supply `POST /api/routes` or its `GET /api/routes/status`
+availability probe, so the S3 page keeps Compare disabled; the local review server
+supplies both. A Cloudflare Worker gateway (`gateway/`, deployed
 2026-09-26 UTC at an address not linked publicly) supplies both at its own
 origin while passing this bucket's files through unchanged. Its one SQLite Durable
 Object stores only a `requests(day, calls)` usage ledger, a `state` row holding
-the provider cooldown time and, for the rate limits added 2026-09-26 (validated
-locally, not yet deployed), `clients(day, client, at)` rows keyed by a salted hash
+the provider cooldown time and, for the rate limits added and deployed 2026-09-26,
+`clients(day, client, at)` rows keyed by a salted hash
 of the client network plus that date's random `salts(day, salt)` row; earlier
 dates' rows are deleted. No origins, routes, keys or client addresses. It writes
 nothing to S3.

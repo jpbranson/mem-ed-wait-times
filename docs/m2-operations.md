@@ -410,7 +410,7 @@ restart; and the unconfigured state. Through the served page, Compare returned 1
 labeled rows with no console errors. One live comparison from downtown Memphis
 returned 18/18 routes in 4.6 s (2026-09-26 00:32 UTC).
 
-**Rate-limit validation (2026-09-26 ~02:50 UTC, local; not yet deployed).** Three
+**Rate-limit validation (2026-09-26 ~02:50 UTC, local).** Three
 new unit tests (17 gateway tests; Node suite 71/71, Python 90/90) cover IPv4/IPv6 /64
 grouping and the shared fallback; burst and daily per-client limits with another
 network unaffected, a rejected comparison reserving nothing, the window sliding,
@@ -431,16 +431,26 @@ after a gateway change, from `gateway/`: `npm run build`, then `npx wrangler dep
 line or file). Then check the status probe, one Compare from a public point, cache
 headers, and that the S3 site is unchanged.
 
+Rate limits live (read-only check, 2026-09-27 15:05 UTC): Cloudflare's deployment
+history (`npx wrangler deployments list`, `npx wrangler versions view <id>`) shows
+Worker versions carrying `CLIENT_BURST_LIMIT` 4, `CLIENT_DAILY_LIMIT` 20,
+`TOMTOM_DAILY_BUDGET` 1000 and `TOMTOM_REQUEST_BUDGET` 20000 beside the key secret,
+deployed at 02:56 and 13:07 UTC on 2026-09-26; the 13:07 version, one minute after
+commit `1d2331c`, is current. The S3 site has carried the page's messages for the
+new codes since the 13:09 UTC build (run
+[36244228621](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/36244228621)).
+`/api/routes/status` returned `available: true` with `no-store`. No comparison was
+sent, so the limits' behavior has not been exercised against the public Worker.
+
 Still open before linking the `workers.dev` URL publicly:
 
 1. The remaining M2 gates below.
 2. Review Cloudflare's Workers/Durable Objects terms and privacy policy for its
    handling of user coordinates.
-3. Deploy the rate limits (implemented and validated locally on 2026-09-26; the
-   live Worker predates them), then confirm from a public connection that a fifth
-   comparison within 10 minutes returns `client_rate_limited`. The page's messages
-   for the new codes publish with the next hourly build after a push to `main`;
-   until then it shows its generic routing error for them.
+3. Confirm from a public connection that a fifth comparison within 10 minutes
+   returns `client_rate_limited`. The limits and the page's messages for the new
+   codes are deployed (above). Child comparisons reserve 4 requests each, so four
+   of them cost about 16 provider requests before the rejected fifth.
 4. Consider lowering `TOMTOM_REQUEST_BUDGET` (the repository still sets 20,000; for
    example 15,000): the Worker's ledger cannot see requests made by local scripts or
    the review server.
@@ -451,7 +461,7 @@ Local key configuration and one actual v3 response check are complete. Verify
 account free-plan settings, emergency arrival points and applicability, confirm the
 current wait API's clinical/averaging/update/zero-value contract, evaluate representative real routes
 and threshold sensitivity, and settle the deployed gateway's privacy review and
-deploy its rate limits.
+confirm its deployed rate limits from a public connection.
 Then review the interpretation and presentation before enabling public use.
 The local prototype and synthetic tests do not satisfy those evidence gates.
 See [dated validation](m2-validation.md) and the [living plan](development-plan.md).

@@ -64,7 +64,9 @@ Selected design target: **Cloudflare Workers Free with one SQLite-backed Durable
 Object** for shared reservations and rate enforcement. Cloudflare documents
 [Free-plan Durable Objects](https://developers.cloudflare.com/changelog/post/2025-04-07-durable-objects-free-tier/)
 and [included quotas](https://developers.cloudflare.com/workers/platform/pricing/).
-This is a design selection, not a configured account or deployed service.
+This is a design selection, not a configured account or deployed service. (It was
+later implemented and deployed at an unlinked address on 2026-09-26; see
+[M2 operations](m2-operations.md#cloudflare-gateway).)
 
 Use a free `workers.dev` origin serving the static dashboard through the existing
 public S3 assets and handling `/api/routes` at the same origin. Retain no-store

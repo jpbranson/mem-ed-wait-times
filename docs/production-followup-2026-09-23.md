@@ -205,11 +205,18 @@ confirm it from the AWS notification email before failed dispatches can notify
 anyone. The remaining steps are about a day of hourly delivery and then removal of
 the cron.
 
-Update 2026-09-27 UTC: that subscription lapsed unconfirmed on 2026-09-26. The user
-confirmed a re-created one on 2026-09-27, and the workflow's `schedule:` trigger was
-then removed at the user's request. By then all 89 hourly dispatches from 01:17 UTC
-on 2026-09-24 through 17:17 UTC on 2026-09-27 had succeeded, and the backup cron had
-run 19 times, 3–6 hours apart.
+Update (read-only checks, 2026-09-27 ~15:05 UTC): all 86 hourly dispatches from
+01:17 UTC on 2026-09-24 through 14:17 UTC on 2026-09-27 started successful
+`workflow_dispatch` runs, and the backup cron's 19 runs in that period, 3–6
+hours apart, also succeeded; the alarm has been `OK` since 2026-09-24 00:25 UTC.
+The email
+subscription was never confirmed and lapsed on 2026-09-26, and the topic still had
+no subscriptions. Cron removal therefore waits for a re-created, confirmed
+subscription rather than a day of delivery ([plan](development-plan.md#open-decisions-and-immediate-next-work)).
+A new subscription was created at the user's request at 17:31:38 UTC, and the user
+confirmed it; the same topic now also receives the collectors' alarms. The
+workflow's `schedule:` trigger was then removed at the user's request, after 89/89
+hourly dispatches through 17:17 UTC.
 
 ## M4 release
 
@@ -241,7 +248,8 @@ before release ([M4 validation](m4-validation.md)).
 The workflow's `schedule:` trigger is retained as a backup until EventBridge has
 delivered hourly for about a day; the workflow's concurrency group queues any
 duplicate. Remove the cron after that observation. (Removed on 2026-09-27, after
-the alarm's email subscription was confirmed.) The existing collector
+the alarm's email subscription was confirmed; see the update under
+[Observed dispatches](#observed-dispatches).) The existing collector
 (`trigger_15`) and compaction (`compact_daily`) rules are unchanged. No repository,
 Lambda, bucket policy or record/storage contract changed. Expected cost is
 negligible (about 720 API-destination invocations per month).

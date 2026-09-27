@@ -3,8 +3,10 @@
 Status: **local prototype validated; M2 acceptance remains incomplete**. The
 checks below occurred on 2026-09-14, without production deployment, account
 creation, billing configuration, or preferred hospital recommendations.
-The static interface was subsequently published with M0/M1 on 2026-09-22;
-the routing gateway remains local-only and real destinations remain excluded.
+The static interface was subsequently published with M0/M1 on 2026-09-22.
+Since 2026-09-23, 18 adult/4 child destinations route to labeled campus centers;
+since 2026-09-26, a Cloudflare gateway serves routing at an unlinked address while
+the S3 page keeps Compare disabled. Recommendations remain disabled.
 [Release evidence](aws-deployment-2026-09-22.md), [operations and policy](m2-operations.md).
 
 ## Origin selection follow-up — 2026-09-14
@@ -201,7 +203,18 @@ same hour to measure jam delay and reported-delay coverage:
 
 ## Outstanding evidence and release work
 
-All 20 real registry entries remain travel-ineligible. The pages reviewed on
+Status as of 2026-09-27 UTC: a local key passed a live v3 check on 2026-09-23;
+18 adult/4 child destinations route to labeled campus centers, with 54/54 live
+validation routes ([destination evidence](m2-destinations-2026-09-23.md)); and the
+Cloudflare gateway, with its rate limits, is deployed at an unlinked address
+([gateway](m2-operations.md#cloudflare-gateway)). Still required: confirmed
+`CV_ED_Wait` semantics (inquiry drafted, not recorded as sent), imagery-reviewed
+entrances, Leake's status decision, the live weekday-peak run above, a benefit rule
+(the [pre-registered backtest](m2-benefit-validation.md) adopted none), and a
+review of Cloudflare's handling of coordinates before any public link. The rest of
+this section is the dated 2026-09-14 checkpoint.
+
+On 2026-09-14, all 20 real registry entries were travel-ineligible. The pages reviewed on
 2026-09-14 remain dated source evidence: the
 [Baptist emergency page](https://www.baptistonline.org/services/emergency) supports
 the directory and triage guidance but did not establish the API's `CV_ED_Wait`
@@ -213,9 +226,9 @@ describes emergency services and campus access. Neither supplies all the
 verified entrance, age, operational and metric evidence needed by this prototype.
 Coarse campus geotags and older campus maps were not promoted into ED destinations.
 
-Configure a free TomTom key locally and validate actual v3 responses. Complete
-destination/metric verification and representative route/threshold
-evaluation, then select a free public gateway with aggregate provider limits and
-review the full provider terms. Static S3 hosting cannot serve the local POST
-endpoint. These remain M2 work; test fixtures and one connectivity check do not
-satisfy them. No forecast or measured patient time-savings claim has been made.
+The 2026-09-14 next steps were to configure a free TomTom key locally and validate
+actual v3 responses, complete destination/metric verification and representative
+route/threshold evaluation, then select a free public gateway with aggregate
+provider limits and review the full provider terms. Static S3 hosting cannot serve
+the POST endpoint. Test fixtures and one connectivity check do not satisfy the
+remaining gates. No forecast or measured patient time-savings claim has been made.

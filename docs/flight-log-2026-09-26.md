@@ -15,6 +15,21 @@ work the human review queue below. When the alarm subscription is confirmed, do
 step 2 (remove the `schedule:` trigger, update the docs, push to `main` alone).
 Steps 1 and 2 were completed on 2026-09-27 (entries below).
 
+Queue status after the run (read-only checks, 2026-09-27 ~15:05 UTC; the entries
+below stay as recorded, and the [development plan](development-plan.md) is current):
+
+- Done: item 8, this branch was merged into `main` at the user's request (`87885e4`, pushed 01:42 UTC,
+  published by run [36209744679](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/36209744679)),
+  so steps 5 and 9 are deployed. Item 4, the user created the Cloudflare account and
+  deployed the gateway (public check 01:54 UTC); its rate limits went live the same
+  day. Cloudflare's handling of coordinates still needs review before a public link.
+  Item 1, the user confirmed a re-created subscription on 2026-09-27, and step 2
+  followed: the backup cron was removed on `main` (89/89 hourly dispatches through
+  17:17 UTC had succeeded).
+- Still open: items 2 and 3 (no entrance reviewed; Leake
+  still `unknown`), item 5 (not recorded as sent), items 6 and 7 (time-gated), and
+  item 9 (the AWS CLI still authenticates as the root identity).
+
 ## Rules for this run
 
 - A step is **Done** only when its stated outcome exists and was verified.

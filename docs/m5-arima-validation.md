@@ -1,6 +1,6 @@
 # M5 ARIMA development pilot — 2026-09-23 UTC
 
-Status: two nonseasonal candidates evaluated locally; no public forecast qualifies for release. Calibration and final holdout remain unscored.
+Status: two nonseasonal candidates evaluated locally; no public forecast qualifies for release. Calibration and final holdout remained unscored at this checkpoint; the [v2 candidate study](m5-candidates-validation.md) later scored calibration (2026-09-24), and the holdout remains unscored.
 
 The [frozen protocol](m5-study-protocol.md) named ARIMA(1,0,0) and ARIMA(1,1,0) before these scores were calculated. The [benchmark checkpoint](m5-validation.md) supplies the exact input snapshot. Both pilots use at most 28 days, daily UTC refits, hourly state updates, no gap imputation, and nonnegative output clipping. ARIMA(1,0,0) includes a constant; ARIMA(1,1,0) has no drift. No neighboring or unavailable future regressors were used.
 
