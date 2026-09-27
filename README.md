@@ -142,8 +142,8 @@ local historical context.
 
 In production, the existing collector is scheduled every 15 minutes; the browser
 polls its latest artifact every 60 seconds. The website workflow is dispatched
-hourly at minute 17 by the AWS EventBridge rule `dashboard_hourly`, keeps a backup
-GitHub cron at the same minute, and can be run manually. It rebuilds history and comparison context; it
+hourly at minute 17 by the AWS EventBridge rule `dashboard_hourly` and can be run
+manually; the backup GitHub cron was removed on 2026-09-27. It rebuilds history and comparison context; it
 does not deploy Lambda code. A Git push alone does not trigger publication.
 Actual workflow starts can be delayed, so current comparisons pause when their
 context is two hours old or reaches the next Chicago midnight. The page's refresh

@@ -205,6 +205,12 @@ confirm it from the AWS notification email before failed dispatches can notify
 anyone. The remaining steps are about a day of hourly delivery and then removal of
 the cron.
 
+Update 2026-09-27 UTC: that subscription lapsed unconfirmed on 2026-09-26. The user
+confirmed a re-created one on 2026-09-27, and the workflow's `schedule:` trigger was
+then removed at the user's request. By then all 89 hourly dispatches from 01:17 UTC
+on 2026-09-24 through 17:17 UTC on 2026-09-27 had succeeded, and the backup cron had
+run 19 times, 3–6 hours apart.
+
 ## M4 release
 
 The user approved pushing `8242ad1` (M4 area counts, wait stability and the M2
@@ -234,7 +240,8 @@ before release ([M4 validation](m4-validation.md)).
 
 The workflow's `schedule:` trigger is retained as a backup until EventBridge has
 delivered hourly for about a day; the workflow's concurrency group queues any
-duplicate. Remove the cron after that observation. The existing collector
+duplicate. Remove the cron after that observation. (Removed on 2026-09-27, after
+the alarm's email subscription was confirmed.) The existing collector
 (`trigger_15`) and compaction (`compact_daily`) rules are unchanged. No repository,
 Lambda, bucket policy or record/storage contract changed. Expected cost is
 negligible (about 720 API-destination invocations per month).

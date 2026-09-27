@@ -1,9 +1,8 @@
 name: Render dashboard
 
 on:
-  schedule:
-    # Avoid the top-of-hour peak; scheduled starts are still best effort.
-    - cron: "17 * * * *"
+  # Hourly runs come from AWS EventBridge rule dashboard_hourly at minute 17, which
+  # alarms by email on failed dispatches. GitHub's cron backup was removed 2026-09-27.
   workflow_dispatch:
 
 permissions:

@@ -13,6 +13,7 @@ is pushed or deployed unless an entry below says so.
 Run complete at 2026-09-26 01:08 UTC. Nothing further can proceed without the user:
 work the human review queue below. When the alarm subscription is confirmed, do
 step 2 (remove the `schedule:` trigger, update the docs, push to `main` alone).
+Steps 1 and 2 were completed on 2026-09-27 (entries below).
 
 ## Rules for this run
 
@@ -27,8 +28,8 @@ step 2 (remove the `schedule:` trigger, update the docs, push to `main` alone).
 
 | # | Step | Owner | Status | Evidence and notes |
 | --- | --- | --- | --- | --- |
-| 1 | Confirm the `dashboard-dispatch-alerts` SNS email subscription | Human | Blocked (human) | Subscription (created 2026-09-24 00:24:56 UTC) never confirmed. A re-send at 2026-09-26 00:07 UTC did not extend it; by 00:37 UTC the topic had **no subscriptions** (0 confirmed, 0 pending). Restoring it failed safely: CloudTrail redacts the address. The user must re-create and confirm it |
-| 2 | Remove the backup GitHub `schedule:` trigger | Claude, after step 1 | Blocked on step 1 | Observation gate met: 47/47 hourly dispatches succeeded, 2026-09-24 01:17 to 2026-09-25 23:17 UTC. Re-check the topic between steps; do this once a subscription is confirmed |
+| 1 | Confirm the `dashboard-dispatch-alerts` SNS email subscription | Human | Done 2026-09-27 | Subscription (created 2026-09-24 00:24:56 UTC) never confirmed. A re-send at 2026-09-26 00:07 UTC did not extend it; by 00:37 UTC the topic had **no subscriptions** (0 confirmed, 0 pending). Restoring it failed safely: CloudTrail redacts the address. On 2026-09-27 a new subscription was created at the user's request and the user confirmed it (1 confirmed at 17:41 UTC) |
+| 2 | Remove the backup GitHub `schedule:` trigger | Claude, after step 1 | Done 2026-09-27 | Observation gate met: 47/47 hourly dispatches succeeded, 2026-09-24 01:17 to 2026-09-25 23:17 UTC (89/89 through 2026-09-27 17:17 UTC). Removed at the user's request after step 1, pushed to `main` alone |
 | 3a | Review ER entrances from imagery | Human | Blocked (human) | Tooling checked: `python -m edwait.entrances list` prints aerial links for all 20 (all still `campus`); review file `.cache/entrance-review-20260926.geojson` (Git-ignored) |
 | 3b | Verify Leake's active emergency status | Human; Claude researched | Blocked (human decision) | Official pages unchanged (Level IV ER, live wait shown, no 24/7 wording, absent from the emergency list). CMS lists CCN 251315 as a critical access hospital with emergency services; 42 CFR 485.618(a) requires 24-hour availability. Registry unchanged |
 | 3c | Cloudflare account and terms for the gateway | Human | Blocked (human) | Claude cannot create accounts or accept terms |

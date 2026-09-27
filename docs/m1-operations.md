@@ -155,18 +155,19 @@ unchanged. Direction becomes unavailable if the recent reference is too sparse.
 
 ## Refresh and troubleshooting
 
-The [workflow](../.github/workflows/dashboard.yml) runs on `workflow_dispatch` and a
-backup cron `17 * * * *`, using `main`. It has no push trigger. Since 2026-09-24 UTC
-the hourly start comes from an AWS EventBridge dispatch; see
-[Hourly EventBridge dispatch](#hourly-eventbridge-dispatch).
+The [workflow](../.github/workflows/dashboard.yml) runs only on `workflow_dispatch`,
+using `main`; it has no push or schedule trigger. Since 2026-09-24 UTC the hourly
+start comes from an AWS EventBridge dispatch (the backup GitHub cron was removed on
+2026-09-27); see [Hourly EventBridge dispatch](#hourly-eventbridge-dispatch).
 It tests, prepares, renders, and uploads the website; it does not package or
 deploy either Lambda. To request a website rebuild, use GitHub Actions →
 **Render dashboard** → **Run workflow** on `main`. Publish source changes to
-`main` before expecting a scheduled/manual build to include them.
+`main` before expecting a dispatched or manual build to include them.
 
-The cron is a requested cadence, not evidence of hourly completion. GitHub
-documents that scheduled jobs can be delayed or dropped under high load,
-including at the start of an hour ([schedule behavior](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)).
+GitHub's cron, the original hourly trigger, was a requested cadence rather than
+evidence of completion: GitHub documents that scheduled jobs can be delayed or
+dropped under high load, including at the start of an hour ([schedule behavior](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)).
+That is why the workflow now relies on EventBridge dispatch.
 The [production follow-up](production-followup-2026-09-23.md) records the successful
 updated manual build, browser review and approved schedule mitigation. Deployments
 are serialized, bounded to 30 minutes, and checked afterward using
@@ -208,16 +209,18 @@ records a failed invocation. [Configuration evidence](production-followup-2026-0
 
 - **Check delivery:** GitHub Actions → **Render dashboard** should show a run labeled
   "Manually run" (event `workflow_dispatch`) shortly after :17 each hour; runs labeled
-  "Scheduled" come from the backup cron. In the EventBridge console, Buses → Rules →
+  "Scheduled" came from the backup cron until 2026-09-27. In the EventBridge console, Buses → Rules →
   `dashboard_hourly` → Monitoring shows `Invocations` and `FailedInvocations`.
 - **Token expiry or revocation:** GitHub returns 401, EventBridge does not retry, and
   the alarm fires. Create a replacement token with the same scope, then edit the
   connection (EventBridge → Integration → API destinations → Connections) and set the
   API key value to `Bearer <new token>`. Do not edit its Secrets Manager secret directly.
 - **Pause or resume:** `aws events disable-rule --name dashboard_hourly --region us-east-1`
-  (or `enable-rule`). This does not affect the collector's `trigger_15` rule.
-- **Backup cron:** after about a day of observed hourly dispatches, remove the
-  workflow's `schedule:` trigger and update this section.
+  (or `enable-rule`). This does not affect the collector's `trigger_15` rule. With
+  no cron backup, disabling it stops all automatic builds.
+- **Backup cron:** removed on 2026-09-27 after the user confirmed the alarm's
+  re-created email subscription; 89/89 hourly dispatches had succeeded by then. If
+  dispatches stop, the alarm emails and manual runs keep the site current.
 
 ## Release and operator checks
 
