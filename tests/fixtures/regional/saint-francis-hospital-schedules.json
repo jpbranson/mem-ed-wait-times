@@ -43,5 +43,16 @@
   ],
   "meta": {
     "record-count": 1
-  }
+  },
+  "included": [
+    {
+      "id": "953125689",
+      "type": "facilities",
+      "attributes": {
+        "name": "Saint Francis Hospital",
+        "permalink": "saint-francis-hospital",
+        "facility-type": "Emergencydepartment"
+      }
+    }
+  ]
 }

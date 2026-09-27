@@ -9,16 +9,16 @@
   "properties": {
     "schema_version": {"const": 1},
     "facility": {"type": "string", "minLength": 1},
-    "metric": {"enum": ["estimated_wait_range", "arrival_slots", "published_wait", "initial_assessment_target"]},
+    "metric": {"enum": ["estimated_wait_range", "arrival_slots", "published_wait"]},
     "batch_id": {"type": "string", "format": "date-time"},
     "observed_at": {"type": "string", "format": "date-time"},
     "source_url": {"type": "string", "format": "uri", "pattern": "^https://"},
     "source_endpoint": {"type": "string", "format": "uri", "pattern": "^https://"},
-    "latency_ms": {"type": "integer", "minimum": 0, "description": "Monotonic milliseconds spent in this source's HTTP requests, including body transfer and excluding parsing. The five Methodist rows share one page request and one data request; Saint Francis excludes the shared token request."},
+    "latency_ms": {"type": "integer", "minimum": 0, "description": "Monotonic milliseconds for this facility's requests and parsing. The five Methodist rows also include the page and data requests they share; Saint Francis excludes the shared token request."},
     "status": {"enum": ["available", "unavailable", "invalid"]},
     "reason": {"type": ["string", "null"]},
     "value": {},
-    "source_value": {"description": "Public evidence used to derive value: selected Methodist department fields; Saint Francis slot rows reduced to the fields the parser reads; Forrest City's trimmed widget text or pledge snippets with the regex matches, kept even when nothing matched. No cookies, CSRF tokens, bearer tokens, patient inputs or HTML."}
+    "source_value": {"description": "Public evidence used to derive value: selected Methodist department fields; Saint Francis slot rows reduced to the fields the parser reads; Forrest City's trimmed widget text with the regex matches, kept even when nothing matched. No cookies, CSRF tokens, bearer tokens, patient inputs or HTML."}
   },
   "allOf": [
     {
@@ -47,11 +47,11 @@
       "then": {"properties": {"value": {"properties": {"next_available_at": {"type": "string", "format": "date-time"}}}}}
     },
     {
-      "if": {"properties": {"metric": {"enum": ["published_wait", "initial_assessment_target"]}, "status": {"const": "available"}}},
+      "if": {"properties": {"metric": {"const": "published_wait"}, "status": {"const": "available"}}},
       "then": {"properties": {"value": {"$ref": "#/$defs/minutes"}}}
     },
     {
-      "if": {"properties": {"metric": {"enum": ["estimated_wait_range", "published_wait", "initial_assessment_target"]}, "status": {"const": "unavailable"}}},
+      "if": {"properties": {"metric": {"enum": ["estimated_wait_range", "published_wait"]}, "status": {"const": "unavailable"}}},
       "then": {"properties": {"value": {"type": "null"}}}
     },
     {
@@ -61,10 +61,6 @@
     {
       "if": {"properties": {"metric": {"const": "published_wait"}}},
       "then": {"properties": {"source_value": {"$ref": "#/$defs/widget_evidence"}}}
-    },
-    {
-      "if": {"properties": {"metric": {"const": "initial_assessment_target"}}},
-      "then": {"properties": {"source_value": {"$ref": "#/$defs/pledge_evidence"}}}
     }
   ],
   "$defs": {
@@ -112,13 +108,6 @@
       "properties": {
         "widget_text": {"type": "string", "maxLength": 200, "description": "Whitespace-collapsed text of the wait-time-menu widget."},
         "matches": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[+-]?\\d+$"}}
-      }
-    },
-    "pledge_evidence": {
-      "type": "object", "additionalProperties": false, "required": ["pledge_snippets", "matches"],
-      "properties": {
-        "pledge_snippets": {"type": "array", "maxItems": 3, "items": {"type": "string", "maxLength": 126}, "description": "Visible page text around each \"pledge\" mention, up to 60 characters on each side."},
-        "matches": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^\\d+$"}}
       }
     }
   }

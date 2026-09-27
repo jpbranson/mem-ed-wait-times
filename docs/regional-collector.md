@@ -1,21 +1,20 @@
 # Regional ER publication collector
 
 Implemented and locally validated 2026-09-27. **Not deployed or scheduled.**
-The [collector](../edwait/regional_collector.py) includes the relevant research
-from this chat in a commented section at the top, with sources and dated findings.
+The dated research behind the [collector](../edwait/regional_collector.py) is in
+[Research notes](#research-notes-checked-2026-09-27).
 
 ## Sources and measures
 
 | Facility slugs | Public information | Collection |
 | --- | --- | --- |
 | `methodist-university`, `methodist-north`, `methodist-south`, `methodist-germantown`, `methodist-olive-branch` | Estimated ER wait bounds; Germantown excludes the children's ED | Anonymous MyChart page and its read-only `GetOnMyWayDepartmentData` request. Match exact ER names and ED/ASAP flags; exclude Minor Medical Centers |
-| `saint-francis-memphis`, `saint-francis-bartlett` | Projected ER check-in/treatment slots, subject to triage | InQuicker anonymous public token, facility lookup, verified ER schedules, available times. Resolve facility/schedule IDs on each run; no booking or patient form requests |
-| `forrest-city` | Numeric ER wait widget and a separate initial-assessment pledge | Public ER page: `wait-time-menu` widget and the "NN-Minute ER Pledge" text anywhere in its visible content |
+| `saint-francis-memphis`, `saint-francis-bartlett` | Projected ER check-in/treatment slots, subject to triage | InQuicker anonymous public token, ER schedules and available times. Facility IDs are fixed and checked each run against the facility the schedules response includes; schedule IDs are resolved each run. No booking or patient form requests |
+| `forrest-city` | Numeric ER wait widget | Public ER page `wait-time-menu` widget. The separate 30-minute pledge is a fixed service promise and is not collected |
 
 These are a separate eight-facility collector roster in `regional_collector.py`.
 The existing 20-facility Baptist collector, dashboard and analytical inputs
-remain as documented. Adding these publishers to the map and displaying their
-different measures is subsequent presentation work.
+remain as documented. Adding these publishers to the map and displaying their different measures is subsequent presentation work.
 
 ## Run locally
 
@@ -37,14 +36,13 @@ failed collection. Inspect the written result even when the exit status is 1.
 [er-publication.schema.json](er-publication.schema.json) is separate from the
 six-field Baptist schema. Each row has `schema_version` 1, a facility, metric, UTC
 batch/observation timestamps, source page/endpoint, `latency_ms`, status, reason,
-normalized `value`, and `source_value` evidence. `latency_ms` is time spent in that
-source's HTTP requests, body included and parsing excluded; the five Methodist rows
-share one page request and one data request, and Saint Francis excludes the shared
-token request. Evidence is selected Methodist department fields; Saint Francis slot
-rows reduced to `schedule-id`, `appointment-type-id`, `times` and `next-time`; or
-Forrest City's `{widget_text, matches}` and `{pledge_snippets, matches}`, trimmed
-visible text kept even when nothing matched, so a wording change can be seen in
-stored data. `observed_at` means collection
+normalized `value`, and `source_value` evidence. `latency_ms` is the facility's
+request and parsing time; the five Methodist rows also include the page and data
+requests they share, and Saint Francis excludes the shared token request. Evidence
+is selected Methodist department fields; Saint Francis slot rows reduced to
+`schedule-id`, `appointment-type-id`, `times` and `next-time`; or Forrest City's
+`{widget_text, matches}`, trimmed visible text kept even when nothing matched, so a
+wording change can be seen in stored data. `observed_at` means collection
 time, not the source's last update or a patient's actual wait.
 
 - `estimated_wait_range`: `lower_minutes`, `upper_minutes`, `lower_bound_only`.
@@ -65,13 +63,9 @@ time, not the source's last update or a patient's actual wait.
 - `published_wait`: Forrest City's displayed minutes. Negative values such as
   `-1` are `invalid` with null normalized value and original source evidence.
   Zero is preserved as published, with its meaning unverified.
-- `initial_assessment_target`: the pledge's minutes. This is a service target,
-  not a current wait. A page fetch failure cannot generate a pledge observation
-  from the historical research comments.
 
-Invalid rows preserve source evidence but are unusable as wait values. A valid
-pledge alongside an invalid widget produces a partial facility attempt. A missing
-or conflicting widget/pledge is invalid. HTML script/style text is ignored.
+Invalid rows preserve source evidence but are unusable as wait values. A missing
+or conflicting widget is invalid. HTML script/style text is ignored.
 HTTP failures produce attempt diagnostics with no fabricated observation.
 There is no carry-forward or latest-value merge in this collector.
 
@@ -84,8 +78,9 @@ fixed description of the failed check, such as `missing or duplicate ER departme
 or `invalid JSON`; for invalid rows it lists their reasons. Details never contain
 exception text or anything copied from a source. A body that is not JSON is an
 invalid response, not a failed request. The summary also records the run's
-`duration_ms`. Successful source reads can still report explicitly
-unavailable information. A facility whose rows are all invalid is `failed` with
+`duration_ms`. Every facility now has one metric, so attempts are `success` or
+`failed`; `partial` remains for a facility with several metrics. Successful source
+reads can still report explicitly unavailable information. A facility whose rows are all invalid is `failed` with
 `invalid_source_value`, yet those rows are still stored and listed in
 `collected_metrics`; request failures leave no row. Failures are isolated by facility; a shared Methodist
 or InQuicker bootstrap failure is recorded for each affected facility. No exception
@@ -96,9 +91,10 @@ anonymous bearer tokens are obtained on each batch and remain in memory.
 ## Optional Lambda storage entry point
 
 Handler: `edwait.regional_collector.lambda_handler`; environment: `BUCKET`.
-Package `edwait/` and the existing Python dependencies using the platform-correct
-[Lambda packaging procedure](m0-operations.md). This is a separate handler;
-do not replace `mem-ed-lambda.lambda_handler` or call it from the website build.
+The package needs only `requests` plus `edwait/__init__.py` and this module; the
+Lambda runtime provides boto3 ([steps](#deployment-steps-not-yet-run)). This is a
+separate handler; do not replace `mem-ed-lambda.lambda_handler` or call it from the
+website build.
 
 ```text
 raw/er_publications/dt=YYYY-MM-DD/YYYYMMDDTHHMMSSffffffZ.jsonl
@@ -124,6 +120,18 @@ the site rather than changing headers or addresses to get around it.
 
 ## Validation and cost assessment
 
+- Simplification (2026-09-27, after the hardening below): Saint Francis reads its
+  schedules with the included facility instead of a separate facility lookup
+  (8 requests per run instead of 10); latency is measured once per facility;
+  errors are classified by one function; the research notes moved into this file;
+  timestamps ending in `Z` are parsed natively; Forrest City's pledge is no longer
+  collected, so a full run has eight rows. 25 collector tests and the full Python
+  and JS suites passed. A live batch at `2026-09-27T16:58:53.516702+00:00`
+  collected all eight facilities in 1,945 ms with eight schema-valid rows:
+  Methodist 50–75, 25–40, 80–110, 25–45 and 35–65 minutes, 16 Memphis / 8
+  Bartlett slots with none past the window, and Forrest City's 5 minutes. Saint
+  Francis took about 280 ms per facility (about 410 ms with the lookup). It would
+  store 9,212 bytes (6,996 JSONL + 2,216 summary).
 - 110 Python tests passed, including 19 new collector tests: captured source
   shapes, ED identity, bounds/caps/zero, empty/invalid/expired slots, incorrect
   facility relationships, source failures, partial batches, deadline skips,
@@ -148,16 +156,17 @@ the site rather than changing headers or addresses to get around it.
   the 14:54 batch then succeeded. No stored batch recorded the `-1`.
 - Raw JSONL plus summary for the successful sample totaled 9,193 bytes. At an
   illustrative 15-minute cadence, 2,880 monthly runs imply roughly 26.5 MB/month
-  at that sample size and 5,760 S3 PUTs. There are ten public HTTP requests per
-  successful batch; no browser bundle download or paid API is required.
+  at that sample size and 5,760 S3 PUTs. There are eight public HTTP requests per
+  successful batch (ten before the simplification); no browser bundle download or
+  paid API is required.
 - Before free allowances, using a conservative 60 seconds at 128 MB per run
   yields about $0.36/month Lambda compute plus less than $0.001 requests, about
   $0.029 S3 PUTs and less than $0.01 for one month of this stored volume. Budget
   approximately $0.40/month incremental under those assumptions, excluding logs,
-  trigger choice and future reads; retained storage accumulates (about 29 MB/month
-  at the 15:53 batch's size). Both live batches took about 2.1–2.2 s end to end, so
-  the 60-second figure is deliberately conservative; within free allowances, S3
-  PUTs would dominate (about $0.03/month). Verify the
+  trigger choice and future reads; retained storage accumulates (about 26.5 MB/month
+  at the 16:58 batch's size). Live batches took 1.9–2.2 s end to end, so the
+  60-second figure is deliberately conservative; within free allowances, S3 PUTs
+  would dominate (about $0.03/month). Verify the
   chosen deployment memory and actual runtime against the project's $5/month
   total limit. [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/),
   [S3 pricing](https://aws.amazon.com/s3/pricing/).
@@ -175,15 +184,14 @@ InQuicker's rules do not cover `/v4/...`, and Forrest City allows all with a
 10-second crawl delay.) Build from the committed collector. Prefer an IAM identity
 over root keys for these commands. From the repository root in PowerShell, `us-east-1`:
 
-1. Build a Linux package with the same layout as the existing Lambdas (tested
-   2026-09-27: 16.8 MB, forward-slash entry names, no `__pycache__`, `bin/` or
-   `.lock`):
+1. Build a Linux package with only `requests` and the collector module; the Lambda
+   runtime provides boto3 (tested 2026-09-27: 0.66 MB, forward-slash entry names,
+   no `__pycache__`, `bin/` or `.lock`):
 
    ```powershell
    $py = "$PWD\.venv\Scripts\python.exe"; $dir = "build\regional-$(Get-Date -Format yyyyMMdd)"; $zip = "$PWD\$dir.zip"
-   uv pip install --python $py --python-version 3.14 --python-platform x86_64-manylinux2014 --only-binary :all: --target $dir -r requirements.txt
-   Copy-Item -Recurse edwait "$dir\edwait"
-   Get-ChildItem $dir -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+   uv pip install --python $py --python-version 3.14 --python-platform x86_64-manylinux2014 --only-binary :all: --target $dir "requests>=2.32,<3"
+   New-Item -ItemType Directory -Force "$dir\edwait" | Out-Null; Copy-Item edwait\__init__.py, edwait\regional_collector.py "$dir\edwait\"
    Push-Location $dir; & $py -m zipfile -c $zip @(Get-ChildItem -Name | Where-Object { $_ -notin "bin", ".lock" }); Pop-Location
    ```
 
@@ -235,3 +243,55 @@ over root keys for these commands. From the repository root in PowerShell, `us-e
    only once the alert topic has a confirmed email subscription.
 
 To pause: `aws events disable-rule --name regional_15`. Stored objects stay in place.
+
+## Research notes (checked 2026-09-27)
+
+Moved from the collector's comments on 2026-09-27. These are historical findings,
+not live data; recheck them before relying on them.
+
+- **Methodist.** Five ERs publish estimated wait ranges: University, North, South,
+  Le Bonheur Germantown and Olive Branch. Germantown's estimate excludes the
+  children's ED. The public MyChart listing also contains Minor Medical Centers,
+  which are urgent care and must not be mistaken for the five ERs
+  ([emergency care information](https://www.methodisthealth.org/articles/emergency-care-information),
+  [MyChart On My Way](https://mychart.methodisthealth.org/MyChart/Scheduling/OnMyWay)).
+  The anonymous page supplies a session-specific reason-for-visit ID and CSRF
+  token. Its read-only `GetOnMyWayDepartmentData` POST returns `WaitTime` (upper),
+  `WaitTimeLower`, `CanShowWaitInfo`, `IsEDDep` and `IsASAP`. The site's formatter
+  renders equal or absent lower bounds as one value; `MaxValueHit` then means
+  "or more". Readings during verification: University 5–20, Germantown 10–25,
+  South 60–105, North 55–115 and Olive Branch 15–30 minutes. Do not reuse these.
+- **Saint Francis.** Memphis (5959 Park Ave) and Bartlett (2986 Kate Bond Rd) offer
+  InQuicker arrival/check-in slots, not a measured wait or guaranteed appointment;
+  Memphis explicitly calls these projected treatment times, subject to triage
+  ([ER locations](https://www.saintfrancishealthsystem.com/services/emergency-room/emergency-room-locations),
+  [Memphis check-in](https://southern-checkin.inquicker.com/facility/saint-francis-hospital?service=10),
+  [Bartlett check-in](https://southern-checkin.inquicker.com/facility/saint-francis-hospital-bartlett?service=10)).
+  The public application obtains an anonymous token with its bundled public client
+  key, then reads facilities, schedules and available appointment times; the
+  collector reads only schedules (with the facility included) and available times.
+  Observed facility IDs 953125689 / 953125690 are fixed in the collector and checked
+  against the facility each schedules response includes; schedule IDs (17 / 18) are
+  resolved on every run. UI service line 10 is not API ER service 36; the collector
+  checks the service permalink `emergency-room` and each schedule's facility
+  relation. Both returned next-time 2026-09-27T10:30:00-05:00 during verification.
+  Store absolute timestamps and the query window, never minutes until a slot as an
+  ER wait.
+- **Forrest City.** Forrest City Medical Center (Forrest City, AR, near the search's
+  50-mile radius boundary) publishes a numeric ER widget
+  ([ER page](https://forrestcitymedicalcenter.com/er/)). Earlier checks showed
+  inconsistent 0 / −1 values; the browser showed −1 again on 2026-09-27, and direct
+  requests returned HTTP 403 during implementation. A later full collector run
+  succeeded at 14:54 UTC with 11 minutes. The 403 is not a permanent policy claim,
+  and 11 is not a fallback. Negative values are kept only as invalid source
+  evidence, never reported as a wait; zero stays a published zero with unverified
+  meaning; access failures are never replaced by cached research values. The
+  hospital also publishes a
+  [30-minute initial-assessment pledge](https://forrestcitymedicalcenter.com/er-30-minute-pledge/),
+  a service target rather than a current wait. It was collected until the
+  2026-09-27 simplification and no longer is.
+- **Scope.** These eight publishers are separate from the eight map-only
+  nonpublishers (Regional One, Le Bonheur Children's, Memphis VA, Highland Hills,
+  Alliance, CrossRidge, SMC Regional, Lauderdale) and from the 20 Baptist
+  `CV_ED_Wait` facilities. No clinical equivalence between these providers'
+  measures has been established.

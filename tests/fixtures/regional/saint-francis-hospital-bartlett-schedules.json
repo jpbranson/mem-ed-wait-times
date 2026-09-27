@@ -43,5 +43,16 @@
   ],
   "meta": {
     "record-count": 1
-  }
+  },
+  "included": [
+    {
+      "id": "953125690",
+      "type": "facilities",
+      "attributes": {
+        "name": "Saint Francis Hospital Bartlett",
+        "permalink": "saint-francis-hospital-bartlett",
+        "facility-type": "Emergencydepartment"
+      }
+    }
+  ]
 }

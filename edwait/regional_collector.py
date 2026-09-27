@@ -1,58 +1,10 @@
-"""Collect public ER ranges, check-in slots and timing targets around Memphis.
+"""Collect public ER wait ranges and check-in slots around Memphis.
 
 Run ``python -m edwait.regional_collector --output batch.json`` for a local
 read-only collection. The separate Lambda handler writes to BUCKET, never to
-the Baptist wait history or latest.json. See docs/regional-collector.md.
+the Baptist wait history or latest.json. Dated source research and the record
+contract are in docs/regional-collector.md.
 """
-
-# Research from this chat, checked 2026-09-27 (historical findings, not live data):
-#
-# Five Methodist ERs publish estimated wait ranges: University, North, South,
-# Le Bonheur Germantown, and Olive Branch. Germantown's estimate excludes the
-# children's ED. The public MyChart listing also contains Minor Medical Centers;
-# those are urgent care and must not be mistaken for the five ERs.
-# https://www.methodisthealth.org/articles/emergency-care-information
-# https://mychart.methodisthealth.org/MyChart/Scheduling/OnMyWay
-# The anonymous page supplies a session-specific reason-for-visit ID and CSRF
-# token. Its read-only GetOnMyWayDepartmentData POST returns WaitTime (upper),
-# WaitTimeLower, CanShowWaitInfo, IsEDDep and IsASAP. The site's formatter renders
-# equal/absent lower bounds as one value; MaxValueHit then means "or more".
-# Live examples during verification: University 5-20, Germantown 10-25,
-# South 60-105, North 55-115, Olive Branch 15-30 minutes. Do not reuse these.
-#
-# Saint Francis Memphis (5959 Park Ave) and Bartlett (2986 Kate Bond Rd) offer
-# InQuicker arrival/check-in slots, NOT a measured wait or guaranteed appointment.
-# Memphis explicitly calls these projected treatment times, subject to triage.
-# https://www.saintfrancishealthsystem.com/services/emergency-room/emergency-room-locations
-# https://southern-checkin.inquicker.com/facility/saint-francis-hospital?service=10
-# https://southern-checkin.inquicker.com/facility/saint-francis-hospital-bartlett?service=10
-# The public application obtains an anonymous token using its bundled public
-# client key, then reads facilities, schedules, and available-appointment-times.
-# Observed facility IDs: 953125689 / 953125690; schedule IDs: 17 / 18. Resolve
-# these at collection time. UI service-line 10 is NOT API ER service ID 36;
-# verify service permalink emergency-room and the schedule's facility relation.
-# Both returned next-time 2026-09-27T10:30:00-05:00 during verification. Store
-# absolute timestamps and the query window, never minutes-until-slot as ER wait.
-#
-# Forrest City Medical Center (Forrest City, AR; near the search's 50-mile radius
-# boundary) publishes a numeric ER widget and a 30-minute initial-assessment
-# pledge. The pledge is a service target, not a current wait measurement.
-# https://forrestcitymedicalcenter.com/er/
-# https://forrestcitymedicalcenter.com/er-30-minute-pledge/
-# Earlier checks showed inconsistent 0 / -1 widget values; the browser showed
-# -1 again on 2026-09-27. Direct requests returned HTTP 403 during implementation.
-# A later full collector run succeeded at 14:54 UTC: the widget returned 11
-# minutes, while the pledge remained 30. Both successful and failing states were
-# observed; the 403 is not a permanent policy claim and 11 is not a fallback.
-# Preserve negative values only as invalid source evidence; never report -1 as
-# a wait. Zero remains published zero with unverified meaning. Access failures
-# must not be replaced by cached research values or the pledge.
-#
-# These eight publishers are separate from the eight map-only nonpublishers
-# added earlier (Regional One, Le Bonheur Children's, Memphis VA, Highland Hills,
-# Alliance, CrossRidge, SMC Regional, Lauderdale). They are also separate from
-# the existing 20 Baptist CV_ED_Wait facilities. No clinical equivalence between
-# these providers' measures has been established.
 
 import argparse
 import json
@@ -81,6 +33,8 @@ INQUICKER_API = "https://apiv4.inquicker.com/v4/southern-checkin.inquicker.com"
 # credential. Only exchange it for an ephemeral token; never persist that token.
 INQUICKER_PUBLIC_KEY = "935412a0255fa01a36766c351d70583006f39056"
 FORREST_URL = "https://forrestcitymedicalcenter.com/er/"
+# ER department names. The same MyChart listing includes Minor Medical Centers
+# (urgent care), which must never match.
 METHODIST = {
     "methodist-university": "Methodist University Emergency Department",
     "methodist-north": "Methodist North Emergency",
@@ -88,17 +42,19 @@ METHODIST = {
     "methodist-germantown": "Methodist Germantown Emergency",
     "methodist-olive-branch": "Methodist Olive Branch Emergency",
 }
+# Permalink and InQuicker facility ID (observed 2026-09-27). Every run checks both
+# against the facility included in the schedules response.
 SAINT_FRANCIS = {
-    "saint-francis-memphis": "saint-francis-hospital",
-    "saint-francis-bartlett": "saint-francis-hospital-bartlett",
+    "saint-francis-memphis": ("saint-francis-hospital", "953125689"),
+    "saint-francis-bartlett": ("saint-francis-hospital-bartlett", "953125690"),
 }
 EXPECTED = {**{f: ["estimated_wait_range"] for f in METHODIST},
             **{f: ["arrival_slots"] for f in SAINT_FRANCIS},
-            "forrest-city": ["published_wait", "initial_assessment_target"]}
+            "forrest-city": ["published_wait"]}
 TIMEOUT = (3, 10)
 # Saint Francis evidence keeps only the slot fields the parser reads.
 SLOT_FIELDS = ("schedule-id", "appointment-type-id", "times", "next-time")
-WIDGET_CHARS, PLEDGE_CONTEXT, PLEDGE_SNIPPETS = 200, 60, 3
+WIDGET_CHARS = 200
 
 
 class DeadlineError(Exception):
@@ -108,6 +64,9 @@ class DeadlineError(Exception):
 class SourceError(ValueError):
     """A failed source check. Its message is a fixed phrase from this module, so the
     attempt summary can store it; exception text that might quote a source is never stored."""
+
+
+COLLECTION_ERRORS = (requests.RequestException, ValueError, TypeError, KeyError, DeadlineError)
 
 
 class PublicHTML(HTMLParser):
@@ -149,7 +108,7 @@ def aware(value):
     if not isinstance(value, str):
         raise SourceError("timestamp must be text")
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value)
     except ValueError:
         raise SourceError("invalid timestamp") from None
     if parsed.tzinfo is None:
@@ -179,29 +138,26 @@ def json_body(response):
         raise SourceError("invalid JSON") from None
 
 
-def request(session, method, url, context=None, spent=None, **kwargs):
+def request(session, method, url, context=None, **kwargs):
     if context and context.get_remaining_time_in_millis() < 23000:
         raise DeadlineError()
-    started = time.monotonic()
     response = session.request(method, url, timeout=TIMEOUT, **kwargs)
-    if spent is not None:
-        # HTTP time only: requests reads the body before returning; parsing is excluded.
-        spent.append(time.monotonic() - started)
     response.raise_for_status()
     return response
 
 
-def observation(facility, metric, batch_id, source_url, endpoint, latency_ms,
+def observation(facility, metric, batch_id, source_url, endpoint,
                 *, value=None, source_value=None, status="available", reason=None):
+    # collect() fills latency_ms with the facility's measured fetch time.
     return {"schema_version": 1, "facility": facility, "metric": metric,
             "batch_id": batch_id, "observed_at": utcnow().isoformat(),
             "source_url": source_url, "source_endpoint": endpoint,
-            "latency_ms": latency_ms, "status": status, "reason": reason,
+            "latency_ms": None, "status": status, "reason": reason,
             "value": value, "source_value": source_value}
 
 
-def methodist_payload(session, context=None, spent=None):
-    html = request(session, "GET", METHODIST_URL, context, spent=spent).text
+def methodist_payload(session, context=None):
+    html = request(session, "GET", METHODIST_URL, context).text
     token = PublicHTML(html).inputs.get("__RequestVerificationToken")
     start = html.find('{"WorkflowSettings"')
     if not token or start < 0:
@@ -215,12 +171,12 @@ def methodist_payload(session, context=None, spent=None):
         raise SourceError("ambiguous reason for visit")
     # This endpoint only reads department information. Do not call scheduling,
     # registration, patient-intake, or reservation endpoints.
-    return json_body(request(session, "POST", METHODIST_API, context, spent=spent, data={
+    return json_body(request(session, "POST", METHODIST_API, context, data={
         "rfvId": reasons[0]["Id"], "displayGroupIds": "", "searchCoordinates": "null",
         "__RequestVerificationToken": token}))
 
 
-def parse_methodist(payload, facility, batch_id, latency_ms):
+def parse_methodist(payload, facility, batch_id):
     departments = payload["OnMyWayDepartments"]
     if not isinstance(departments, list) or not all(isinstance(d, dict) for d in departments):
         raise SourceError("invalid department list")
@@ -245,12 +201,13 @@ def parse_methodist(payload, facility, batch_id, latency_ms):
     elif type(dep.get("MaxValueHit")) not in (bool, type(None)):
         options.update(status="invalid", reason="invalid_cap_flag")
     else:
+        # The site shows equal or absent bounds as one value; MaxValueHit means "or more".
         lower = upper if lower is None else lower
         capped = dep.get("MaxValueHit") is True and lower == upper
         options["value"] = {"lower_minutes": lower, "upper_minutes": None if capped else upper,
                             "lower_bound_only": capped}
     return observation(facility, "estimated_wait_range", batch_id, METHODIST_URL,
-                       METHODIST_API, latency_ms, **options)
+                       METHODIST_API, **options)
 
 
 def inquicker_token(session, context=None):
@@ -268,11 +225,18 @@ def data_list(payload):
     return payload["data"]
 
 
-def select_schedules(payload, facility_id):
+def select_schedules(payload, facility_id, permalink):
     rows = data_list(payload)
     count = object_value(payload.get("meta")).get("record-count")
     if type(count) is not int or count != len(rows):
         raise SourceError("incomplete schedule listing")
+    # include=facility returns the facility itself; confirm it is this hospital's ER.
+    included = [object_value(item) for item in payload.get("included") or []]
+    facilities = [item for item in included if item.get("type") == "facilities"]
+    if (len(facilities) != 1 or facilities[0].get("id") != facility_id
+            or object_value(facilities[0].get("attributes")).get("permalink") != permalink
+            or facilities[0]["attributes"].get("facility-type") != "Emergencydepartment"):
+        raise SourceError("missing or unexpected emergency facility")
     result = []
     for row in rows:
         attrs = object_value(row["attributes"])
@@ -327,44 +291,35 @@ def parse_slots(payload, schedule_ids, start, end):
 
 
 def fetch_saint_francis(session, token, facility, batch_id, context=None):
-    spent = []
+    permalink, facility_id = SAINT_FRANCIS[facility]
     headers = {"Authorization": "Bearer " + token, "Accept": "application/vnd.api+json"}
-    permalink = SAINT_FRANCIS[facility]
-    payload = json_body(request(session, "GET", INQUICKER_API + "/facilities", context, spent=spent,
-                      headers=headers, params={"filter[permalink]": permalink}))
-    matches = [r for r in data_list(payload) if object_value(r["attributes"]).get("permalink") == permalink
-               and r["attributes"].get("facility-type") == "Emergencydepartment"]
-    if len(matches) != 1:
-        raise SourceError("missing or duplicate emergency facility")
-    facility_id = matches[0]["id"]
-    payload = json_body(request(session, "GET", INQUICKER_API + "/schedules", context, spent=spent,
-                      headers=headers,
-                      params={"filter[facility_id]": facility_id, "filter[active]": "true",
-                              "filter[hidden]": "false", "filter[context]": "patient",
-                              "include": "facility", "page[size]": 100}))
-    schedules = select_schedules(payload, facility_id)
+    payload = json_body(request(session, "GET", INQUICKER_API + "/schedules", context, headers=headers,
+                                params={"filter[facility_id]": facility_id, "filter[active]": "true",
+                                        "filter[hidden]": "false", "filter[context]": "patient",
+                                        "include": "facility", "page[size]": 100}))
+    schedules = select_schedules(payload, facility_id, permalink)
     start = utcnow().replace(microsecond=0)
     end = start + timedelta(days=1)
     endpoint = INQUICKER_API + "/available-appointment-times"
-    payload = json_body(request(session, "GET", endpoint, context, spent=spent, headers=headers, params={
+    payload = json_body(request(session, "GET", endpoint, context, headers=headers, params={
         "schedule_ids[]": schedules, "max_days": 1, "from": start.isoformat(),
         "to": end.isoformat(), "context": "patient"}))
+    # Check-in slots are projected times subject to triage, not waits: keep absolute
+    # timestamps and never convert time until a slot into a wait.
     value = parse_slots(payload, schedules, start, end)
     available = value["next_available_at"] is not None
     evidence = [{k: row.get(k) for k in SLOT_FIELDS} for row in payload]
     return observation(facility, "arrival_slots", batch_id,
                        f"{INQUICKER_URL}/facility/{permalink}?service=10", endpoint,
-                       round(sum(spent) * 1000), value=value,
-                       source_value=evidence, status="available" if available else "unavailable",
+                       value=value, source_value=evidence,
+                       status="available" if available else "unavailable",
                        reason=None if available else "no_slots_returned")
 
 
-def parse_forrest(html, batch_id, latency_ms):
+def parse_forrest(html, batch_id):
     page = PublicHTML(html)
-    text = " ".join(" ".join(page.text).split())
-    if "Forrest City Medical Center" not in text:
+    if "Forrest City Medical Center" not in " ".join(" ".join(page.text).split()):
         raise SourceError("unexpected Forrest City page")
-    records = []
     widget = " ".join(" ".join(page.wait_text).split())
     matches = re.findall(r"Current\s+ER\s+Wait\s+Time:\s*([+-]?\d+)\s+Minutes", widget, re.I)
     raw = list(dict.fromkeys(matches))
@@ -373,54 +328,38 @@ def parse_forrest(html, batch_id, latency_ms):
                "status": "invalid", "reason": "missing_or_conflicting_widget"}
     if len(raw) == 1:
         minutes = int(raw[0])
+        # The widget has shown -1: negative values are invalid evidence, never a wait.
         options["reason"] = "negative_wait_sentinel"
         if minutes >= 0:
             options.update(value={"minutes": minutes}, status="available", reason=None)
-    records.append(observation("forrest-city", "published_wait", batch_id, FORREST_URL,
-                               FORREST_URL, latency_ms, **options))
-    pledges = set(re.findall(r"(\d+)[\s\-\u2011\u2013]+Minute\s+ER\s+Pledge", text, re.I))
-    snippets = [text[max(0, m.start() - PLEDGE_CONTEXT):m.end() + PLEDGE_CONTEXT].strip()
-                for m in re.finditer("pledge", text, re.I)]
-    options = {"source_value": {"pledge_snippets": list(dict.fromkeys(snippets))[:PLEDGE_SNIPPETS],
-                                "matches": sorted(pledges)},
-               "status": "invalid", "reason": "missing_or_conflicting_pledge"}
-    if len(pledges) == 1:
-        options.update(value={"minutes": int(next(iter(pledges)))}, status="available", reason=None)
-    records.append(observation("forrest-city", "initial_assessment_target", batch_id, FORREST_URL,
-                               FORREST_URL, latency_ms, **options))
-    return records
+    return observation("forrest-city", "published_wait", batch_id, FORREST_URL, FORREST_URL, **options)
 
 
-def error_code(error):
+def diagnose(error):
+    """Attempt fields for a failed fetch. Details are fixed phrases, never source text."""
+    status = None
     if isinstance(error, DeadlineError):
-        return "collection_deadline"
-    if isinstance(error, requests.RequestException):
-        return "request_failed"
-    return "invalid_response"
-
-
-def error_detail(error):
-    """A short, fixed description for the attempt summary; never text from a source."""
-    if isinstance(error, DeadlineError):
-        return None
-    if isinstance(error, requests.HTTPError):
-        return "http_error"
-    if isinstance(error, requests.Timeout):
-        return "timeout"
-    if isinstance(error, requests.ConnectionError):
-        return "connection_error"
-    if isinstance(error, requests.RequestException):
-        return "request_error"
-    if isinstance(error, SourceError):
-        return str(error)
-    if isinstance(error, KeyError) and error.args and isinstance(error.args[0], str):
-        return "missing field " + error.args[0]  # keys are literals in this module
-    return "unexpected value type" if isinstance(error, TypeError) else "invalid value"
-
-
-def http_status(error):
-    response = getattr(error, "response", None)
-    return response.status_code if isinstance(error, requests.HTTPError) and response is not None else None
+        code, detail = "collection_deadline", None
+    elif isinstance(error, requests.RequestException):
+        code = "request_failed"
+        if isinstance(error, requests.HTTPError):
+            detail = "http_error"
+            status = error.response.status_code if error.response is not None else None
+        elif isinstance(error, requests.Timeout):
+            detail = "timeout"
+        elif isinstance(error, requests.ConnectionError):
+            detail = "connection_error"
+        else:
+            detail = "request_error"
+    else:
+        code = "invalid_response"
+        if isinstance(error, SourceError):
+            detail = str(error)
+        elif isinstance(error, KeyError) and error.args and isinstance(error.args[0], str):
+            detail = "missing field " + error.args[0]  # keys are literals in this module
+        else:
+            detail = "unexpected value type" if isinstance(error, TypeError) else "invalid value"
+    return {"error_code": code, "error_detail": detail, "http_status": status}
 
 
 def collect(batch_dt=None, context=None):
@@ -431,44 +370,46 @@ def collect(batch_dt=None, context=None):
     batch_id = batch_dt.astimezone(timezone.utc).isoformat()
     records, attempts = [], {}
 
-    def capture(facility, fetch, attempted=None):
+    def capture(facility, fetch, attempted=None, shared_ms=0):
+        # Latency covers this facility's fetch and parsing plus any fetch it shares.
         attempted = attempted or utcnow().isoformat()
-        detail = status = None
+        started = time.monotonic()
+        failure = {"error_code": None, "error_detail": None, "http_status": None}
         try:
             rows = fetch()
-            invalid = [r for r in rows if r["status"] == "invalid"]
-            state = "failed" if len(invalid) == len(rows) else "partial" if invalid else "success"
-            code = "invalid_source_value" if invalid else None
-            detail = ", ".join(sorted({r["reason"] for r in invalid})) or None
-            records.extend(rows)
-        except (requests.RequestException, ValueError, TypeError, KeyError, DeadlineError) as exc:
-            rows, state, code = [], "failed", error_code(exc)
-            detail, status = error_detail(exc), http_status(exc)
-        attempts[facility] = {"attempted_at": attempted, "state": state, "error_code": code,
-                              "error_detail": detail, "http_status": status,
+        except COLLECTION_ERRORS as exc:
+            rows, failure = [], diagnose(exc)
+        latency = shared_ms + round((time.monotonic() - started) * 1000)
+        invalid = [r for r in rows if r["status"] == "invalid"]
+        if invalid:
+            failure.update(error_code="invalid_source_value",
+                           error_detail=", ".join(sorted({r["reason"] for r in invalid})))
+        for row in rows:
+            row["latency_ms"] = latency
+        records.extend(rows)
+        state = "failed" if len(invalid) == len(rows) else "partial" if invalid else "success"
+        attempts[facility] = {"attempted_at": attempted, "state": state, **failure,
                               "expected_metrics": EXPECTED[facility],
                               "collected_metrics": [r["metric"] for r in rows]}
 
     with requests.Session() as session:
         session.headers.update({"User-Agent": USER_AGENT})
-        spent = []
-        methodist_attempted = utcnow().isoformat()
+        methodist_attempted, started = utcnow().isoformat(), time.monotonic()
         try:
-            methodist = methodist_payload(session, context, spent)
-            methodist_error = None
-        except (requests.RequestException, ValueError, TypeError, KeyError, DeadlineError) as exc:
+            methodist, methodist_error = methodist_payload(session, context), None
+        except COLLECTION_ERRORS as exc:
             methodist, methodist_error = None, exc
-        elapsed = round(sum(spent) * 1000)
+        bootstrap_ms = round((time.monotonic() - started) * 1000)
         for facility in METHODIST:
             def fetch_methodist(facility=facility):
                 if methodist_error is not None:
                     raise methodist_error
-                return [parse_methodist(methodist, facility, batch_id, elapsed)]
-            capture(facility, fetch_methodist, methodist_attempted)
+                return [parse_methodist(methodist, facility, batch_id)]
+            capture(facility, fetch_methodist, methodist_attempted, bootstrap_ms)
 
         try:
             token, token_error = inquicker_token(session, context), None
-        except (requests.RequestException, ValueError, TypeError, KeyError, DeadlineError) as exc:
+        except COLLECTION_ERRORS as exc:
             token, token_error = None, exc
         for facility in SAINT_FRANCIS:
             def fetch_slots(facility=facility):
@@ -478,9 +419,7 @@ def collect(batch_dt=None, context=None):
             capture(facility, fetch_slots)
 
         def fetch_forrest():
-            spent = []
-            response = request(session, "GET", FORREST_URL, context, spent=spent)
-            return parse_forrest(response.text, batch_id, round(sum(spent) * 1000))
+            return [parse_forrest(request(session, "GET", FORREST_URL, context).text, batch_id)]
         capture("forrest-city", fetch_forrest)
 
     summary = {"schema_version": 1, "batch_id": batch_id, "generated_at": utcnow().isoformat(),

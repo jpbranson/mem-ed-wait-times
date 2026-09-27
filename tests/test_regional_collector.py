@@ -1,4 +1,5 @@
 import copy
+import itertools
 import json
 import logging
 import os
@@ -32,18 +33,16 @@ class RegionalCollectorTests(unittest.TestCase):
         self.forrest = (FIXTURES / "forrest.html").read_text(encoding="utf-8")
 
     def methodist_record(self):
-        return collector.parse_methodist(self.methodist, "methodist-university", BATCH, 32)
+        return collector.parse_methodist(self.methodist, "methodist-university", BATCH)
 
     def university(self):
         return next(d for d in self.methodist["OnMyWayDepartments"]
                     if d["Name"] == collector.METHODIST["methodist-university"])
 
     def saint_francis_row(self, times):
-        facility = {"data": [{"id": "953125689", "attributes": {
-            "permalink": "saint-francis-hospital", "facility-type": "Emergencydepartment"}}]}
         session = Mock()
-        responses = [Mock(), Mock(), Mock()]
-        for response, payload in zip(responses, [facility, fixture("saint-francis-hospital-schedules.json"), times]):
+        responses = [Mock(), Mock()]
+        for response, payload in zip(responses, [fixture("saint-francis-hospital-schedules.json"), times]):
             response.json.return_value = payload
         session.request.side_effect = responses
         with patch.object(collector, "utcnow", return_value=self.start):
@@ -52,7 +51,7 @@ class RegionalCollectorTests(unittest.TestCase):
     def test_live_methodist_fixture_preserves_ranges_and_excludes_urgent_care(self):
         expected = [(5, 20), (55, 115), (60, 105), (10, 25), (15, 30)]
         for slug, bounds in zip(collector.METHODIST, expected):
-            record = collector.parse_methodist(self.methodist, slug, BATCH, 32)
+            record = collector.parse_methodist(self.methodist, slug, BATCH)
             self.assertEqual(record["status"], "available")
             self.assertEqual((record["value"]["lower_minutes"], record["value"]["upper_minutes"]), bounds)
             self.assertNotIn("wait_minutes", record)
@@ -90,7 +89,7 @@ class RegionalCollectorTests(unittest.TestCase):
             self.methodist_record()
         for payload in ({}, {"OnMyWayDepartments": []}, {"OnMyWayDepartments": [None]}):
             with self.assertRaises((ValueError, KeyError)):
-                collector.parse_methodist(payload, "methodist-university", BATCH, 0)
+                collector.parse_methodist(payload, "methodist-university", BATCH)
 
     def test_missing_contract_fields_and_nonfinite_json_fail_clearly(self):
         del self.university()["CanShowWaitInfo"]
@@ -103,7 +102,7 @@ class RegionalCollectorTests(unittest.TestCase):
         schedules = fixture("saint-francis-hospital-schedules.json")
         schedules["meta"] = None
         with self.assertRaises(ValueError):
-            collector.select_schedules(schedules, "953125689")
+            collector.select_schedules(schedules, "953125689", "saint-francis-hospital")
 
     def test_one_changed_methodist_department_does_not_drop_other_hospitals(self):
         self.university()["CanShowWaitInfo"] = None
@@ -133,16 +132,26 @@ class RegionalCollectorTests(unittest.TestCase):
         for name, facility, schedule in [("saint-francis-hospital", "953125689", "17"),
                                          ("saint-francis-hospital-bartlett", "953125690", "18")]:
             schedules = fixture(name + "-schedules.json")
-            self.assertEqual(collector.select_schedules(schedules, facility), [schedule])
+            self.assertEqual(collector.select_schedules(schedules, facility, name), [schedule])
             slots = collector.parse_slots(fixture(name + "-times.json"), [schedule], self.start, self.end)
             self.assertEqual(slots["next_available_at"], "2026-09-27T15:30:00+00:00")
             self.assertTrue(slots["available_slots"])
             self.assertEqual(slots["timezone"], "America/Chicago")
             with self.assertRaises(ValueError):
-                collector.select_schedules(schedules, "wrong-facility")
+                collector.select_schedules(schedules, "wrong-facility", name)
+            # The included facility must be this hospital's ER, or the run fails.
+            for change in ({"permalink": "another-hospital"}, {"facility-type": "Urgentcare"}):
+                bad = copy.deepcopy(schedules)
+                bad["included"][0]["attributes"].update(change)
+                with self.subTest(change=change), self.assertRaises(ValueError):
+                    collector.select_schedules(bad, facility, name)
+            del schedules["included"]
+            with self.assertRaises(ValueError):
+                collector.select_schedules(schedules, facility, name)
+            schedules = fixture(name + "-schedules.json")
             schedules["meta"]["record-count"] = 2
             with self.assertRaises(ValueError):
-                collector.select_schedules(schedules, facility)
+                collector.select_schedules(schedules, facility, name)
 
     def test_inquicker_no_slots_is_explicit_and_next_time_can_be_outside_window(self):
         payload = [{"schedule-id": "17", "appointment-type-id": "", "times": [], "next-time": None}]
@@ -178,22 +187,24 @@ class RegionalCollectorTests(unittest.TestCase):
             row, session = self.saint_francis_row(times)
             self.assertEqual(row["status"], state)
             calls = session.request.call_args_list
-            self.assertEqual([c.args[0] for c in calls], ["GET"] * 3)
-            # Relationship data is only returned when explicitly included.
-            self.assertEqual(calls[1].kwargs["params"]["include"], "facility")
-            self.assertEqual(calls[2].kwargs["params"]["schedule_ids[]"], ["17"])
+            self.assertEqual([c.args[0] for c in calls], ["GET"] * 2)
+            # The facility is only returned when explicitly included; no separate lookup.
+            self.assertEqual(calls[0].kwargs["params"]["include"], "facility")
+            self.assertEqual(calls[0].kwargs["params"]["filter[facility_id]"], "953125689")
+            self.assertEqual(calls[1].kwargs["params"]["schedule_ids[]"], ["17"])
             self.assertNotIn("ephemeral", json.dumps(row))
 
-    def test_partial_forrest_result_is_reported_as_partial(self):
+    def test_invalid_forrest_widget_fails_the_facility_but_keeps_its_evidence(self):
         response = Mock(text=self.forrest)
         with patch.object(collector, "methodist_payload", return_value=self.methodist), \
              patch.object(collector, "inquicker_token", side_effect=requests.Timeout()), \
              patch.object(collector, "request", return_value=response):
             records, summary = collector.collect(self.start)
-        self.assertEqual(summary["attempts"]["forrest-city"]["state"], "partial")
-        self.assertEqual(summary["attempts"]["forrest-city"]["error_detail"], "negative_wait_sentinel")
-        self.assertEqual(summary["partial"], 1)
-        self.assertEqual(len(records), 7)
+        attempt = summary["attempts"]["forrest-city"]
+        self.assertEqual((attempt["state"], attempt["error_code"], attempt["error_detail"]),
+                         ("failed", "invalid_source_value", "negative_wait_sentinel"))
+        self.assertEqual(attempt["collected_metrics"], ["published_wait"])
+        self.assertEqual(len(records), 6)
 
     def test_inquicker_wrong_missing_duplicate_past_and_naive_slots_are_rejected(self):
         payload = fixture("saint-francis-hospital-times.json")
@@ -210,37 +221,33 @@ class RegionalCollectorTests(unittest.TestCase):
             with self.subTest(field=field, value=value), self.assertRaises(ValueError):
                 collector.parse_slots(bad, ["17"], self.start, self.end)
 
-    def test_forrest_negative_widget_keeps_pledge_separate_and_does_not_invent_zero(self):
-        wait, pledge = collector.parse_forrest(self.forrest, BATCH, 100)
-        self.assertEqual(wait["status"], "invalid")
+    def test_forrest_negative_widget_is_invalid_and_zero_is_kept(self):
+        wait = collector.parse_forrest(self.forrest, BATCH)
+        self.assertEqual((wait["metric"], wait["status"]), ("published_wait", "invalid"))
         self.assertEqual(wait["reason"], "negative_wait_sentinel")
         self.assertEqual(wait["source_value"],
                          {"widget_text": "Current ER Wait Time: -1 Minutes Learn More", "matches": ["-1"]})
         self.assertIsNone(wait["value"])
-        self.assertEqual(pledge["metric"], "initial_assessment_target")
-        self.assertEqual(pledge["value"], {"minutes": 30})
         for minutes in (0, 13):
-            wait, _ = collector.parse_forrest(self.forrest.replace("<span>-1", f"<span>{minutes}"), BATCH, 1)
+            wait = collector.parse_forrest(self.forrest.replace("<span>-1", f"<span>{minutes}"), BATCH)
             self.assertEqual(wait["value"], {"minutes": minutes})
-        wait, _ = collector.parse_forrest(self.forrest.replace("wait-time-menu", "changed"), BATCH, 1)
+        wait = collector.parse_forrest(self.forrest.replace("wait-time-menu", "changed"), BATCH)
         self.assertEqual(wait["status"], "invalid")
         with self.assertRaises(ValueError):
-            collector.parse_forrest("<h1>Access denied</h1>", BATCH, 1)
+            collector.parse_forrest("<h1>Access denied</h1>", BATCH)
 
     def test_forrest_conflicting_widgets_and_script_text_are_not_trusted(self):
         html = self.forrest + '<h4 class="wait-time-menu">Current ER Wait Time: 20 Minutes</h4>'
-        self.assertEqual(collector.parse_forrest(html, BATCH, 0)[0]["status"], "invalid")
-        html = self.forrest.replace('<h1>30-Minute ER Pledge</h1>', '<script>30-Minute ER Pledge</script>')
-        self.assertEqual(collector.parse_forrest(html, BATCH, 0)[1]["status"], "invalid")
+        self.assertEqual(collector.parse_forrest(html, BATCH)["status"], "invalid")
+        html = (self.forrest.replace("wait-time-menu", "changed") +
+                '<script>document.write("<h4 class=\\"wait-time-menu\\">Current ER Wait Time: 5 Minutes</h4>")</script>')
+        self.assertEqual(collector.parse_forrest(html, BATCH)["status"], "invalid")
 
     def test_forrest_keeps_trimmed_text_when_the_wording_changes(self):
-        html = self.forrest.replace("Minutes", "Mins").replace("30-Minute ER Pledge", "30 Minute E.R. Pledge")
-        wait, pledge = collector.parse_forrest(html, BATCH, 1)
-        self.assertEqual((wait["status"], pledge["status"]), ("invalid", "invalid"))
+        wait = collector.parse_forrest(self.forrest.replace("Minutes", "Mins"), BATCH)
+        self.assertEqual(wait["status"], "invalid")
         self.assertEqual(wait["source_value"], {"widget_text": "Current ER Wait Time: -1 Mins Learn More", "matches": []})
-        self.assertEqual(pledge["source_value"]["matches"], [])
-        self.assertTrue(any("30 Minute E.R. Pledge" in s for s in pledge["source_value"]["pledge_snippets"]))
-        wait, _ = collector.parse_forrest(self.forrest.replace("Learn More", "x" * 500), BATCH, 1)
+        wait = collector.parse_forrest(self.forrest.replace("Learn More", "x" * 500), BATCH)
         self.assertEqual(len(wait["source_value"]["widget_text"]), collector.WIDGET_CHARS)
 
     def test_partial_outage_preserves_other_facilities_and_records_all_attempts(self):
@@ -277,20 +284,26 @@ class RegionalCollectorTests(unittest.TestCase):
         response._content = b"<html>Access denied</html>"
         with self.assertRaises(collector.SourceError) as caught:
             collector.json_body(response)
-        self.assertEqual((collector.error_code(caught.exception), str(caught.exception)),
-                         ("invalid_response", "invalid JSON"))
-        self.assertEqual(collector.error_detail(KeyError("next-time")), "missing field next-time")
-        self.assertEqual(collector.error_detail(ValueError("Invalid isoformat string: 'source text'")),
+        self.assertEqual(collector.diagnose(caught.exception),
+                         {"error_code": "invalid_response", "error_detail": "invalid JSON", "http_status": None})
+        self.assertEqual(collector.diagnose(KeyError("next-time"))["error_detail"], "missing field next-time")
+        self.assertEqual(collector.diagnose(ValueError("Invalid isoformat string: 'source text'"))["error_detail"],
                          "invalid value")
         with self.assertRaises(collector.SourceError) as caught:
             collector.aware("source text")
         self.assertEqual(str(caught.exception), "invalid timestamp")
 
-    def test_latency_counts_http_time_only(self):
-        spent = []
-        with patch.object(collector.time, "monotonic", side_effect=[10.0, 10.25]):
-            collector.request(Mock(), "GET", collector.FORREST_URL, spent=spent)
-        self.assertEqual(spent, [0.25])
+    def test_latency_is_timed_per_facility_and_includes_the_shared_bootstrap(self):
+        # Every clock read advances 100 ms.
+        with patch.object(collector, "methodist_payload", return_value=self.methodist), \
+             patch.object(collector, "inquicker_token", side_effect=requests.Timeout()), \
+             patch.object(collector, "request", return_value=Mock(text=self.forrest.replace("<span>-1", "<span>7"))), \
+             patch.object(collector.time, "monotonic", side_effect=itertools.count(0, 0.1)):
+            records, _ = collector.collect(self.start)
+        latency = {r["facility"]: r["latency_ms"] for r in records}
+        # Methodist rows: the shared page and data fetch (100 ms) plus their own parse (100 ms).
+        self.assertEqual({latency[f] for f in collector.METHODIST}, {200})
+        self.assertEqual(latency["forrest-city"], 100)
 
     def test_deadline_skips_network_and_reports_all_facilities(self):
         context = Mock()
@@ -308,7 +321,7 @@ class RegionalCollectorTests(unittest.TestCase):
 
     def test_storage_is_separate_and_retains_invalid_evidence(self):
         s3 = MemoryS3()
-        records = collector.parse_forrest(self.forrest, BATCH, 10)
+        records = [collector.parse_forrest(self.forrest, BATCH)]
         key = collector.store_batch(s3, "data", records, {"batch_id": BATCH})
         self.assertTrue(key.startswith("raw/er_publications/dt=2026-09-27/"))
         stored = [json.loads(line) for line in s3.objects["data", key]["Body"].splitlines()]
@@ -349,8 +362,9 @@ class RegionalCollectorTests(unittest.TestCase):
                              {"summary": summary, "observations": []})
 
     def all_record_kinds(self):
-        """Every status each parser can produce, built from the captured fixtures."""
-        records = [collector.parse_methodist(self.methodist, slug, BATCH, 32) for slug in collector.METHODIST]
+        """Every status each parser can produce, built from the captured fixtures. collect()
+        fills latency_ms, so it is set here before schema validation."""
+        records = [collector.parse_methodist(self.methodist, slug, BATCH) for slug in collector.METHODIST]
         for fields in ({"CanShowWaitInfo": False}, {"WaitTime": -1}, {"MaxValueHit": "false"},
                        {"WaitTime": 0, "WaitTimeLower": None},
                        {"WaitTime": 120, "WaitTimeLower": None, "MaxValueHit": True}):
@@ -363,8 +377,10 @@ class RegionalCollectorTests(unittest.TestCase):
                       [{**empty, "times": [(self.end + timedelta(hours=1)).isoformat()]}]):
             records.append(self.saint_francis_row(times)[0])
         for html in (self.forrest, self.forrest.replace("<span>-1", "<span>0"),
-                     self.forrest.replace("wait-time-menu", "changed").replace("30-Minute ER Pledge", "Our promise")):
-            records.extend(collector.parse_forrest(html, BATCH, 1))
+                     self.forrest.replace("wait-time-menu", "changed")):
+            records.append(collector.parse_forrest(html, BATCH))
+        for record in records:
+            record["latency_ms"] = 1
         return records
 
     def test_schema_accepts_every_record_kind_and_rejects_fake_waits(self):
@@ -375,12 +391,13 @@ class RegionalCollectorTests(unittest.TestCase):
         self.assertEqual({(r["metric"], r["status"]) for r in records}, {
             ("estimated_wait_range", "available"), ("estimated_wait_range", "unavailable"),
             ("estimated_wait_range", "invalid"), ("arrival_slots", "available"), ("arrival_slots", "unavailable"),
-            ("published_wait", "available"), ("published_wait", "invalid"),
-            ("initial_assessment_target", "available"), ("initial_assessment_target", "invalid")})
+            ("published_wait", "available"), ("published_wait", "invalid")})
         for record in records:
             with self.subTest(metric=record["metric"], status=record["status"], reason=record["reason"]):
                 validator.validate(record)
         bad = copy.deepcopy(records[0]); bad["wait_minutes"] = 10
+        self.assertTrue(list(validator.iter_errors(bad)))
+        bad = copy.deepcopy(records[0]); bad["latency_ms"] = None
         self.assertTrue(list(validator.iter_errors(bad)))
         wait = next(r for r in records if r["metric"] == "published_wait")
         bad = copy.deepcopy(wait); bad["value"] = {"minutes": -1}

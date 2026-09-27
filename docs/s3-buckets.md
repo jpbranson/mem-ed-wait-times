@@ -41,16 +41,16 @@ raw/er_publications/dt=YYYY-MM-DD/YYYYMMDDTHHMMSSffffffZ.jsonl
 operations/er_publications/dt=YYYY-MM-DD/YYYYMMDDTHHMMSSffffffZ.json
 ```
 
-Its nine expected observations cover eight facilities: five Methodist ranges,
-two Saint Francis arrival-slot listings and Forrest City's wait widget plus
-pledge. [er-publication.schema.json](er-publication.schema.json) defines normalized
+Its eight expected observations, one per facility, are five Methodist ranges, two
+Saint Francis arrival-slot listings and Forrest City's wait widget (its pledge has
+not been collected since 2026-09-27). [er-publication.schema.json](er-publication.schema.json) defines normalized
 values, original source evidence, unavailable/invalid states and source provenance.
 Raw is UTF-8 `application/x-ndjson`; summary is `application/json`. Filenames and
 partitions use UTC batch start, including microseconds in filenames. Attempt
 summaries include all eight facilities, even failed requests, each with an error
 code, a collector-defined detail and any HTTP status; the summary also records the
 run's duration. An all-failed run writes diagnostics before raising. A successful
-batch stores about 10 KB. No new objects have been written to S3.
+batch stores about 9 KB. No new objects have been written to S3.
 
 These prefixes are outside the Baptist reader and compactor. They do not extend
 the six-field `ed_wait` contract, feed `latest.json`, or alter the registry's

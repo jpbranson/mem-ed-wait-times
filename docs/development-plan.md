@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-27 16:15 UTC (regional collector)
+Last updated: 2026-09-27 17:05 UTC (regional collector)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -22,7 +22,7 @@ the final holdout, which the user chose to keep reserved while more data is
 collected; no public forecasts exist.
 A separate eight-facility regional collector is implemented and locally validated:
 five Methodist wait ranges, two Saint Francis arrival-slot listings, and Forrest
-City's numeric widget plus service pledge. Its typed records and diagnostics use
+City's numeric widget. Its typed records and diagnostics use
 separate storage prefixes; it is not deployed, scheduled, or integrated into the
 map/analytics. [Operation and validation](regional-collector.md).
 Website builds are now also dispatched hourly by a user-configured AWS EventBridge
@@ -76,7 +76,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Component | Current behavior | Reference |
 | --- | --- | --- |
 | Collection | Uses 20 registry slugs; preserves raw observations, writes attempt summaries, and conditionally publishes latest readings and failures | [Collector](../mem-ed-lambda.py), [publisher](../edwait/latest.py) |
-| Regional published information (local) | Separate collector for eight additional ERs; preserves ranges, absolute check-in slots, Forrest City's numeric widget and service targets as distinct metrics, with invalid/unavailable states and per-facility diagnostics (error code, collector-defined detail, HTTP status, run duration). All eight live sources passed two smoke tests; production activation (steps written, not run) and presentation remain pending | [Collector and commented research](../edwait/regional_collector.py), [contract/validation](regional-collector.md) |
+| Regional published information (local) | Separate collector for eight additional ERs; preserves ranges, absolute check-in slots and Forrest City's numeric widget as distinct metrics, with invalid/unavailable states and per-facility diagnostics (error code, collector-defined detail, HTTP status, run duration). All eight live sources passed three smoke tests, the last with the simplified collector (8 requests per run); production activation (steps written, not run) and presentation remain pending | [Collector and commented research](../edwait/regional_collector.py), [contract/validation](regional-collector.md) |
 | Compaction | Concatenates raw without rewriting provenance; attaches a fingerprint of copied raw objects | [Compactor](../lambda_function.py) |
 | Shared history | Selects one source per UTC batch-date partition, validates and deduplicates by facility/metric, reports coverage/gaps/rejections | [Reader](../edwait/data.py) |
 | Registry | Stable slugs, verified names/state groupings, timezone/source dates; 2026-09-23 official evidence for active status, general-emergency service and explicit age groups, with per-facility `destination_evidence`; OpenStreetMap `campus_point` fallbacks labeled "ER entrance unconfirmed"; `emergency_entrance` null until reviewed via `python -m edwait.entrances` | [Registry](../edwait/facilities.json), [destination evidence](m2-destinations-2026-09-23.md) |
@@ -137,10 +137,10 @@ verification in the S3 reference retains its own date and narrower scope.
   the product does not have a complete inventory of all regional emergency departments.
 - Treat `observed_at` as collection time. It does not establish when the hospital
   last changed its published metric. Request latency is operational telemetry.
-- Regional `er_publications` observations retain bounds, slot timestamps,
-  Forrest City's numeric widget and targets in a separate typed contract. Do not
-  substitute midpoints, minutes until a check-in slot, pledge targets or that
-  widget for Baptist `CV_ED_Wait`. The regional roster
+- Regional `er_publications` observations retain bounds, slot timestamps and
+  Forrest City's numeric widget in a separate typed contract. Do not substitute
+  midpoints, minutes until a check-in slot, or that widget for Baptist
+  `CV_ED_Wait`. The regional roster
   is independent of the Baptist roster and its analyses.
 - Historical percentiles and bands describe published observations. They do not
   describe the distribution of individual patient waits or hospital care quality.
@@ -844,8 +844,8 @@ decided the same day that the sources' terms are acceptable and that it runs eve
 15 minutes like the Baptist collector; the tested
 [deployment steps](regional-collector.md#deployment-steps-not-yet-run) cover
 packaging, a write-only role, a function with retries off, one manual run from AWS
-and the schedule. Explicit presentation of ranges, check-in slots, the Forrest City
-widget and targets follows. Its records cannot enter existing numeric wait
+and the schedule. Explicit presentation of ranges, check-in slots and the Forrest
+City widget follows. Its records cannot enter existing numeric wait
 comparisons without a separate metric-aware design. No new collection schedule
 or public artifact is active. [Validation and cost estimate](regional-collector.md).
 
@@ -908,6 +908,7 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-27 UTC | Simplify the regional collector before deployment: read Saint Francis schedules with the included facility instead of a separate lookup (facility IDs fixed and checked each run); time each facility in one place, so latency includes parsing; one error classifier; research notes in the doc; package only `requests` and the module; stop collecting Forrest City's 30-minute pledge | User request for a leaner collector without losing core function. The schedules response already carries the facility's ID, permalink and ER type, so the lookup added requests without adding a check, and a renumbered facility still fails. The pledge is a fixed service promise, not a reading, so collecting it every run added a metric and code without new information. boto3 ships with the Lambda runtime, cutting the package from 16.8 MB to 0.66 MB |
 | 2026-09-27 UTC | Schedule the regional collector every 15 minutes, the Baptist collector's cadence, and proceed on the sources' current terms | User decision after reviewing the collector and the robots.txt findings. Matching cadences keeps both collections aligned in time. About 2,880 runs and 29 MB a month, roughly $0.03 after free allowances, within the $5/month limit |
 | 2026-09-27 UTC | Regional collector contract refinements before first deployment: count Saint Francis slots returned past the requested window (`slots_beyond_window`) instead of failing the facility; store only parsed slot fields and Forrest City's trimmed widget/pledge text as evidence; record a collector-defined `error_detail`, `http_status` and run `duration_ms`; measure latency as HTTP time only; turn off Lambda retries at deployment | User-approved hardening after the documentation audit. A full day's listing is a plausible reason for later slots and should not drop the reading. Diagnostics must separate a source refusing AWS (403) from an outage without storing source text. Nothing had been deployed or stored, so the contract could change without migration. A failed run retried twice would triple requests to a source that may be blocking |
 | 2026-09-27 UTC | Add a standalone eight-facility regional collector with research comments and a typed `er_publications` contract; keep ranges, check-in slots and service pledges distinct from `CV_ED_Wait` | User requested collection for the other publishers. Separate raw/operations prefixes prevent clinical and unit conflation, preserve source values and invalid/unavailable states, and avoid changing Baptist history/compaction/latest. No new dependencies or deployed infrastructure. A 15-minute, 128 MB/60-second scenario is approximately $0.40/month incremental before free allowances; actual deployment must fit the $5/month total budget. [Design/evidence](regional-collector.md) |
@@ -956,6 +957,7 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-27 UTC | M0 additional sources (simplification) | At the user's request: Saint Francis schedules now carry the facility check (8 requests per run instead of 10); per-facility timing in `collect()`; one `diagnose()` function; research notes moved to [regional-collector.md](regional-collector.md#research-notes-checked-2026-09-27); native `Z` timestamps; a requests-only package (0.66 MB, test-built); and no Forrest City pledge (`initial_assessment_target` removed from the schema, so a full run has eight rows). The schedule fixtures regained the included facility. 25 collector tests and the full Python and JS suites passed. A live batch at 16:58 UTC collected all eight facilities in 1,945 ms with eight schema-valid rows | Local only; nothing deployed, stored in S3 or scheduled |
 | 2026-09-27 UTC | M0 additional sources (hardening) | At the user's request, `edwait/regional_collector.py` gained attempt `error_detail` (fixed phrases only), `http_status` and summary `duration_ms`; non-JSON bodies count as invalid responses; slots past the window are counted; evidence keeps parsed slot fields and trimmed Forrest City text; latency is HTTP time only; INFO/WARNING logs; a User-Agent with the repository URL; `--output` creates its folder. Schema and docs updated, with tested deployment steps (package built locally, 16.8 MB). 25 collector tests (6 new; every parser status validated against the schema) and 117 Python / 72 JS tests passed. A live batch at 15:53 UTC collected all eight facilities in 2,153 ms with nine schema-valid rows. [Validation and steps](regional-collector.md) | Local only; nothing deployed, stored in S3 or scheduled |
 | 2026-09-27 UTC | M0 additional sources | Added `edwait/regional_collector.py` with commented research, local CLI, independent Lambda storage handler, public-source fixtures and typed schema. 110 Python tests passed, including 19 focused collector tests; the 14:54 UTC live batch collected nine schema-valid observations across all eight facilities. Earlier Forrest City HTTP failures and negative sentinel were retained as separate failure evidence. [Operation/validation](regional-collector.md) | Local only; no S3 writes, function changes or schedule activation; map and analytics integration remain pending |
 | 2026-09-26 UTC | M2 gateway rate limits | `gateway/src/gate.mjs` checks per-client burst/daily limits and an all-client daily cap in the ledger transaction; `handler.mjs` derives the client network from `CF-Connecting-IP`; new codes `client_rate_limited` and `daily_budget_exhausted` (429) with their own page messages; four new `wrangler.toml` settings. 71 JS / 90 Python tests passed (three new gateway tests); 13/13 `wrangler dev` checks, including both limits across a restart with no provider call; bundle 20.67 KiB. [Evidence](m2-operations.md#cloudflare-gateway) | Local only; the live Worker predates it and needs `npx wrangler deploy` by the account owner; page messages publish with the next build after a push |
