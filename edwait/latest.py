@@ -52,7 +52,27 @@ def build_latest(previous, records, attempts, facilities, *, generated_at, fresh
             "coverage": {"configured": len(entries), "with_reading": len(times),
                          "failed_latest_attempt": sum(f["reporting_state"] == "failed" for f in entries),
                          "missing": sum(f["last_success"] is None for f in entries)},
+            "health": _health(entries, settings, generated_at),
             "facilities": entries}
+
+
+def _health(entries, settings, generated_at):
+    """Status for the project tracker (its DESIGN.md §2 contract). Current means the dashboard would label
+    the facility recently collected when this artifact was generated; the tracker judges the age itself."""
+    now = timestamp(generated_at)
+
+    def current(f):
+        success, attempt = f["last_success"], f["last_attempt"]
+        age = (now - timestamp(success["observed_at"])).total_seconds() if success else None
+        return age is not None and 0 <= age < settings["stale_after_seconds"] and not (attempt and attempt["state"] == "failed")
+
+    fresh = sum(map(current, entries))
+    failed = sum(f["reporting_state"] == "failed" for f in entries)
+    times = [timestamp(f["last_success"]["observed_at"]) for f in entries if f["last_success"]]
+    return {"status": "ok" if entries and fresh == len(entries) else "warn" if fresh else "fail",
+            "last_success_at": max(times).isoformat() if times else None,
+            "expect_every": f"{max(1, settings['expected_collection_seconds'] // 60)}m",
+            "detail": f"{fresh}/{len(entries)} facilities current" + (f"; {failed} failed the latest collection" if failed else "")}
 
 
 def publish_latest(s3, bucket, records, attempts, facilities, *, freshness=None):
