@@ -1,6 +1,9 @@
 # Regional ER publication collector
 
-Implemented and locally validated 2026-09-27. **Not deployed or scheduled.**
+Implemented and validated 2026-09-27, and **deployed the same day** as Lambda
+`ed-wait-regional`, run every 15 minutes by EventBridge rule `regional_15`
+([deployment record](#deployment-2026-09-27)). Not yet shown on the dashboard or
+used in analyses.
 The dated research behind the [collector](../edwait/regional_collector.py) is in
 [Research notes](#research-notes-checked-2026-09-27).
 
@@ -92,7 +95,7 @@ anonymous bearer tokens are obtained on each batch and remain in memory.
 
 Handler: `edwait.regional_collector.lambda_handler`; environment: `BUCKET`.
 The package needs only `requests` plus `edwait/__init__.py` and this module; the
-Lambda runtime provides boto3 ([steps](#deployment-steps-not-yet-run)). This is a
+Lambda runtime provides boto3 ([steps](#deployment-steps)). This is a
 separate handler; do not replace `mem-ed-lambda.lambda_handler` or call it from the
 website build.
 
@@ -171,11 +174,38 @@ the site rather than changing headers or addresses to get around it.
   total limit. [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/),
   [S3 pricing](https://aws.amazon.com/s3/pricing/).
 
-No AWS objects, functions, IAM policies, schedules, deployed site files or paid
-tiers were changed. Public map/analytics integration and a production release
-remain separate work.
+Validation itself changed nothing in AWS; the deployment below created the
+function, role, log group and schedule. Public map/analytics integration remains
+separate work.
 
-## Deployment steps (not yet run)
+## Deployment (2026-09-27)
+
+Run by Claude at the user's request with the local AWS CLI (root credentials),
+following the steps below, all in `us-east-1`:
+
+| Resource | Configuration |
+| --- | --- |
+| IAM role `ed-wait-regional-collector` (created 17:18:19 UTC) | Trusted by Lambda; managed `AWSLambdaBasicExecutionRole` for logs; inline `RegionalPublicationWrites` allows only `s3:PutObject` on `mem-ed-wait-times/raw/er_publications/*` and `mem-ed-wait-times/operations/er_publications/*` |
+| Log group `/aws/lambda/ed-wait-regional` | 30-day retention |
+| Lambda `ed-wait-regional` | Python 3.14, x86_64, 128 MB, 60 s, handler `edwait.regional_collector.lambda_handler`, `BUCKET=mem-ed-wait-times`; asynchronous retries 0. Package `build/regional-20260927-9691589.zip` from commit `9691589` (0.66 MB), `CodeSha256` `gW+Iwtp91XHo3V+uaGjxH8On0NDGd0IsdwOFiKDSknQ=` |
+| EventBridge rule `regional_15` (enabled 17:20:39 UTC) | `rate(15 minutes)`, target `ed-wait-regional`; Lambda permission `regional-15` allows only this rule |
+| Metric filter `regional-facility-failures` | On the log group: each `regional_facility_failed` line adds 1 to `EdWait/Regional` `FacilityFailures` (0 for other lines) |
+| CloudWatch alarms (added about 17:30 UTC) | `regional-collector-failed-run`: Lambda `Errors` ≥ 1 in 15 minutes (every facility failed, or a crash). `regional-collector-facility-failing`: `FacilityFailures` ≥ 1 in four consecutive 15-minute periods (some facility failed in every run for an hour). `regional-collector-stopped`: no invocations in an hour (missing data counts as breaching). All email SNS topic `dashboard-dispatch-alerts` |
+
+Before the deployment, the role, function, rule and log group did not exist and
+both prefixes were empty. The manual run at 17:19:41 UTC succeeded for all eight
+facilities in 1,810 ms, with no 403 from AWS addresses. It stored 6,996 bytes of raw
+rows (eight, all schema-valid) and a 2,216-byte summary, and CloudWatch showed the
+INFO `regional_collection_summary` line. The first scheduled run, at 17:21:06 UTC,
+also succeeded for all eight facilities in 1,472 ms.
+
+At the user's request the alarms above were added, the alert topic was given the
+display name "ED wait alerts", and a new email subscription (the user's address)
+was created at 17:31:38 UTC. It delivers nothing until the user confirms it from
+AWS's email. The facility alarm also fires if Forrest City shows its `-1` sentinel
+for an hour, since an invalid widget fails that facility.
+
+## Deployment steps
 
 User decisions, 2026-09-27: the sources' terms are acceptable for scheduled
 collection, and the collector runs every 15 minutes like the Baptist collector.
@@ -239,10 +269,28 @@ over root keys for these commands. From the repository root in PowerShell, `us-e
 
 6. After an hour, confirm four summaries and `regional_collection_summary` log lines;
    after a few days, confirm the cost. Record the deployment in the development plan,
-   this file and the S3 reference. An alarm on the function's `Errors` metric helps
-   only once the alert topic has a confirmed email subscription.
+   this file and the S3 reference.
+
+7. Add the alarms. They email the alert topic, which needs a confirmed subscription
+   (`aws sns subscribe --topic-arn $topic --protocol email --notification-endpoint <address>`,
+   then the emailed link):
+
+   ```powershell
+   $topic = "arn:aws:sns:us-east-1:666037347522:dashboard-dispatch-alerts"
+   aws logs put-metric-filter --log-group-name /aws/lambda/ed-wait-regional --filter-name regional-facility-failures --filter-pattern regional_facility_failed --metric-transformations "metricName=FacilityFailures,metricNamespace=EdWait/Regional,metricValue=1,defaultValue=0"
+   aws cloudwatch put-metric-alarm --alarm-name regional-collector-failed-run --namespace AWS/Lambda --metric-name Errors --dimensions Name=FunctionName,Value=ed-wait-regional --statistic Sum --period 900 --evaluation-periods 1 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --treat-missing-data notBreaching --alarm-actions $topic
+   aws cloudwatch put-metric-alarm --alarm-name regional-collector-facility-failing --namespace EdWait/Regional --metric-name FacilityFailures --statistic Sum --period 900 --evaluation-periods 4 --datapoints-to-alarm 4 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --treat-missing-data notBreaching --alarm-actions $topic
+   aws cloudwatch put-metric-alarm --alarm-name regional-collector-stopped --namespace AWS/Lambda --metric-name Invocations --dimensions Name=FunctionName,Value=ed-wait-regional --statistic Sum --period 3600 --evaluation-periods 1 --threshold 1 --comparison-operator LessThanThreshold --treat-missing-data breaching --alarm-actions $topic
+   ```
+
+   The deployed alarms also carry `--alarm-description` text naming what to check.
 
 To pause: `aws events disable-rule --name regional_15`. Stored objects stay in place.
+Pausing trips `regional-collector-stopped` after an hour unless you also run
+`aws cloudwatch disable-alarm-actions --alarm-names regional-collector-stopped`.
+To ship a code change: rebuild the package (step 1) from the new commit, then
+`aws lambda update-function-code --function-name ed-wait-regional --zip-file fileb://<zip>`
+and check its `CodeSha256` and the next run's summary.
 
 ## Research notes (checked 2026-09-27)
 

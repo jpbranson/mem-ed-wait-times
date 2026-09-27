@@ -1,6 +1,6 @@
 # Development plan
 
-Last updated: 2026-09-27 17:05 UTC (regional collector)
+Last updated: 2026-09-27 17:40 UTC (regional collector deployed; alerts)
 
 Status: M0 and M1 are implemented, locally validated, and deployed to AWS as of
 2026-09-22. M2's static interface is published, but routing and acceptance work
@@ -20,18 +20,21 @@ ARIMA pilots, a v2 candidate study scored development, froze its selections and
 gates, then scored calibration. Only Collierville at 60 minutes remains eligible for
 the final holdout, which the user chose to keep reserved while more data is
 collected; no public forecasts exist.
-A separate eight-facility regional collector is implemented and locally validated:
-five Methodist wait ranges, two Saint Francis arrival-slot listings, and Forrest
-City's numeric widget. Its typed records and diagnostics use
-separate storage prefixes; it is not deployed, scheduled, or integrated into the
-map/analytics. [Operation and validation](regional-collector.md).
+A separate eight-facility regional collector collects five Methodist wait ranges,
+two Saint Francis arrival-slot listings, and Forrest City's numeric widget into
+typed records and diagnostics under separate storage prefixes. It was deployed on
+2026-09-27 as Lambda `ed-wait-regional`, run every 15 minutes by rule `regional_15`;
+its manual and first scheduled runs each collected all eight facilities. It is not
+yet integrated into the map or analytics. [Operation and validation](regional-collector.md).
 Website builds are now also dispatched hourly by a user-configured AWS EventBridge
 rule because GitHub cron proved unreliable. All 50 hourly dispatches from 01:17 UTC
 on 2026-09-24 through 02:17 UTC on 2026-09-26 produced successful builds. The backup
 cron stays until the failure alarm has a confirmed email subscription. The original
 subscription was never confirmed and lapsed about two days after creation; a link
 re-sent at 00:07 UTC on 2026-09-26 did not extend it, and by 00:37 UTC the topic had
-no subscriptions (still none at 02:25 UTC). The user must re-create and confirm it.
+no subscriptions (still none at 02:25 UTC). At the user's request a new subscription
+was created at 17:31:38 UTC on 2026-09-27; it delivers nothing until the user confirms
+it.
 
 Local preview rebuilt and started on 2026-09-22 at `http://127.0.0.1:8765/`
 using read-only S3 history and the existing review server. That local launch
@@ -76,7 +79,7 @@ reading change over the next 15–120 minutes, and how uncertain is that forecas
 | Component | Current behavior | Reference |
 | --- | --- | --- |
 | Collection | Uses 20 registry slugs; preserves raw observations, writes attempt summaries, and conditionally publishes latest readings and failures | [Collector](../mem-ed-lambda.py), [publisher](../edwait/latest.py) |
-| Regional published information (local) | Separate collector for eight additional ERs; preserves ranges, absolute check-in slots and Forrest City's numeric widget as distinct metrics, with invalid/unavailable states and per-facility diagnostics (error code, collector-defined detail, HTTP status, run duration). All eight live sources passed three smoke tests, the last with the simplified collector (8 requests per run); production activation (steps written, not run) and presentation remain pending | [Collector and commented research](../edwait/regional_collector.py), [contract/validation](regional-collector.md) |
+| Regional published information | Separate collector for eight additional ERs; preserves ranges, absolute check-in slots and Forrest City's numeric widget as distinct metrics, with invalid/unavailable states and per-facility diagnostics (error code, collector-defined detail, HTTP status, run duration). All eight live sources passed three smoke tests, the last with the simplified collector (8 requests per run). Deployed 2026-09-27 as Lambda `ed-wait-regional` on a 15-minute rule, with alarms for failed runs, an hour of facility failures and an hour without runs; presentation remains pending | [Collector and commented research](../edwait/regional_collector.py), [contract/validation](regional-collector.md) |
 | Compaction | Concatenates raw without rewriting provenance; attaches a fingerprint of copied raw objects | [Compactor](../lambda_function.py) |
 | Shared history | Selects one source per UTC batch-date partition, validates and deduplicates by facility/metric, reports coverage/gaps/rejections | [Reader](../edwait/data.py) |
 | Registry | Stable slugs, verified names/state groupings, timezone/source dates; 2026-09-23 official evidence for active status, general-emergency service and explicit age groups, with per-facility `destination_evidence`; OpenStreetMap `campus_point` fallbacks labeled "ER entrance unconfirmed"; `emergency_entrance` null until reviewed via `python -m edwait.entrances` | [Registry](../edwait/facilities.json), [destination evidence](m2-destinations-2026-09-23.md) |
@@ -838,16 +841,16 @@ change. Offline study outputs do not alter existing record/storage contracts.
 
 ## Open decisions and immediate next work
 
-The separate regional publication collector is locally validated for all eight
-publishers and was hardened for deployment on 2026-09-27 (progress log). The user
-decided the same day that the sources' terms are acceptable and that it runs every
-15 minutes like the Baptist collector; the tested
-[deployment steps](regional-collector.md#deployment-steps-not-yet-run) cover
-packaging, a write-only role, a function with retries off, one manual run from AWS
-and the schedule. Explicit presentation of ranges, check-in slots and the Forrest
-City widget follows. Its records cannot enter existing numeric wait
-comparisons without a separate metric-aware design. No new collection schedule
-or public artifact is active. [Validation and cost estimate](regional-collector.md).
+The separate regional publication collector was hardened, simplified and deployed
+on 2026-09-27 (progress log). The user decided that day that the sources' terms are
+acceptable and that it runs every 15 minutes like the Baptist collector; the
+[deployment record](regional-collector.md#deployment-2026-09-27) lists the function,
+role, log group, rule and alarms. Next: watch the first days of runs (alarms email
+failed runs, an hour of facility failures and an hour without runs once the alert
+subscription is confirmed), then explicit presentation of ranges, check-in slots and
+the Forrest City widget. Its records cannot enter existing numeric wait comparisons without a
+separate metric-aware design. No public artifact uses them yet.
+[Validation and cost estimate](regional-collector.md).
 
 | Question | Needed by | Next action |
 | --- | --- | --- |
@@ -908,6 +911,7 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-27 UTC | Email alerts through the existing SNS topic `dashboard-dispatch-alerts` (display name "ED wait alerts"): for each collector, a failed-run alarm (Lambda `Errors` ≥ 1 in 15 minutes) and a stopped alarm (no invocations in an hour, missing data breaching); for the regional collector, also a facility alarm (a `regional_facility_failed` log line in four consecutive 15-minute periods) | User request after the regional deployment showed that nothing reported failures. One topic means one confirmation covers every alert. Both handlers raise only when every facility fails, so a failed run alerts at once; a single facility must fail for an hour, so one-off errors stay quiet; missing invocations catch a disabled rule or broken permission. Six alarms and one log-derived metric stay within CloudWatch's free allowance of 10 each |
 | 2026-09-27 UTC | Simplify the regional collector before deployment: read Saint Francis schedules with the included facility instead of a separate lookup (facility IDs fixed and checked each run); time each facility in one place, so latency includes parsing; one error classifier; research notes in the doc; package only `requests` and the module; stop collecting Forrest City's 30-minute pledge | User request for a leaner collector without losing core function. The schedules response already carries the facility's ID, permalink and ER type, so the lookup added requests without adding a check, and a renumbered facility still fails. The pledge is a fixed service promise, not a reading, so collecting it every run added a metric and code without new information. boto3 ships with the Lambda runtime, cutting the package from 16.8 MB to 0.66 MB |
 | 2026-09-27 UTC | Schedule the regional collector every 15 minutes, the Baptist collector's cadence, and proceed on the sources' current terms | User decision after reviewing the collector and the robots.txt findings. Matching cadences keeps both collections aligned in time. About 2,880 runs and 29 MB a month, roughly $0.03 after free allowances, within the $5/month limit |
 | 2026-09-27 UTC | Regional collector contract refinements before first deployment: count Saint Francis slots returned past the requested window (`slots_beyond_window`) instead of failing the facility; store only parsed slot fields and Forrest City's trimmed widget/pledge text as evidence; record a collector-defined `error_detail`, `http_status` and run `duration_ms`; measure latency as HTTP time only; turn off Lambda retries at deployment | User-approved hardening after the documentation audit. A full day's listing is a plausible reason for later slots and should not drop the reading. Diagnostics must separate a source refusing AWS (403) from an outage without storing source text. Nothing had been deployed or stored, so the contract could change without migration. A failed run retried twice would triple requests to a source that may be blocking |
@@ -957,6 +961,8 @@ released, and the routing gateway is live but not linked publicly.
 
 | Date | Milestone | Progress and evidence | Deployment |
 | --- | --- | --- | --- |
+| 2026-09-27 UTC | M0 operations (alerts) | At the user's request: log metric filter `regional-facility-failures`; alarms `regional-collector-failed-run`, `regional-collector-facility-failing`, `regional-collector-stopped`, `baptist-collector-failed-run` and `baptist-collector-stopped`, all emailing topic `dashboard-dispatch-alerts` (display name "ED wait alerts"), beside the existing `dashboard-dispatch-failed`; a new email subscription for the user's address created at 17:31:38 UTC. The new alarms evaluated to `OK` within minutes. [Regional record](regional-collector.md#deployment-2026-09-27), [M0 operator checks](m0-operations.md#operator-checks) | Deployed 2026-09-27; no email is delivered until the user confirms the subscription |
+| 2026-09-27 UTC | M0 additional sources (deployment) | At the user's request, Claude ran the deployment steps with the local AWS CLI after read-only checks found no existing resources: role `ed-wait-regional-collector` (Lambda logging plus `s3:PutObject` on the two `er_publications` prefixes only), log group with 30-day retention, function `ed-wait-regional` (Python 3.14, 128 MB, 60 s, retries off) from commit `9691589` (0.66 MB, `CodeSha256` verified), and rule `regional_15` (every 15 minutes, enabled 17:20:39 UTC). The manual run at 17:19:41 UTC and the first scheduled run at 17:21:06 UTC each collected all eight facilities (1,810 and 1,472 ms), with no 403 from AWS; the stored rows passed the schema and CloudWatch showed the INFO summary lines. [Record](regional-collector.md#deployment-2026-09-27) | Deployed 2026-09-27 in `us-east-1`; no failure alarm configured |
 | 2026-09-27 UTC | M0 additional sources (simplification) | At the user's request: Saint Francis schedules now carry the facility check (8 requests per run instead of 10); per-facility timing in `collect()`; one `diagnose()` function; research notes moved to [regional-collector.md](regional-collector.md#research-notes-checked-2026-09-27); native `Z` timestamps; a requests-only package (0.66 MB, test-built); and no Forrest City pledge (`initial_assessment_target` removed from the schema, so a full run has eight rows). The schedule fixtures regained the included facility. 25 collector tests and the full Python and JS suites passed. A live batch at 16:58 UTC collected all eight facilities in 1,945 ms with eight schema-valid rows | Local only; nothing deployed, stored in S3 or scheduled |
 | 2026-09-27 UTC | M0 additional sources (hardening) | At the user's request, `edwait/regional_collector.py` gained attempt `error_detail` (fixed phrases only), `http_status` and summary `duration_ms`; non-JSON bodies count as invalid responses; slots past the window are counted; evidence keeps parsed slot fields and trimmed Forrest City text; latency is HTTP time only; INFO/WARNING logs; a User-Agent with the repository URL; `--output` creates its folder. Schema and docs updated, with tested deployment steps (package built locally, 16.8 MB). 25 collector tests (6 new; every parser status validated against the schema) and 117 Python / 72 JS tests passed. A live batch at 15:53 UTC collected all eight facilities in 2,153 ms with nine schema-valid rows. [Validation and steps](regional-collector.md) | Local only; nothing deployed, stored in S3 or scheduled |
 | 2026-09-27 UTC | M0 additional sources | Added `edwait/regional_collector.py` with commented research, local CLI, independent Lambda storage handler, public-source fixtures and typed schema. 110 Python tests passed, including 19 focused collector tests; the 14:54 UTC live batch collected nine schema-valid observations across all eight facilities. Earlier Forrest City HTTP failures and negative sentinel were retained as separate failure evidence. [Operation/validation](regional-collector.md) | Local only; no S3 writes, function changes or schedule activation; map and analytics integration remain pending |

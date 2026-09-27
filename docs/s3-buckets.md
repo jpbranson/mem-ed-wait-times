@@ -8,7 +8,8 @@ changed during rollout. Earlier record sampling below remains dated 2026-09-11
 (three objects, 1,960 records); the 2026-09-14 schedule/policy checks remain
 historical evidence. Existing schedules and public read policy were preserved.
 2026-09-27 adds documentation/schema for the separate regional publication
-collector's storage prefixes; that collector is locally validated, not deployed.
+collector's storage prefixes; that collector was deployed the same day and writes
+to them every 15 minutes.
 
 ## Overview
 
@@ -33,8 +34,9 @@ when validating latest artifacts, as shown in [contract tests](../tests/test_con
 
 ### Object layout and encoding
 
-The separate [regional collector](regional-collector.md), implemented and locally
-validated 2026-09-27 but **not deployed**, has its own optional Lambda storage:
+The separate [regional collector](regional-collector.md), deployed 2026-09-27 as
+Lambda `ed-wait-regional` (EventBridge rule `regional_15`, every 15 minutes), has
+its own storage:
 
 ```text
 raw/er_publications/dt=YYYY-MM-DD/YYYYMMDDTHHMMSSffffffZ.jsonl
@@ -50,7 +52,9 @@ partitions use UTC batch start, including microseconds in filenames. Attempt
 summaries include all eight facilities, even failed requests, each with an error
 code, a collector-defined detail and any HTTP status; the summary also records the
 run's duration. An all-failed run writes diagnostics before raising. A successful
-batch stores about 9 KB. No new objects have been written to S3.
+batch stores about 9 KB. The first objects were written by a manual run at
+17:19:41 UTC on 2026-09-27 and by the first scheduled run at 17:21:06 UTC; the
+function's role can only put objects under these two prefixes.
 
 These prefixes are outside the Baptist reader and compactor. They do not extend
 the six-field `ed_wait` contract, feed `latest.json`, or alter the registry's

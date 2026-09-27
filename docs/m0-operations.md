@@ -130,7 +130,13 @@ relevant steps when changing the collector, compactor, or their contracts again.
   writes precede public publication. Timeouts or process termination can prevent
   operations summaries; inspect Lambda errors alongside completed-attempt data.
 - A collector rollback can stop public updates; retained data ages into stale
-  state. Keep the website exclusion. M0 adds no automated production alarms.
+  state. Keep the website exclusion. M0 itself added no automated production alarms.
+- Since 2026-09-27, alarm `baptist-collector-failed-run` fires on any Lambda `Errors`
+  in a 15-minute period (the handler raises only when every facility fails, or on a
+  crash), and `baptist-collector-stopped` fires after an hour without invocations.
+  Both email SNS topic `dashboard-dispatch-alerts`, which delivers only to confirmed
+  subscriptions; a new one was created for the user at 17:31:38 UTC that day.
+  Disable `baptist-collector-stopped` actions before pausing `trigger_15` on purpose.
 
 The 30-minute threshold is provisional, informed by the verified 15-minute
 schedule and the plan's dated cadence assessment. The provider's current API
