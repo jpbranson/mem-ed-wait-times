@@ -7,6 +7,9 @@ comparisons, travel, static assets, and compaction metadata. No record schema
 changed during rollout. Earlier record sampling below remains dated 2026-09-11
 (three objects, 1,960 records); the 2026-09-14 schedule/policy checks remain
 historical evidence. Existing schedules and public read policy were preserved.
+2026-09-27 adds documentation/schema for the separate regional publication
+collector's storage prefixes; that collector was deployed the same day and writes
+to them every 15 minutes.
 
 ## Overview
 
@@ -30,6 +33,32 @@ when validating latest artifacts, as shown in [contract tests](../tests/test_con
 ## Data bucket: `mem-ed-wait-times`
 
 ### Object layout and encoding
+
+The separate [regional collector](regional-collector.md), deployed 2026-09-27 as
+Lambda `ed-wait-regional` (EventBridge rule `regional_15`, every 15 minutes), has
+its own storage:
+
+```text
+raw/er_publications/dt=YYYY-MM-DD/YYYYMMDDTHHMMSSffffffZ.jsonl
+operations/er_publications/dt=YYYY-MM-DD/YYYYMMDDTHHMMSSffffffZ.json
+```
+
+Its eight expected observations, one per facility, are five Methodist ranges, two
+Saint Francis arrival-slot listings and Forrest City's wait widget (its pledge has
+not been collected since 2026-09-27). [er-publication.schema.json](er-publication.schema.json) defines normalized
+values, original source evidence, unavailable/invalid states and source provenance.
+Raw is UTF-8 `application/x-ndjson`; summary is `application/json`. Filenames and
+partitions use UTC batch start, including microseconds in filenames. Attempt
+summaries include all eight facilities, even failed requests, each with an error
+code, a collector-defined detail and any HTTP status; the summary also records the
+run's duration. An all-failed run writes diagnostics before raising. A successful
+batch stores about 9 KB. The first objects were written by a manual run at
+17:19:41 UTC on 2026-09-27 and by the first scheduled run at 17:21:06 UTC; the
+function's role can only put objects under these two prefixes.
+
+These prefixes are outside the Baptist reader and compactor. They do not extend
+the six-field `ed_wait` contract, feed `latest.json`, or alter the registry's
+20-facility analytical roster. The descriptions below apply to Baptist storage.
 
 ```text
 s3://mem-ed-wait-times/
