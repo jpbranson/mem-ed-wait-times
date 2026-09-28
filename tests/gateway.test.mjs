@@ -405,3 +405,21 @@ test("static assets pass through from the bucket without query strings, cookies 
   const down = await handle(new Request("https://gateway.example/app.mjs"), env, {gate: null, fetcher: async () => { throw new Error("offline"); }});
   assert.equal(down.status, 502);
 });
+
+test("asset requests whose path names another host still go only to the asset origin", async () => {
+  const requests = [];
+  const fetcher = async url => { requests.push(String(url)); return new Response("missing", {status: 404}); };
+  const env = {ASSET_ORIGIN: "https://bucket.example"};
+  // Resolved against ASSET_ORIGIN, each of these paths would name evil.example (or host "x").
+  const cases = [["//evil.example/x.html", "//evil.example/x.html"], ["///evil.example/x.html", "///evil.example/x.html"],
+    ["/\\evil.example/x.html", "//evil.example/x.html"], ["/..//evil.example/x", "//evil.example/x"],
+    ["//evil.example/", "//evil.example/index.html"], ["//user@evil.example:8443/x?y=1", "//user@evil.example:8443/x"],
+    ["//evil.example/%2e%2e/x", "//x"]];
+  for (const [path, key] of cases) {
+    const response = await handle(new Request("https://gateway.example" + path), env, {gate: null, fetcher});
+    assert.equal(response.status, 404, path);
+    assert.equal(requests.at(-1), "https://bucket.example" + key, path);
+  }
+  assert.equal(requests.length, cases.length);
+  assert.ok(requests.every(url => new URL(url).origin === "https://bucket.example"));
+});
