@@ -96,7 +96,6 @@ if(typeof document!=="undefined" && document.getElementById("hospital-select")) 
   }});
   const reference=createContextFeed({expected,onChange:state=>{context=state; render();}});
   selector.addEventListener("change",render);
-  hours.addEventListener("change",render);
   document.addEventListener("history-window-change",event=>{hours.value=String(event.detail); render();});
   document.getElementById("refresh-waits").addEventListener("click",()=>Promise.all([feed.refresh(),reference.refresh(),travel.refresh()]));
   const widths=new Map();

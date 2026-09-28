@@ -1,11 +1,18 @@
 // Versioned facility context, computed from prior local days by edwait.analysis.
 export const escape = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
 const number = n => Number.isFinite(n);
-const validTime = value => typeof value === "string" && /T.*(Z|[+-]\d{2}:\d{2})$/.test(value) && number(Date.parse(value));
+export const parseTime = value => typeof value === "string" && /T.*(Z|[+-]\d{2}:\d{2})$/.test(value) ? Date.parse(value) : NaN;
+const validTime = value => number(parseTime(value));
 const ordinal = n => { const whole=Math.round(n), tail=whole%100; return `${whole}${tail>=11&&tail<=13?"th":({1:"st",2:"nd",3:"rd"}[whole%10]??"th")}`; };
 export const fmt = n => number(n) ? Number(n.toFixed(1)).toLocaleString("en-US") : "Unavailable";
 export const signed = n => `${n > 0 ? "+" : ""}${fmt(n)}`;
 export const when = value => new Date(value).toLocaleString("en-US", {timeZone:"America/Chicago", timeZoneName:"short"});
+export const dayFormat = new Intl.DateTimeFormat("en-US", {timeZone:"America/Chicago", month:"short", day:"numeric"});
+export const timeFormat = new Intl.DateTimeFormat("en-US", {timeZone:"America/Chicago", hour:"numeric", minute:"2-digit"});
+export const median = values => {
+  const sorted=[...values].sort((a,b)=>a-b), mid=Math.floor(sorted.length/2);
+  return sorted.length%2 ? sorted[mid] : (sorted[mid-1]+sorted[mid])/2;
+};
 const parts = new Intl.DateTimeFormat("en-CA", {timeZone:"America/Chicago", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", hourCycle:"h23"});
 export function localGroup(at) {
   const fields = Object.fromEntries(parts.formatToParts(new Date(at)).map(p => [p.type, p.value]));
@@ -98,10 +105,7 @@ export function recentDirection(points, at, value, policy) {
   if (sample.length < policy.trend_minimum_samples || sample.some((p,i) => i && Date.parse(p[0]) - Date.parse(sample[i-1][0]) > policy.gap_seconds * 1000)) {
     return {state:"insufficient_recent_history", delta:null, samples:sample.length};
   }
-  const values = sample.map(p => p[1]).sort((a,b) => a-b);
-  const middle = Math.floor(values.length / 2);
-  const median = values.length % 2 ? values[middle] : (values[middle-1] + values[middle]) / 2;
-  const delta = value - median;
+  const delta = value - median(sample.map(p => p[1]));
   return {state:delta >= policy.meaningful_minutes ? "rising" : delta <= -policy.meaningful_minutes ? "falling" : "little_change", delta, samples:sample.length};
 }
 
@@ -237,8 +241,7 @@ export function renderHistory(points, hours, now, policy, generatedAt, available
   const tickCount=Math.max(2,Math.min(5,Math.floor((right-left)/120)));
   for (let i=0;i<tickCount;i++) {
     const time=new Date(start+(now-start)*i/(tickCount-1)), xx=left+(right-left)*i/(tickCount-1);
-    const day=time.toLocaleDateString("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric"});
-    const hour=time.toLocaleTimeString("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit"});
+    const day=dayFormat.format(time), hour=timeFormat.format(time);
     content+=`<text x="${xx}" y="${bottom+24}" text-anchor="${i===0?"start":i===tickCount-1?"end":"middle"}">${escape(day)}<tspan x="${xx}" dy="20">${escape(hour)}</tspan></text>`;
   }
   content+=`<text x="${left}" y="18">Published wait · min</text><text x="${left}" y="${deltaTop-15}">Difference from usual · min</text>`;

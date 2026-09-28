@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,locate,probeRouting,destinations,sortTravel} from "../dashboard/travel.mjs";
+import {compareTravel,validateTravel,validateRoutes,renderTravel,exampleComparison,createRouteFeed,probeRouting,destinations,sortTravel} from "../dashboard/travel.mjs";
+import {locate} from "../dashboard/origin.mjs";
 
 const at="2026-09-14T17:00:00Z", now=Date.parse(at);
 const facilities=[{slug:"a",display_name:"Example A"},{slug:"b",display_name:"Example B"}];

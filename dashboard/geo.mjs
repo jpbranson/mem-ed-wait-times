@@ -126,7 +126,6 @@ export function mountGeo(root, {expected, mapOnly=[], areas=[], onSelect=()=>{},
       follow=index===model.columns-1;
       start=model.start+index*model.binMs;
       show();
-    },
-    stop
+    }
   };
 }

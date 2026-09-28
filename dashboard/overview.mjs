@@ -73,8 +73,6 @@ if(typeof document!=="undefined") {
   buttons.forEach(button=>button.addEventListener("click",()=>{
     hours=Number(button.dataset.overviewHours);
     buttons.forEach(other=>other.setAttribute("aria-pressed",String(other===button)));
-    const field=document.getElementById("history-hours");
-    if(field) field.value=String(hours);
     controller?.setWindow(hours);
     document.dispatchEvent(new CustomEvent("history-window-change",{detail:hours}));
   }));

@@ -1,8 +1,8 @@
 // M4 area view: how many hospitals in an area read above or below their own usual.
 // Counts facilities from M1 comparisons; not occupancy, capacity or patient-weighted load.
-import {escape, compareReading, contextAvailable} from "./comparisons.mjs";
+import {escape, compareReading, contextAvailable, dayFormat, timeFormat} from "./comparisons.mjs";
 import {facilityView} from "./latest.mjs";
-import {ticks} from "./heatmap.mjs";
+import {span, ticks} from "./heatmap.mjs";
 
 export function validateAreas(areas, expected) {
   const slugs=new Set(expected.map(f=>f.slug)), keys=new Set();
@@ -68,11 +68,8 @@ export function binArea(context, area, hours) {
   const counts=bins.filter(b=>b.compared).map(b=>b.above.length).sort((a,b)=>a-b);
   const typical=counts.length ? counts[Math.floor((counts.length-1)/2)] : null;
   return {start,end,binMs,columns,hours,total:area.slugs.length,bins,perFacility,typicalAbove:typical,
-    periodsWithAbove:bins.filter(b=>b.above.length).length,compared:bins.filter(b=>b.compared).length};
+    periodsWithAbove:bins.filter(b=>b.above.length).length};
 }
-
-const dayFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric"});
-const timeFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit"});
 
 export function renderAreaChart(model, names, {width=900, full=names}={}) {
   const left=46, right=width-12, top=12, rowUnit=Math.max(10,Math.min(24,Math.floor(150/Math.max(1,model.total))));
@@ -94,7 +91,7 @@ export function renderAreaChart(model, names, {width=900, full=names}={}) {
   model.bins.forEach((bin,i)=>{
     if(!bin.reporting) return;
     const x=(left+i*columnWidth).toFixed(2), w=Math.max(1,columnWidth-gap).toFixed(2);
-    const when=`${dayFormat.format(bin.start)}, ${timeFormat.format(bin.start)}–${timeFormat.format(bin.start+model.binMs)}`;
+    const when=span(bin,model.binMs);
     const detail=`${bin.above.length} above usual${bin.above.length ? ` (${list(bin.above)})` : ""}; ${bin.below.length} below${bin.below.length ? ` (${list(bin.below)})` : ""}; ${bin.compared} of ${model.total} with a usual range`;
     content+=`<g class="area-column"><title>${escape(when)}: ${escape(detail)}</title>`+
       `<rect class="area-compared" x="${x}" y="${y(bin.compared)}" width="${w}" height="${bin.compared*rowUnit}"/>`+

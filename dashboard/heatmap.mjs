@@ -1,6 +1,6 @@
 // M3 first view: every hospital's difference from its own usual median, binned over time.
 // Exploratory and descriptive; it does not show patient movement or a forecast.
-import {escape, signed} from "./comparisons.mjs";
+import {dayFormat, escape, median, signed, timeFormat} from "./comparisons.mjs";
 
 // Diverging steps: cool below, warm above, neutral within the M1 meaningful distance.
 export const bands = [
@@ -13,10 +13,6 @@ export const bands = [
   {key:"above-3", test:()=>true, label:"40+ above"},
 ];
 export const bandOf = delta => bands.find(b=>b.test(delta)).key;
-const median = values => {
-  const sorted=[...values].sort((a,b)=>a-b), mid=Math.floor(sorted.length/2);
-  return sorted.length%2 ? sorted[mid] : (sorted[mid-1]+sorted[mid])/2;
-};
 
 export function binHeatmap(context, expected, hours) {
   const binMs=(hours<=24 ? 15 : 60)*60000;
@@ -34,7 +30,7 @@ export function binHeatmap(context, expected, hours) {
       if(p[5]!==null) cell.deltas.push(p[5]);
     }
     return {slug:facility.slug,name:facility.short_name ?? facility.display_name,full:facility.display_name,
-      cells:cells.map(c=>({start:c.start,readings:c.readings,supported:c.deltas.length,
+      cells:cells.map(c=>({start:c.start,readings:c.readings,
         delta:c.deltas.length ? median(c.deltas) : null}))};
   });
   return {start,end,binMs,columns,hours,rows};
@@ -47,8 +43,6 @@ export function summarize(row) {
     largest:above.length ? Math.max(...above.map(c=>c.delta)) : null};
 }
 
-const dayFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric"});
-const timeFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit"});
 export const span=(cell,binMs)=>`${dayFormat.format(cell.start)}, ${timeFormat.format(cell.start)}–${timeFormat.format(cell.start+binMs)}`;
 
 const hourFormat=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"numeric",hourCycle:"h23"});

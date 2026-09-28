@@ -1,9 +1,7 @@
+import {escape, parseTime as time} from "./comparisons.mjs";
 import {facilityView} from "./latest.mjs";
 import {mountOriginPicker} from "./origin.mjs";
-export {locate} from "./origin.mjs";
 
-const escape = v => String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const time = v => typeof v === "string" && /T.*(Z|[+-]\d{2}:\d{2})$/.test(v) ? Date.parse(v) : NaN;
 const number = v => typeof v === "number" && Number.isFinite(v) && v >= 0;
 const minutes = v => v.toLocaleString("en-US", {maximumFractionDigits:1});
 export const ageGroups = ["adult", "child"];

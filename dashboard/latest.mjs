@@ -1,7 +1,5 @@
 // Live readings are fetched independently of Quarto. Never infer freshness from value changes.
-const parseTime = value => typeof value === "string" && /T.*(Z|[+-]\d{2}:\d{2})$/.test(value)
-  ? Date.parse(value) : NaN;
-const escape = value => String(value).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+import {escape, parseTime, when} from "./comparisons.mjs";
 
 export function validateArtifact(data, expected) {
   if (data?.schema_version !== 1 || data.metric !== "CV_ED_Wait" || !Number.isFinite(parseTime(data.generated_at)) ||
@@ -54,8 +52,8 @@ export function renderCards(expected, artifact, now, refreshFailed) {
     const view = facilityView(bySlug.get(f.slug), artifact, now, refreshFailed);
     const age = view.age === null ? "No successful observation" : view.age < 0 ? "Observation time is in the future" :
       `Collected ${Math.floor(view.age / 60)} min ago`;
-    const absolute = view.observedAt ? new Date(view.observedAt).toLocaleString("en-US", {timeZone: "America/Chicago", timeZoneName: "short"}) : "";
-    const attempted = view.attempt?.state === "failed" ? `<p>Latest collection attempt failed at ${escape(new Date(view.attempt.attempted_at).toLocaleString("en-US", {timeZone: "America/Chicago", timeZoneName: "short"}))}.</p>` : "";
+    const absolute = view.observedAt ? when(view.observedAt) : "";
+    const attempted = view.attempt?.state === "failed" ? `<p>Latest collection attempt failed at ${escape(when(view.attempt.attempted_at))}.</p>` : "";
     return `<article class="wait-card ${view.current ? "recent" : "unavailable"}"><h3>${escape(f.display_name)}</h3>` +
       `<p class="wait-status">${escape(view.labels.join(" · "))}</p>` +
       `<p class="wait-value">${view.value === null ? "Unavailable" : `${view.value} min`}</p>` +
