@@ -1,6 +1,6 @@
 """Past-only facility self-comparisons; these are published readings, not patients."""
 
-from bisect import bisect_left, bisect_right
+from bisect import bisect_left
 from collections import Counter, defaultdict
 from datetime import datetime, time, timedelta
 from functools import lru_cache
@@ -39,11 +39,6 @@ def quantile(values, p):
     left = int(position)
     right = min(left + 1, len(values) - 1)
     return values[left] + (values[right] - values[left]) * (position - left)
-
-
-def percentile(values, value):
-    """Midrank percentile: ties receive half their mass, including repeated zeros."""
-    return 100 * (bisect_left(values, value) + bisect_right(values, value)) / (2 * len(values))
 
 
 class BaselineIndex:

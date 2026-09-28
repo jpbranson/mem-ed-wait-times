@@ -3,7 +3,7 @@ import json
 import unittest
 from datetime import date, datetime, timezone
 
-from edwait.data import coverage, load_history, local_time, registry, timestamp, validate_record
+from edwait.data import coverage, load_history, local_time, registry, timestamp
 from lambda_function import compact
 from tests.fakes import MemoryS3, record
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import unittest
 
 from edwait.benefit import (POLICY, analyze, claims, confirmation_outcome, horizon_for, opportunities, profile,

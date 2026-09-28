@@ -6,7 +6,7 @@ import {tmpdir} from "node:os";
 import {join, resolve, dirname, basename} from "node:path";
 import {execFile} from "node:child_process";
 import {promisify} from "node:util";
-import {createFeed, facilityView, validateArtifact} from "../dashboard/latest.mjs";
+import {createFeed, facilityView} from "../dashboard/latest.mjs";
 
 const expected = [{slug: "memphis", display_name: "Memphis"}, {slug: "desoto", display_name: "DeSoto"}];
 const base = Date.parse("2026-09-14T12:00:00Z");

@@ -1,7 +1,7 @@
 import unittest
 from datetime import date, datetime, timedelta, timezone
 
-from edwait.analysis import BaselineIndex, DEFAULT_POLICY, ZONE, expected_slots, quantile, percentile
+from edwait.analysis import BaselineIndex, ZONE, expected_slots, quantile
 from edwait.data import History
 from edwait.prepare import build_comparisons
 
@@ -25,11 +25,10 @@ def cohort(target=date(2026,9,14), hours=range(9,12), exclude=None, value=20):
 
 
 class AnalysisTests(unittest.TestCase):
-    def test_linear_quantiles_and_midrank_ties(self):
+    def test_linear_quantiles(self):
         self.assertEqual(quantile([0,10,20,30],.25),7.5)
         self.assertEqual(quantile([0,10,20,30],.5),15)
         self.assertEqual(quantile([0,10,20,30],.75),22.5)
-        self.assertEqual(percentile([0,0,0,10],0),37.5)
 
     def test_same_day_and_future_values_cannot_leak_into_baseline(self):
         rows=cohort()

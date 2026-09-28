@@ -2,7 +2,6 @@ import importlib.util
 import json
 import os
 import unittest
-from pathlib import Path
 from unittest.mock import Mock, patch
 
 from edwait.data import registry, timestamp

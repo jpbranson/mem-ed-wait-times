@@ -4,8 +4,6 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from edwait.data import History
-
 
 class DashboardTests(unittest.TestCase):
     def test_empty_history_keeps_registry_and_explicit_missing_message(self):

@@ -5,7 +5,6 @@ import hashlib
 import json
 import sys
 from collections import Counter, defaultdict
-from datetime import datetime
 from pathlib import Path
 from statistics import mean, median
 
