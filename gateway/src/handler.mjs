@@ -65,11 +65,14 @@ async function assets(request, env, fetcher, url) {
   const headers = new Headers();
   for (const name of FORWARDED) if (request.headers.has(name)) headers.set(name, request.headers.get(name));
   try {
+    // Only the path is replaced, so the upstream host is always ASSET_ORIGIN's: resolving the
+    // path against it would read "//other.host/x" (or "/..//other.host/x") as another host.
     // Query strings are dropped: the page never uses them and S3 treats some as subresources.
+    const target = new URL("/", env.ASSET_ORIGIN);
+    target.pathname = path;
     // Bypass Cloudflare's cache: it would otherwise keep .css/.js from an earlier site build
     // (seen 2026-09-26). Cache headers pass through, including no-store on data/latest.json.
-    const upstream = await fetcher(new URL(path, env.ASSET_ORIGIN),
-                                   {method: request.method, headers, redirect: "manual", cache: "no-store"});
+    const upstream = await fetcher(target, {method: request.method, headers, redirect: "manual", cache: "no-store"});
     const out = new Headers();
     for (const [name, value] of upstream.headers) if (!DROPPED.test(name)) out.set(name, value);
     // The bucket sets no cache policy on site files; make browsers revalidate (cheap 304s

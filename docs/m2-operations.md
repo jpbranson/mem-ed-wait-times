@@ -313,6 +313,21 @@ Fix (2026-09-26, redeployed by the user; verified 02:16 UTC with `CF-Cache-Statu
 the build before the M3 map (`CF-Cache-Status: HIT`), leaving the map's buttons
 unstyled. The pass-through now fetches site files with `cache: "no-store"` and adds
 `Cache-Control: no-cache` where the bucket sets none, so browsers revalidate by ETag.
+Security fix (2026-09-28 UTC; merged into `main`, deployment **unverified**): the
+pass-through built its upstream URL with `new URL(path, ASSET_ORIGIN)`. URL parsing
+keeps a leading `//` in a request path, so `https://<gateway>//other.host/x.html`
+resolved to `https://other.host/x.html` (so did `///`, `/\` and `/..//` paths), and the
+Worker would fetch that host and serve its body on the gateway's origin, the same
+origin as `/api/routes`. The Worker now copies `ASSET_ORIGIN` and sets only the path,
+so such a request asks the bucket for a key like `/other.host/x.html` and gets the
+bucket's error. A regression test in `tests/gateway.test.mjs` covers seven such paths
+and fails on the previous handler. Whether Cloudflare's edge collapses duplicate
+slashes before the Worker sees the request is unknown; nothing was sent to the
+deployed Worker to find out. Cloudflare lists a deployment at 00:53 UTC, after the fix
+was committed, whose contents were not verified, so treat the deployed version as
+affected until the account owner redeploys from `main` (steps under Deployment below). After redeploying, the owner
+can confirm that `https://mem-ed-wait-times.jpbranson.workers.dev//example.com/`
+returns an error from the bucket rather than example.com's page.
 
 **Design.** One Worker serves the dashboard and the API from the same
 `workers.dev` origin, so the page's relative `/api/routes` requests stay
@@ -320,8 +335,10 @@ same-origin over HTTPS (which also satisfies geolocation's secure-context rule).
 
 - Every other `GET`/`HEAD` passes through from the bucket's HTTPS object URL
   (`ASSET_ORIGIN`) with its status and cache headers, including `no-store` on
-  `data/latest.json`. `/` maps to `index.html`. Query strings, cookies and
-  credentials are never forwarded; `x-amz-*` and `Server` headers are dropped.
+  `data/latest.json`. `/` maps to `index.html`. Only the request path is set on
+  `ASSET_ORIGIN`, so no path can name another host (since the 2026-09-28 fix above).
+  Query strings, cookies and credentials are never forwarded; `x-amz-*` and `Server`
+  headers are dropped.
 - `GET /api/routes/status` and `POST /api/routes` keep the local server's contract:
   exact same-origin `Origin`, a JSON body of at most 512 bytes with exactly
   `latitude`, `longitude` and `age_group`, bounded error codes with the same
@@ -444,14 +461,16 @@ sent, so the limits' behavior has not been exercised against the public Worker.
 
 Still open before linking the `workers.dev` URL publicly:
 
-1. The remaining M2 gates below.
-2. Review Cloudflare's Workers/Durable Objects terms and privacy policy for its
+1. Redeploy the 2026-09-28 asset-path fix (due now, since the unlinked address is
+   reachable) and confirm a `//example.com/` path gets the bucket's error.
+2. The remaining M2 gates below.
+3. Review Cloudflare's Workers/Durable Objects terms and privacy policy for its
    handling of user coordinates.
-3. Confirm from a public connection that a fifth comparison within 10 minutes
+4. Confirm from a public connection that a fifth comparison within 10 minutes
    returns `client_rate_limited`. The limits and the page's messages for the new
    codes are deployed (above). Child comparisons reserve 4 requests each, so four
    of them cost about 16 provider requests before the rejected fifth.
-4. Consider lowering `TOMTOM_REQUEST_BUDGET` (the repository still sets 20,000; for
+5. Consider lowering `TOMTOM_REQUEST_BUDGET` (the repository still sets 20,000; for
    example 15,000): the Worker's ledger cannot see requests made by local scripts or
    the review server.
 
