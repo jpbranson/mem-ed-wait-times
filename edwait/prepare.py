@@ -7,7 +7,7 @@ from dataclasses import replace
 from datetime import datetime, time, timedelta, timezone
 from pathlib import Path
 
-from edwait.analysis import BaselineIndex, METHOD_VERSION, ZONE, quantile
+from edwait.analysis import BaselineIndex, DEFAULT_POLICY, METHOD_VERSION, ZONE, quantile
 from edwait.data import History, METRIC, coverage, registry, timestamp, utc
 from edwait.snapshot import load_window
 from edwait import stability
@@ -82,7 +82,6 @@ def main():
         from botocore.config import Config
         # Seven display days plus the model lookback, padded one UTC partition
         # for local-day and batch/observation midnight differences.
-        from edwait.analysis import DEFAULT_POLICY
         start = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=DEFAULT_POLICY["lookback_days"] + 8)
         s3 = boto3.client("s3", config=Config(max_pool_connections=10))
         history = load_window(s3, os.environ.get("BUCKET", "mem-ed-wait-times"), start, now)

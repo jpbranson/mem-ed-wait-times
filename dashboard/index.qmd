@@ -24,7 +24,7 @@ from pathlib import Path
 from IPython.display import HTML, display
 
 sys.path.insert(0, str(Path.cwd().parent))
-from edwait.data import registry, short_name
+from edwait.data import local_time, registry, short_name
 from edwait.areas import areas
 facilities = registry()
 context_path = Path("comparisons.json")
@@ -62,9 +62,7 @@ else:
                                 div_id="all-hospitals-plot", default_height="100%",
                                 post_script="document.dispatchEvent(new CustomEvent('overview-ready'));",
                                 config={"responsive": True, "displayModeBar": False})))
-    from edwait.data import LOCAL_TIMEZONE, timestamp
-    from zoneinfo import ZoneInfo
-    prepared = timestamp(context["generated_at"]).astimezone(ZoneInfo(LOCAL_TIMEZONE))
+    prepared = local_time(context["generated_at"])
 ```
 
 ```{=html}
@@ -86,23 +84,19 @@ if context is not None and any(entry["history"] for entry in context["facilities
                  '<button id="overview-all" class="show-all" type="button">All</button>' + legend + '</div>'))
     display(HTML('<p class="overview-stamp" title="Overview updates with the site build; gaps over 20 minutes stay blank">' +
                  'History · ' + html.escape(prepared.strftime('%b %d, %I:%M %p %Z')) + '</p>'))
-display(HTML('<script type="application/json" id="facility-registry">' +
-             json.dumps([{"slug": f["slug"], "display_name": f["display_name"], "short_name": short_name(f),
-                          "campus": {k: f["campus_point"][k] for k in ("latitude", "longitude")} if f.get("campus_point") else None}
-                         for f in facilities]).replace("<", "\\u003c") +
-             '</script>'))
-display(HTML('<script type="application/json" id="area-groups">' +
-             json.dumps(areas(facilities)).replace("<", "\\u003c") + '</script>'))
+def json_script(id, data):
+    display(HTML(f'<script type="application/json" id="{id}">' + json.dumps(data).replace("<", "\\u003c") + '</script>'))
+def campus(f):
+    return {k: f["campus_point"][k] for k in ("latitude", "longitude")}
+json_script("facility-registry", [{"slug": f["slug"], "display_name": f["display_name"], "short_name": short_name(f),
+                                   "campus": campus(f) if f.get("campus_point") else None} for f in facilities])
+json_script("area-groups", areas(facilities))
 map_facilities = registry(include_map_only=True)
-map_only = [{"slug": f["slug"], "display_name": f["display_name"],
-             "campus": {k: f["campus_point"][k] for k in ("latitude", "longitude")},
-             "wait_time_reporting": f["wait_time_reporting"], "map_note": f["map_note"],
-             "address": f["destination_evidence"]["address"], "official_source_url": f["official_source_url"]}
-            for f in map_facilities if not f["collection_enabled"]]
-display(HTML('<script type="application/json" id="map-only-facilities">' +
-             json.dumps(map_only).replace("<", "\\u003c") + '</script>'))
-display(HTML('<script type="application/json" id="map-area-groups">' +
-             json.dumps(areas(map_facilities)).replace("<", "\\u003c") + '</script>'))
+json_script("map-only-facilities", [{"slug": f["slug"], "display_name": f["display_name"], "campus": campus(f),
+                                     "wait_time_reporting": f["wait_time_reporting"], "map_note": f["map_note"],
+                                     "address": f["destination_evidence"]["address"], "official_source_url": f["official_source_url"]}
+                                    for f in map_facilities if not f["collection_enabled"]])
+json_script("map-area-groups", areas(map_facilities))
 ```
 
 ```{=html}

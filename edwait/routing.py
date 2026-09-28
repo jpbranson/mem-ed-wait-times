@@ -2,7 +2,6 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
-import math
 import os
 from pathlib import Path
 import sqlite3
@@ -12,7 +11,7 @@ import time
 import requests
 
 from edwait.data import registry
-from edwait.travel import POLICY, arrival, coordinate, eligibility
+from edwait.travel import POLICY, arrival, coordinate, eligibility, meters_between
 
 ENDPOINT = "https://api.tomtom.com/maps/orbis/routing/routes/calculate"
 USER_AGENT = "mem-ed-wait-times/0.2 (TomTom Routing integration)"
@@ -165,9 +164,7 @@ def nonnegative(value):
 def separation(a, b):
     if not isinstance(a, list) or len(a) != 2 or not coordinate(a[0], 180) or not coordinate(a[1], 90):
         raise ValueError("Invalid road endpoint")
-    lon1, lat1, lon2, lat2 = map(math.radians, [*a, *b])
-    h = math.sin((lat2 - lat1) / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2)**2
-    return 6371000 * 2 * math.asin(math.sqrt(min(1, h)))
+    return meters_between({"latitude": a[1], "longitude": a[0]}, {"latitude": b[1], "longitude": b[0]})
 
 
 def parse_route(payload, slug, origin, destination, tolerance=ARRIVAL_TOLERANCE_METERS["entrance"]):
