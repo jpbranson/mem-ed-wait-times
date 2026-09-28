@@ -116,7 +116,7 @@ export async function compareRoutes({origin, candidates, key, departure, fetcher
           fatal.push(response.status === 429 ? "provider_limit_reached" : "routing_access_denied");
           stopped = true;
         }
-        try { await response.body?.cancel(); } catch { /* Connection cleanup only. */ }
+        await response.body?.cancel();
         return unavailable(candidate.slug);
       }
       const route = parseRoute(await response.json(), candidate.slug, start, [candidate.longitude, candidate.latitude],

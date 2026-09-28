@@ -106,7 +106,6 @@ export class RouteGateCore {
   }
 
   block(until) {
-    this.sql.exec("CREATE TABLE IF NOT EXISTS state (name TEXT PRIMARY KEY, value INTEGER NOT NULL)");
     this.sql.exec("INSERT INTO state VALUES ('blocked_until', ?) ON CONFLICT(name) DO UPDATE SET value = excluded.value", until);
   }
 
@@ -115,7 +114,7 @@ export class RouteGateCore {
       const url = new URL("travel.json", String(this.env.ASSET_ORIGIN).replace(/\/?$/, "/"));
       const response = await this.fetcher(url, {cache: "no-store", signal: AbortSignal.timeout(5000)});
       if (response.status !== 200) {
-        try { await response.body?.cancel(); } catch { /* Connection cleanup only. */ }
+        await response.body?.cancel();
         throw new Error("Travel context unavailable");
       }
       return await response.json();
