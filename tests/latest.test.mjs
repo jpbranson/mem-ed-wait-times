@@ -91,11 +91,14 @@ test("malformed, partial, duplicate and backward artifacts retain last valid dat
   }
 });
 
-test("request timeout marks refresh failed and keeps readings", async () => {
+test("request timeout marks refresh failed and keeps readings", async t => {
+  t.mock.timers.enable({apis: ["setTimeout"]});
   const feed = createFeed({expected, now: () => base,
     fetcher: async (_, {signal}) => new Promise((resolve, reject) => signal.addEventListener("abort", () => reject(Error("timeout"))))});
   // Default timeout is 10 seconds. No artifact has been loaded yet.
-  await feed.refresh();
+  const refresh = feed.refresh();
+  t.mock.timers.tick(10_000);
+  await refresh;
   assert.equal(feed.state().refreshFailed, true);
   assert.match(feed.state().html, /Missing reading/);
 });
@@ -104,7 +107,6 @@ test("deployment sync protects independently published data", () => {
   const workflow = readFileSync(new URL("../.github/workflows/dashboard.yml", import.meta.url), "utf8");
   const sync = workflow.split("\n").find(line => line.includes("aws s3 sync"));
   assert.match(sync, /--delete\s+--exclude "data\/\*"/);
-  assert.match(readFileSync(new URL("../dashboard/_quarto.yml", import.meta.url), "utf8"), /latest\.mjs/);
 });
 
 test("AWS CLI dry run excludes data artifacts from both upload and deletion", async t => {

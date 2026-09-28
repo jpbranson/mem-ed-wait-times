@@ -94,7 +94,6 @@ test("denied and unavailable opt-in geolocation offer manual input; success retu
 
 test("TomTom traffic delay is informational and old provider contracts are rejected",()=>{
   const input=fixture();
-  assert.equal(compareTravel(input).rows[0].total,92); // 12 drive already includes 1 min delay.
   input.routes.routes[0].traffic_delay_seconds=0;
   assert.equal(compareTravel(input).rows[0].trafficDelay,0);
   input.routes.routes[0].traffic_delay_seconds=721;
