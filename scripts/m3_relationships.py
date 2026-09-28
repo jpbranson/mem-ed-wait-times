@@ -1,6 +1,7 @@
 """Run the frozen M3 relationship protocol on M5's snapshot; no public artifact."""
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 import platform
@@ -88,9 +89,7 @@ def main():
     (args.output / "tests.json").write_text(json.dumps(tests), encoding="utf-8")
     args.results.write_text(json.dumps(report, indent=1), encoding="utf-8")
     figures(report, facilities, args.figures)
-    labels = {}
-    for c in report["candidates"]:
-        labels[c["label"]] = labels.get(c["label"], 0) + 1
+    labels = Counter(c["label"] for c in report["candidates"])
     print(json.dumps({"tests": report["tests"], "candidates": len(report["candidates"]), "labels": labels,
                       "runtime_seconds": round(report["runtime_seconds"], 1)}))
 

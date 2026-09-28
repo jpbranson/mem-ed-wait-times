@@ -64,11 +64,10 @@ def main():
                 row["http_status"] = response.status_code
                 if response.status_code == 200:
                     route = response.json()["routes"][0]
-                    path = route["legs"][0]["path"]["coordinates"]
+                    offset = separation(route["legs"][0]["path"]["coordinates"][-1], destination)
                     row.update(seconds=route["summary"]["travelDurationInSeconds"], meters=route["summary"]["lengthInMeters"],
                                traffic_delay_seconds=route["summary"].get("trafficDelayDurationInSeconds"),
-                               end_offset_m=round(separation(path[-1], destination)),
-                               within_tolerance=separation(path[-1], destination) <= ARRIVAL_TOLERANCE_METERS[kind])
+                               end_offset_m=round(offset), within_tolerance=offset <= ARRIVAL_TOLERANCE_METERS[kind])
             except (requests.RequestException, ValueError, KeyError, IndexError, TypeError) as error:
                 row["error"] = type(error).__name__
             results.append(row)

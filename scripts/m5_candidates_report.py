@@ -24,8 +24,7 @@ LABELS = {"carry_forward": "latest reading", "m1_median": "M1 median", "daily_na
 
 
 def load(name):
-    path = STUDY / f"{name}.json"
-    return json.loads(path.read_text()) if path.exists() else None
+    return json.loads((STUDY / f"{name}.json").read_text())
 
 
 def compact(report):
@@ -104,7 +103,7 @@ def main():
             for offset, report, color, marker, label in ((-.17, dev, BLUE, "o", "Development"), (.17, cal, ORANGE, "D", "Calibration")):
                 values = [s["models"][model]["all"][f"coverage_{level}"] for s in report["summary"]]
                 values = [v * 100 for v in values if v is not None]
-                ax.scatter([v for v in values], [i + offset] * len(values), color=color, marker=marker, s=18, alpha=.45,
+                ax.scatter(values, [i + offset] * len(values), color=color, marker=marker, s=18, alpha=.45,
                            label=label if i == 0 else None, edgecolors="none")
         ax.axvspan(level - 5, level + 5, color=MUTED, alpha=.12, label="Gate: nominal ± 5 points")
         ax.axvline(level, color=INK, linewidth=1)

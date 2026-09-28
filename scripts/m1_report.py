@@ -14,6 +14,7 @@ def main():
     report=json.loads(Path('.cache/m1-replay.json').read_text(encoding='utf-8'))
     rows=json.loads(Path('.cache/m1-comparisons.json').read_text(encoding='utf-8'))['28d-radius1']
     later=[r for r in rows if timestamp(r['at'])>=timestamp('2026-09-07T00:00:00Z')]
+    selection=[r for r in rows if timestamp(r['at'])<timestamp('2026-09-07T00:00:00Z')]
     examples=[]
     for facility in ['memphis','desoto','crittenden','arlington','baptist-medical-center-yazoo']:
         cases=[r for r in later if r['facility']==facility and r['delta'] is not None]
@@ -29,7 +30,6 @@ def main():
     for tail in (5,10,15):
         for minimum in (5,10,15):
             entry={'tail_percent':tail,'minimum_minutes':minimum}
-            selection=[r for r in rows if timestamp(r['at'])<timestamp('2026-09-07T00:00:00Z')]
             for label,period in [('selection',selection),('later',later)]:
                 supported=[r for r in period if r['delta'] is not None]
                 count=sum((r['percentile']>=100-tail and r['delta']>=minimum) or
