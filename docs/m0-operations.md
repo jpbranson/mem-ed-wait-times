@@ -6,15 +6,22 @@ tags: [m0, operations, collector, aws]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T17:51:46Z
+  at: 2026-10-05T03:16:22Z
 ---
 
 # M0 operations and deployment
 
-Implementation date: 2026-09-14. Deployed to production on 2026-09-22; both Lambdas
-run version 2 code, and the collector publishes latest readings and attempts.
-See the [deployment record](aws-deployment-2026-09-22.md) for permissions, package
-identity, preserved schedules, smoke checks, and remaining operational checks.
+Implementation date: 2026-09-14. Deployed to production on 2026-09-22 as version 2
+of both Lambdas; the collector publishes latest readings and attempts. At 19:25 UTC
+on 2026-09-27 the collector `ed-wait-times` was updated to published version 3
+(code SHA-256 `BWPrzXeiycGXZthr5WJMgCadvNbgK0rpLrc0Rqzj6QM=`), carrying the
+`latest.json` [`health` block](s3-buckets.md) from PR #1 (`e671c6b`, merged two
+minutes later); the compactor remains version 2. A read-only check on 2026-10-05
+found the live `latest.json` carrying that block. See the
+[deployment record](aws-deployment-2026-09-22.md) for permissions, package identity,
+preserved schedules and smoke checks, and the
+[production follow-up](production-followup-2026-09-23.md) for the operational checks
+completed after it.
 
 ## Local validation
 
@@ -66,7 +73,9 @@ M2's optional transient origin flow is documented separately in
 [its privacy contract](m2-operations.md#destination-and-privacy-contracts).
 No CORS change is needed for same-origin requests.
 
-Required collector environment (compactor requires only `BUCKET`):
+Collector environment: `BUCKET` and `LATEST_BUCKET` are required;
+`STALE_AFTER_SECONDS` is optional and defaults to 1800. The compactor requires only
+`BUCKET`.
 
 ```text
 BUCKET=mem-ed-wait-times

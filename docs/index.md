@@ -32,7 +32,7 @@ okf_version: "0.2"
 
 * [M1 method and validation](m1-validation.md) - How the M1 self-comparison method (self-comparison-v1) was selected and validated by past-only replay on 2026-09-14, with implementation, UI and later display follow-ups.
 * [M2 benefit-rule backtest — 2026-09-26 UTC](m2-benefit-validation.md) - Result of the pre-registered M2 benefit-rule backtest (2026-09-26 UTC): no candidate rule for calling an alternative meaningfully lower qualified, so preferred-option claims stay disabled.
-* [M2 local validation — 2026-09-14](m2-validation.md) - Local validation of the M2 travel-comparison prototype from 2026-09-14, the initial OSRM prototype history, and 2026-09-26 traffic-profile and rush-hour measurements, with outstanding release work.
+* [M2 local validation — 2026-09-14](m2-validation.md) - Local validation of the M2 travel-comparison prototype from 2026-09-14, the initial OSRM prototype history, and 2026-09-26 historical traffic-profile estimates of weekday-peak delay (a live peak run is still pending), with outstanding release work.
 * [M3 validation — relationships explorer](m3-validation.md) - Validation of M3's difference-from-usual heatmap (2026-09-23), the offline relationship study that found no confirmed pair association (2026-09-24), and the campus map with replay (2026-09-26).
 * [M4 validation: area counts and wait stability](m4-validation.md) - Local validation of M4's area-wide elevated-wait counts and wait-stability summaries, deployed 2026-09-24, and the work that remains.
 * [M5 ARIMA development pilot — 2026-09-23 UTC](m5-arima-validation.md) - Development-period pilot of ARIMA(1,0,0) and ARIMA(1,1,0) against simple benchmarks (2026-09-23 UTC); no forecast qualified for release.
@@ -48,7 +48,7 @@ okf_version: "0.2"
 # Deployment records
 
 * [AWS deployment — 2026-09-22](aws-deployment-2026-09-22.md) - Dated record of the 2026-09-22 (America/Chicago) release of the M0 collector and latest publisher, compactor, M1 dashboard and M2 static interface to AWS us-east-1, with validation evidence and rollback notes.
-* [Production follow-up — 2026-09-23 UTC](production-followup-2026-09-23.md) - Dated follow-up to the initial AWS release: the first GitHub-hosted build, schedule mitigation, hourly EventBridge dispatch, and the M2/M3 and M4 releases.
+* [Production follow-up — 2026-09-23 UTC](production-followup-2026-09-23.md) - Dated follow-up to the initial AWS release, 2026-09-23 to 2026-09-27 UTC: the first GitHub-hosted build, public browser review, schedule mitigation, the M2/M3, campus-fallback and M4 releases, and hourly EventBridge dispatch through removal of the backup cron.
 
 # Research records
 

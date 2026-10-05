@@ -5,8 +5,8 @@ description: Dated record of the 2026-09-22 (America/Chicago) release of the M0 
 tags: [deployment, aws, m0, m1, m2]
 status: stable
 generated:
-  by: human:jpbranson
-  at: 2026-09-23T04:28:53Z
+  by: claude-code/claude-opus-5-5
+  at: 2026-10-05T03:16:22Z
 ---
 
 # AWS deployment — 2026-09-22
@@ -82,6 +82,8 @@ used the production client functions in Node; it was not a new visual browser
 review. The dated local desktop/mobile evidence remains in the M1/M2 validation
 documents. The next operational checks are the next hourly GitHub build and a
 public browser review. These are distinct from the completed direct deployment.
+(Both were completed on 2026-09-23; see the
+[production follow-up](production-followup-2026-09-23.md).)
 
 ## Documentation audit follow-up
 

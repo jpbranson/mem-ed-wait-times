@@ -5,8 +5,8 @@ description: How the M1 self-comparison method (self-comparison-v1) was selected
 tags: [m1, self-comparison, validation]
 status: stable
 generated:
-  by: human:jpbranson
-  at: 2026-09-23T04:28:53Z
+  by: claude-code/claude-opus-5-5
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: replay-evidence
   resource: m1-replay-evidence.json
@@ -35,8 +35,9 @@ passed 35 Python and 15 JavaScript tests plus the desktop/mobile checks in
 Earlier cell counts, layouts, test totals, and browser interruptions below are
 dated development history. The full suite later passed 49 Python and 33 JavaScript
 tests at the 2026-09-22 release, with public schema/asset and real-refresh checks.
-A new public visual review remains outstanding; earlier local browser evidence
-does not establish that it has occurred.
+A new public visual review remained outstanding at that point; earlier local browser
+evidence did not establish it. It was completed later on 2026-09-23; see the
+[production follow-up](production-followup-2026-09-23.md#public-browser-review).
 
 ## Selected method: self-comparison-v1
 

@@ -6,12 +6,12 @@ tags: [m2, operations, routing, tomtom, gateway]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-28T01:48:18Z
+  at: 2026-10-05T03:16:22Z
 ---
 
 # M2 travel comparison: local operation and release gates
 
-Updated 2026-09-26 UTC. M2 is implemented as a prototype and remains **in
+Updated 2026-10-05 UTC. M2 is implemented as a prototype and remains **in
 progress**. The user supplied a local API key and one live v3 contract probe passed;
 account/billing settings have not been audited. The [Cloudflare gateway](#cloudflare-gateway)
 was deployed by the user on 2026-09-26 at an address that is not linked publicly.
@@ -424,7 +424,7 @@ nothing to TomTom. `--live` has wrangler read the key from `..\.env.local` with
 `--env-file`; it is never printed or passed on a command line. Its ledger is
 temporary, so reserve live requests in `.cache/tomtom-usage.sqlite3` as well.
 Every local request is one client, so the mock checks and `--serve` lift the
-per-client limits except in the two checks that test them.
+per-client limits except in the per-client burst check.
 
 **Validation (2026-09-26 UTC).** 14 unit tests (`tests/gateway.test.mjs`, part of
 the site's Node suite) cover input and context validation, request format, parsing
@@ -464,7 +464,9 @@ history (`npx wrangler deployments list`, `npx wrangler versions view <id>`) sho
 Worker versions carrying `CLIENT_BURST_LIMIT` 4, `CLIENT_DAILY_LIMIT` 20,
 `TOMTOM_DAILY_BUDGET` 1000 and `TOMTOM_REQUEST_BUDGET` 20000 beside the key secret,
 deployed at 02:56 and 13:07 UTC on 2026-09-26; the 13:07 version, one minute after
-commit `1d2331c`, is current. The S3 site has carried the page's messages for the
+commit `1d2331c`, was current at that check. A later deployment at 00:53 UTC on
+2026-09-28 (version `97c536ea`, contents unverified; see the security fix above) is
+still the current one as of 2026-10-05. The S3 site has carried the page's messages for the
 new codes since the 13:09 UTC build (run
 [36244228621](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/36244228621)).
 `/api/routes/status` returned `available: true` with `no-store`. No comparison was

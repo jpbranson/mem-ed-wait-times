@@ -151,7 +151,8 @@ def main():
         return Counter(k for s in report["summary"] for k, v in s["decision"]["checks"].items() if not v)
     def within(report, model, level):
         values = [s["models"][model]["all"][f"coverage_{level}"] for s in report["summary"]]
-        return sum(v is not None and abs(v - level / 100) <= .05 for v in values)
+        # Inclusive despite float rounding: 75% is exactly 5 points from 80%.
+        return sum(v is not None and abs(v - level / 100) <= .05 + 1e-9 for v in values)
     dev_passes = [key(s) for s in dev["summary"] if s["decision"]["passes"]]
     dev1_passes = [key(s) for s in dev1["summary"] if s["decision"]["passes"]]
     cal_pass = [key(s) for s in cal["summary"] if s["decision"]["passes"]]
@@ -225,7 +226,10 @@ def main():
               "collected after 23 September.", "",
               f"Calibration interval coverage stayed near nominal (ARIMA(1,0,0)+Fourier {within(cal, 'arima_100_fourier', 80)}/80 and "
               f"{within(cal, 'arima_100_fourier', 95)}/80; profile persistence {within(cal, 'profile_ar', 80)}/80 and {within(cal, 'profile_ar', 95)}/80 within 5 points), "
-              f"but {fails(cal)['coverage']} selected candidates missed the coverage gate at one or both levels. Maximum daily fit time was {cal['maximum_daily_fit_seconds']:.0f} s.", "",
+              f"but {fails(cal)['coverage']} selected candidates missed the coverage gate at one or both levels. "
+              "The frozen gate compares in floating point, so coverage exactly 5 points from nominal counts as a miss there; "
+              "no selected candidate's coverage sat at that boundary in any phase. "
+              f"Maximum daily fit time was {cal['maximum_daily_fit_seconds']:.0f} s.", "",
               "![Development versus calibration gain](figures/m5-candidates-selection.png)", "",
               "![Interval coverage by model](figures/m5-candidates-coverage.png)", ""]
     if passed:

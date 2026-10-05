@@ -6,6 +6,12 @@ Record creations, deprecations, renames and structural changes here; routine edi
 tracked by each document's `generated` frontmatter and in git.
 
 ## 2026-10-05
+* **Update**: Checked the bundle against code, git history and read-only live state,
+  and corrected 16 documents: stale deployment and status statements, three wrong
+  figures, and misplaced or superseded passages. Findings are in the
+  [development plan](development-plan.md)'s progress log. In the
+  [regional collector](regional-collector.md), the section "Optional Lambda storage
+  entry point" became "Lambda storage entry point".
 * **Initialization**: Adopted Open Knowledge Format v0.2 for `docs/`. Added frontmatter
   (`type`, `title`, `description`, `tags`, `status`, `generated`, and `sources` for
   evidence-based reports and research) to all 21 concept documents, a generated

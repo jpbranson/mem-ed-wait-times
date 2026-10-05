@@ -6,7 +6,7 @@ tags: [work-log, human-review]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T18:11:49Z
+  at: 2026-10-05T03:16:22Z
 ---
 
 # Flight log: next-steps run (2026-09-26 UTC)
@@ -26,8 +26,9 @@ work the human review queue below. When the alarm subscription is confirmed, do
 step 2 (remove the `schedule:` trigger, update the docs, push to `main` alone).
 Steps 1 and 2 were completed on 2026-09-27 (entries below).
 
-Queue status after the run (read-only checks, 2026-09-27 ~15:05 UTC; the entries
-below stay as recorded, and the [development plan](development-plan.md) is current):
+Queue status after the run (read-only checks on 2026-09-27, about 15:05–17:45 UTC;
+the entries below stay as recorded, and the [development plan](development-plan.md)
+is current):
 
 - Done: item 8, this branch was merged into `main` at the user's request (`87885e4`, pushed 01:42 UTC,
   published by run [36209744679](https://github.com/jpbranson/mem-ed-wait-times/actions/runs/36209744679)),
@@ -40,6 +41,11 @@ below stay as recorded, and the [development plan](development-plan.md) is curre
 - Still open: items 2 and 3 (no entrance reviewed; Leake
   still `unknown`), item 5 (not recorded as sent), items 6 and 7 (time-gated), and
   item 9 (the AWS CLI still authenticates as the root identity).
+- Update (read-only checks, 2026-10-05 UTC): item 6's window on Monday 2026-09-28
+  passed without a run (the local TomTom ledger has no requests after 2026-09-26), so
+  it needs a new weekday-peak date. Item 9 still applies: the AWS CLI on this machine
+  still authenticates as the account's root identity. Items 2, 3 and 5 show no
+  recorded change.
 
 ## Rules for this run
 

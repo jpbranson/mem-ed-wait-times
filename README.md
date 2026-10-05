@@ -29,7 +29,9 @@ day once failed dispatches could email the user.
 
 `docs/` is an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
 v0.2 bundle: each document carries YAML frontmatter (type, description, authorship,
-sources), and [docs/index.md](docs/index.md) lists every document by kind.
+and sources where it derives from evidence), except three frozen study protocols
+whose recorded hashes forbid edits. [docs/index.md](docs/index.md) lists every
+document by kind, and [scripts/okf.py](scripts/okf.py) checks the bundle in the tests.
 
 - [Development plan and design](docs/development-plan.md): priorities, milestone
   status, self-comparisons, travel-and-wait comparison, relationship exploration,
@@ -91,6 +93,7 @@ sources), and [docs/index.md](docs/index.md) lists every document by kind.
   and [page styles](dashboard/latest.css)
 - [Area counts](dashboard/area.mjs) with [area groups](edwait/areas.py), and
   [wait stability](edwait/stability.py) (M4)
+- [Campus map and replay](dashboard/geo-map.mjs) with its [map model](dashboard/geo.mjs) (M3)
 - [Difference-from-usual heatmap](dashboard/heatmap.mjs) and offline
   [relationship study](edwait/relationships.py) with its [runner](scripts/m3_relationships.py) (M3)
 - [Render and deployment workflow](.github/workflows/dashboard.yml)

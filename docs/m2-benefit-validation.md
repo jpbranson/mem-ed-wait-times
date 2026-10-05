@@ -6,7 +6,7 @@ tags: [m2, backtest, recommendations]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-26T00:52:07Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: protocol
   resource: m2-benefit-protocol.md
@@ -45,8 +45,9 @@ hospital's published wait at its arrival replaced the wait at departure.
 
 ## Results
 
-Discovery: 14,170 opportunities on 26 local days (8 August to 1 September).
-Confirmation: 7,924 on 15 days (2–15 September). Precision is the share of claims
+Discovery: 14,170 opportunities on 26 local days (7 August to 1 September).
+Confirmation: 7,924 on 15 local days (1–15 September; the phase boundary at 00:00 UTC
+on 2 September falls on the evening of 1 September in Chicago). Precision is the share of claims
 that held; intervals are day-block bootstrap 95%.
 
 | Rule | Discovery claims | Discovery precision | Confirmation claims | Confirmation precision | Median / 10th pct `A` (disc.) |
@@ -88,7 +89,8 @@ Secondary outcomes (claims holding, discovery, confirmation similar):
   experience resembles the reading about an hour later; judged that way, claims held
   only 60–70% of the time. Confirming the metric's definition matters as much as any
   threshold.
-- Plausible drive-time error (+20%) lowered precision by about 3–13 points.
+- Plausible drive-time error (+20%) lowered precision by about 1–14 points (2–13 on
+  discovery; the largest drop for the no-margin rule F0).
 
 ## What this means for M2
 

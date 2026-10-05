@@ -6,7 +6,7 @@ tags: [s3, storage, data-contract]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T19:27:37Z
+  at: 2026-10-05T03:16:22Z
 ---
 
 # S3 bucket reference
@@ -20,13 +20,14 @@ changed during rollout. Earlier record sampling below remains dated 2026-09-11
 historical evidence. Existing schedules and public read policy were preserved.
 2026-09-27 adds documentation/schema for the separate regional publication
 collector's storage prefixes; that collector was deployed the same day and writes
-to them every 15 minutes.
+to them every 15 minutes. The same day, `latest.json` gained an optional `health`
+block (PR #1, `e671c6b`), live since collector version 3 was deployed at 19:25 UTC.
 
 ## Overview
 
 | Bucket | Purpose | Contents |
 | --- | --- | --- |
-| `s3://mem-ed-wait-times/` | Source data for ED wait-time analysis | Raw JSON Lines batches, daily gzip copies, and collection attempt summaries |
+| `s3://mem-ed-wait-times/` | Source data for ED wait-time analysis | Raw JSON Lines batches, daily gzip copies, and collection attempt summaries; since 2026-09-27 also the regional collector's raw publication records and run summaries (`raw/er_publications/`, `operations/er_publications/`) |
 | `s3://mem-ed-wait-times-dashboard/` | Dashboard hosting | Rendered HTML, supporting assets, website-owned `comparisons.json`/`travel.json`, and independently published `data/latest.json`; verified deployed 2026-09-22 |
 
 The machine-readable [ED wait record schema](ed-wait.schema.json) describes one
@@ -189,8 +190,10 @@ Regions are states for display, not verified clinical service areas.
 
 A failed facility request is logged and omitted from raw readings but recorded
 in the attempt summary and latest artifact. A batch can contain fewer facilities.
-All returned valid metrics retain separate raw records; `latest.json` and the
-dashboard explicitly select `CV_ED_Wait`.
+When every metric in a response is a valid integer, each one gets its own raw
+record; a single non-integer metric rejects the whole response, which is recorded
+as an `invalid_response` attempt with no raw rows. `latest.json` and the dashboard
+explicitly select `CV_ED_Wait`.
 
 ### Reading and combining records
 

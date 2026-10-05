@@ -6,7 +6,7 @@ tags: [m5, forecasting, calibration]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-24T01:25:34Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: protocol
   resource: m5-study-protocol.md
@@ -68,7 +68,7 @@ Gains are minutes of MAE reduction versus the frozen benchmark; positive favors 
 
 Not shortlisted but passing on calibration: anderson 60 min (profile persistence, +3.0), anderson 120 min (profile persistence, +1.6), baptist-medical-center 60 min (profile persistence, +4.3), memphis 120 min (profile persistence, +6.5). They cannot qualify in this study. Together with the development results, they suggest profile persistence may help at 60–120 minutes for the most variable hospitals. Testing that needs a new pre-registered study on data collected after 23 September.
 
-Calibration interval coverage stayed near nominal (ARIMA(1,0,0)+Fourier 66/80 and 77/80; profile persistence 63/80 and 75/80 within 5 points), but 18 selected candidates missed the coverage gate at one or both levels. Maximum daily fit time was 13 s.
+Calibration interval coverage stayed near nominal (ARIMA(1,0,0)+Fourier 68/80 and 77/80; profile persistence 63/80 and 75/80 within 5 points), but 18 selected candidates missed the coverage gate at one or both levels. The frozen gate compares in floating point, so coverage exactly 5 points from nominal counts as a miss there; no selected candidate's coverage sat at that boundary in any phase. Maximum daily fit time was 13 s.
 
 ![Development versus calibration gain](figures/m5-candidates-selection.png)
 

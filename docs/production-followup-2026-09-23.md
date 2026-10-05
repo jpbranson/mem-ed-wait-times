@@ -1,12 +1,12 @@
 ---
 type: Deployment Record
 title: Production follow-up — 2026-09-23 UTC
-description: 'Dated follow-up to the initial AWS release: the first GitHub-hosted build, schedule mitigation, hourly EventBridge dispatch, and the M2/M3 and M4 releases.'
+description: 'Dated follow-up to the initial AWS release, 2026-09-23 to 2026-09-27 UTC: the first GitHub-hosted build, public browser review, schedule mitigation, the M2/M3, campus-fallback and M4 releases, and hourly EventBridge dispatch through removal of the backup cron.'
 tags: [deployment, github-actions, eventbridge, m2, m3, m4]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T18:11:49Z
+  at: 2026-10-05T03:16:22Z
 ---
 
 # Production follow-up — 2026-09-23 UTC
@@ -198,6 +198,15 @@ slot is 01:17 UTC, so **delivery has not yet been observed**. A dispatched run
 appears in GitHub Actions with event `workflow_dispatch` ("Manually run"); runs
 labeled "Scheduled" still come from GitHub's cron.
 
+The workflow's `schedule:` trigger is retained as a backup until EventBridge has
+delivered hourly for about a day; the workflow's concurrency group queues any
+duplicate. Remove the cron after that observation. (Removed on 2026-09-27, after
+the alarm's email subscription was confirmed; see the update under
+[Observed dispatches](#observed-dispatches).) The existing collector
+(`trigger_15`) and compaction (`compact_daily`) rules are unchanged. No repository,
+Lambda, bucket policy or record/storage contract changed. Expected cost is
+negligible (about 720 API-destination invocations per month).
+
 ### Observed dispatches
 
 Read-only checks at about 03:05 and 04:30 UTC on 2026-09-24 found the following:
@@ -255,12 +264,3 @@ area view showed 2 above and 3 below usual with 20 of 20 compared, 168 hourly
 columns and a typical count of 2. The stability graphic was present, there was no
 horizontal overflow and no console errors. Phone-width layout was verified locally
 before release ([M4 validation](m4-validation.md)).
-
-The workflow's `schedule:` trigger is retained as a backup until EventBridge has
-delivered hourly for about a day; the workflow's concurrency group queues any
-duplicate. Remove the cron after that observation. (Removed on 2026-09-27, after
-the alarm's email subscription was confirmed; see the update under
-[Observed dispatches](#observed-dispatches).) The existing collector
-(`trigger_15`) and compaction (`compact_daily`) rules are unchanged. No repository,
-Lambda, bucket policy or record/storage contract changed. Expected cost is
-negligible (about 720 API-destination invocations per month).

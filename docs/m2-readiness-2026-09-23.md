@@ -6,7 +6,7 @@ tags: [m2, tomtom, hosting, readiness]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T18:11:49Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: tomtom-pricing
   resource: https://docs.tomtom.com/pricing
@@ -85,7 +85,9 @@ enable prepaid credit or paid fallback. Full account/terms review remains a gate
 
 The reviewed pages did not establish every required destination field. Campus
 addresses and map markers are not substituted for verified emergency entrances.
-All 20 registry destinations remain excluded. This table records partial research,
+All 20 registry destinations remain excluded. (Later the same day, by user decision,
+18 adult and 4 child destinations became eligible using labeled campus centers; see
+[M2 destination evidence](m2-destinations-2026-09-23.md).) This table records partial research,
 not a complete operational/suitability verification.
 
 The [current emergency information](https://www.baptistonline.org/services/emergency)

@@ -6,7 +6,7 @@ tags: [m2, metric, baptist]
 status: draft
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-26T00:10:32Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: waittimes-endpoint
   resource: https://sites.bmhcc.org/api/waittimes/waittimes.php
@@ -67,7 +67,7 @@ relations. The user may know a better contact.
 > 6. Is it acceptable to display these published values with attribution, and is
 >    there a preferred way to access them?
 >
-> The site labels every value as Baptist's approximate published wait, notes that
+> The site labels every value as Baptist's published wait, notes that
 > serious conditions are treated first through triage, and directs emergencies to
 > 911. Thank you for your help.
 

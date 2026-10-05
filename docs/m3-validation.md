@@ -6,7 +6,7 @@ tags: [m3, relationships, heatmap, map]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-26T13:06:00Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: protocol
   resource: m3-relationship-protocol.md
@@ -109,7 +109,7 @@ unreviewed campus centers, not travel time.
 
 All 190 pairs met support in both periods (1,520 tests each). Every facility had
 331 supported hourly bins in discovery (14 days from 2026-08-19; see the
-protocol's execution note) and 336 in confirmation.
+protocol's execution note) except Booneville, which had 328, and 336 in confirmation.
 
 | Family | Discovery BH q ≤ 0.10 | Robust with ρ ≥ 0.20 | Confirmed |
 | --- | --- | --- | --- |
@@ -197,7 +197,10 @@ wiring in [app.mjs](../dashboard/app.mjs), markup and disclosure in
   between 24 hours and 7 days returns to the latest period.
 - View: the page's existing area groups (all hospitals, three states, and M3's
   50 km neighbor groups) frame the map, separating the Memphis area's seven
-  campuses. The map refits on resize until the user pans or zooms.
+  campuses. The map refits on resize until the user pans or zooms. (Later: on
+  2026-09-27 the map gained eight map-only campuses with square markers and its own
+  area groups built from all 28 directory records, with 17 in the Memphis area; see
+  [map-only ER directory](map-facilities-2026-09-27.md).)
 - Map code and tiles load only when the section nears the viewport. Viewing loads
   the map area from OpenFreeMap, as the origin map does; the disclosure says so.
   If the map fails, a status line points to the heatmap, which shows the same values.

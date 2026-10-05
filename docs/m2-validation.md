@@ -1,12 +1,12 @@
 ---
 type: Validation Report
 title: M2 local validation — 2026-09-14
-description: Local validation of the M2 travel-comparison prototype from 2026-09-14, the initial OSRM prototype history, and 2026-09-26 traffic-profile and rush-hour measurements, with outstanding release work.
+description: Local validation of the M2 travel-comparison prototype from 2026-09-14, the initial OSRM prototype history, and 2026-09-26 historical traffic-profile estimates of weekday-peak delay (a live peak run is still pending), with outstanding release work.
 tags: [m2, routing, validation]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T18:11:49Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: replay-evidence
   resource: m2-replay-evidence.json
@@ -146,7 +146,13 @@ excluding September 14. All 20 facilities had supported summaries at all four
 horizons. The [machine-readable evidence](m2-replay-evidence.json) preserves the
 artifact hash, exact source dates, policy, support counts and selected results.
 
-90th percentile absolute change in published minutes, rounded here to one decimal:
+90th percentile absolute change in published minutes, rounded here to one decimal.
+**Correction (2026-09-24):** these values are not percentiles. `build_travel` then
+interpolated over changes in chronological rather than sorted order, so the values
+below are essentially arbitrary; the defect was fixed with M4 in `8242ad1`
+([M4 validation](m4-validation.md#m2-movement-correction)). Recompute this window
+with the current code before relying on any value; the evidence JSON keeps the
+values as published.
 
 | Facility | 15 min | 30 min | 60 min | 120 min |
 | --- | ---: | ---: | ---: | ---: |
@@ -156,8 +162,7 @@ artifact hash, exact source dates, policy, support counts and selected results.
 
 Each selected summary uses 28 contributing days; valid pairs range from 2,672 to
 2,687. These overlapping, all-hour historical changes are descriptive and are
-not calibrated error bounds. Changes need not increase monotonically with the
-horizon: a published series can return toward an earlier value. Selecting the
+not calibrated error bounds. Selecting the
 next available horizon does not establish a conservative bound for an intervening
 drive time. The provisional movement screen cannot establish clinical benefit or
 traffic uncertainty; recommendations remain disabled even when it is passed.
@@ -210,9 +215,12 @@ more, and profiles say nothing about live coverage. Aggregate results:
 [m2-traffic-profile-2026-09-26.json](m2-traffic-profile-2026-09-26.json); the
 per-route files (no geometry) are in the Git-ignored `.cache/`.
 
-**Still required:** a `live` run during an actual weekday peak (next: Monday
+**Still required:** a `live` run during an actual weekday peak (planned for Monday
 2026-09-28, 12:00–14:00 or 21:00–23:00 UTC), compared with the profile for the
-same hour to measure jam delay and reported-delay coverage:
+same hour to measure jam delay and reported-delay coverage. That window passed
+without a run: as of 2026-10-05 the local TomTom ledger records requests only on
+2026-09-23 and 2026-09-26. Use the commands below for any weekday peak, changing
+the dates in the file names:
 
 ```powershell
 .venv\Scripts\python.exe scripts/check_routes.py --output .cache/route-validation-20260928-am.json

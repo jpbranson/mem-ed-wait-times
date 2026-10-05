@@ -6,7 +6,7 @@ tags: [map, facilities, directory]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T19:05:08Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: highland-hills-er
   resource: https://highlandhillsmc.com/er/
@@ -38,6 +38,9 @@ sources:
 - id: lauderdale-community
   resource: https://www.lauderdalehospital.org/getpage.php?name=Emergency_Services&sub=Services
   title: Lauderdale Community Hospital emergency services
+- id: openstreetmap
+  resource: https://www.openstreetmap.org/
+  title: OpenStreetMap campus geometry (one way or relation per facility, linked in the table)
 ---
 
 # Memphis-area ERs without published wait information

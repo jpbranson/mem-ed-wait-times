@@ -6,7 +6,7 @@ tags: [regional, collector, lambda, operations]
 status: stable
 generated:
   by: claude-code/claude-opus-5-5
-  at: 2026-09-27T17:51:46Z
+  at: 2026-10-05T03:16:22Z
 sources:
 - id: methodist-emergency
   resource: https://www.methodisthealth.org/articles/emergency-care-information
@@ -130,7 +130,7 @@ body, cookie, CSRF token, bearer token or patient information is persisted.
 The bundled InQuicker client key is public application configuration; ephemeral
 anonymous bearer tokens are obtained on each batch and remain in memory.
 
-## Optional Lambda storage entry point
+## Lambda storage entry point
 
 Handler: `edwait.regional_collector.lambda_handler`; environment: `BUCKET`.
 The package needs only `requests` plus `edwait/__init__.py` and this module; the
@@ -208,9 +208,12 @@ the site rather than changing headers or addresses to get around it.
   trigger choice and future reads; retained storage accumulates (about 26.5 MB/month
   at the 16:58 batch's size). Live batches took 1.9–2.2 s end to end, so the
   60-second figure is deliberately conservative; within free allowances, S3 PUTs
-  would dominate (about $0.03/month). Verify the
-  chosen deployment memory and actual runtime against the project's $5/month
-  total limit. [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/),
+  would dominate (about $0.03/month). Deployed at 128 MB every 15 minutes, it
+  averaged 4.6 s per run from 2026-09-28 through 2026-10-04 (maximum 8.7 s over
+  672 runs, CloudWatch), about $0.03/month of compute before the free allowance.
+  Per-service billed cost has not been retrieved (Cost Explorer charges per API
+  call); the account's total AWS spend for October was $0.13 by 2026-10-05,
+  forecast $1.15, within the project's $5/month limit. [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/),
   [S3 pricing](https://aws.amazon.com/s3/pricing/).
 
 Validation itself changed nothing in AWS; the deployment below created the
