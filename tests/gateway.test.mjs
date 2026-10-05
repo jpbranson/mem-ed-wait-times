@@ -151,11 +151,17 @@ test("route parsing keeps delay semantics and fails closed like the Python adapt
 test("starts are spaced, the deadline holds, failures stay partial, and quota errors stop new calls", async () => {
   const many = Array.from({length: 6}, (_, i) => ({slug: `f${i}`, kind: "campus", latitude: 35.14, longitude: -90.04 - i / 100}));
   // Real timers: concurrent sleeps overlap, so a shared fake clock would overstate spacing.
-  const starts = [], spaced = provider({onRoute: () => starts.push(performance.now())});
-  await compareRoutes({origin: ORIGIN, candidates: many, key: KEY, departure: at, fetcher: spaced.fetcher, spacingMs: 30,
+  // Starts are observed in the provider a few event-loop turns after each grant, and one slow
+  // turn (first-call compilation, garbage collection) can shorten an observed gap. Each gap
+  // must still exceed half the spacing, which unserialized grants fail, and the whole span
+  // must cover every enforced gap less one such delay.
+  const spacing = 50, starts = [], spaced = provider({onRoute: () => starts.push(performance.now())});
+  await compareRoutes({origin: ORIGIN, candidates: many, key: KEY, departure: at, fetcher: spaced.fetcher, spacingMs: spacing,
     clock: () => performance.now(), sleep: ms => new Promise(resolve => setTimeout(resolve, ms))});
   assert.equal(starts.length, 6);
-  starts.slice(1).forEach((t, i) => assert.ok(t - starts[i] >= 28, `${t - starts[i]} ms between starts`));
+  starts.slice(1).forEach((t, i) => assert.ok(t - starts[i] >= spacing / 2, `${t - starts[i]} ms between starts`));
+  const span = starts.at(-1) - starts[0];
+  assert.ok(span >= (starts.length - 1.5) * spacing, `${span} ms from first to last start`);
 
   let time = clock();
   const slow = provider({onRoute: () => { time.value += 16_000; }});
