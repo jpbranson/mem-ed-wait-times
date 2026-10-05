@@ -3,6 +3,10 @@
 from collections import Counter
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.okf import write_concept
 
 
 def main():
@@ -55,7 +59,7 @@ def main():
                   "cold-start availability on development data; freeze all choices before scoring calibration/holdout. "
                   "The eight M5 tests cover slot semantics, future mutation, DST, zeros/missingness, fitting cutoffs, "
                   "hourly arrivals and failed-fit abstention. Successful numerical convergence alone is not a release gate.", ""])
-    Path("docs/m5-arima-validation.md").write_text("\n".join(lines), encoding="utf-8")
+    write_concept("docs/m5-arima-validation.md", "\n".join(lines), "process:scripts/m5_arima_report.py")
     Path("docs/m5-arima-results.json").write_text(json.dumps({**report, "comparisons": rows}, indent=2)+"\n", encoding="utf-8")
     print(json.dumps(dict(counts)))
 

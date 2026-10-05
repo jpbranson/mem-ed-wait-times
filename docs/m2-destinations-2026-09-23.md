@@ -1,3 +1,30 @@
+---
+type: Research Record
+title: M2 destination evidence — 2026-09-23 UTC
+description: Official status, service and age evidence for the 20 registry destinations, the user's 2026-09-23 decision to route to labeled campus centers until entrances are reviewed, and the 2026-09-26 Leake recheck.
+tags: [m2, destinations, entrances]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+sources:
+- id: baptist-pages
+  resource: Official Baptist pages for each of the 20 registry facilities, fetched 2026-09-23
+  title: Baptist official facility pages
+- id: leake-location
+  resource: https://www.baptistonline.org/locations/leake
+  title: Baptist Leake location page
+- id: leake-services
+  resource: https://www.baptistonline.org/locations/leake/services
+  title: Baptist Leake services page
+- id: baptist-emergency
+  resource: https://www.baptistonline.org/services/emergency
+  title: Baptist emergency services list
+- id: cfr-485-618
+  resource: https://www.law.cornell.edu/cfr/text/42/485.618
+  title: 42 CFR 485.618
+---
+
 # M2 destination evidence — 2026-09-23 UTC
 
 M2 remains in progress. This record documents the destination research that the

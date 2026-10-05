@@ -1,3 +1,45 @@
+---
+type: Research Record
+title: M2 readiness follow-up — 2026-09-23 UTC
+description: 'Dated M2 readiness follow-up: a live TomTom connectivity check, the destination evidence reviewed, and the free public hosting decision.'
+tags: [m2, tomtom, hosting, readiness]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+sources:
+- id: tomtom-pricing
+  resource: https://docs.tomtom.com/pricing
+  title: TomTom pricing
+- id: tomtom-faq
+  resource: https://docs.tomtom.com/platform/documentation/status-and-support/faqs
+  title: TomTom platform FAQ
+- id: baptist-memphis-services
+  resource: https://www.baptistonline.org/locations/memphis/services
+  title: Baptist Memphis services page
+- id: baptist-desoto-services
+  resource: https://www.baptistonline.org/locations/desoto/services
+  title: Baptist DeSoto services page
+- id: baptist-crittenden
+  resource: https://www.baptistonline.org/locations/crittenden
+  title: Baptist Crittenden location page
+- id: baptist-childrens
+  resource: https://www.baptistonline.org/locations/childrens
+  title: Baptist Children's location page
+- id: baptist-emergency
+  resource: https://www.baptistonline.org/services/emergency
+  title: Baptist emergency information
+- id: cloudflare-do-free
+  resource: https://developers.cloudflare.com/changelog/post/2025-04-07-durable-objects-free-tier/
+  title: Cloudflare free-plan Durable Objects
+- id: cloudflare-pricing
+  resource: https://developers.cloudflare.com/workers/platform/pricing/
+  title: Cloudflare Workers pricing and included quotas
+- id: cloudflare-limits
+  resource: https://developers.cloudflare.com/workers/platform/limits/
+  title: Cloudflare Worker limits
+---
+
 # M2 readiness follow-up — 2026-09-23 UTC
 
 M2 remains in progress. Local TomTom connectivity is now validated; real hospital

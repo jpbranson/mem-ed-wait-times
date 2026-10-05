@@ -1,3 +1,24 @@
+---
+type: Validation Report
+title: M2 benefit-rule backtest — 2026-09-26 UTC
+description: 'Result of the pre-registered M2 benefit-rule backtest (2026-09-26 UTC): no candidate rule for calling an alternative meaningfully lower qualified, so preferred-option claims stay disabled.'
+tags: [m2, backtest, recommendations]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-26T00:52:07Z
+sources:
+- id: protocol
+  resource: m2-benefit-protocol.md
+  title: M2 benefit-rule backtest protocol (frozen)
+- id: results
+  resource: m2-benefit-results.json
+  title: Aggregate backtest results
+- id: route-profiles
+  resource: m2-route-profiles-2026-09-26.json
+  title: Route traffic profiles, 2026-09-26
+---
+
 # M2 benefit-rule backtest — 2026-09-26 UTC
 
 Result: **no candidate rule qualifies.** Under the [pre-registered protocol](m2-benefit-protocol.md)

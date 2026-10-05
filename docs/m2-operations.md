@@ -1,3 +1,14 @@
+---
+type: Runbook
+title: 'M2 travel comparison: local operation and release gates'
+description: 'How the M2 travel comparison is prepared and released: TomTom free usage, origin map and privacy contracts, comparison and uncertainty policy, the Cloudflare gateway, and remaining acceptance work.'
+tags: [m2, operations, routing, tomtom, gateway]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-28T01:48:18Z
+---
+
 # M2 travel comparison: local operation and release gates
 
 Updated 2026-09-26 UTC. M2 is implemented as a prototype and remains **in

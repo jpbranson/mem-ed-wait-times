@@ -1,3 +1,21 @@
+---
+type: Validation Report
+title: M3 validation — relationships explorer
+description: Validation of M3's difference-from-usual heatmap (2026-09-23), the offline relationship study that found no confirmed pair association (2026-09-24), and the campus map with replay (2026-09-26).
+tags: [m3, relationships, heatmap, map]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-26T13:06:00Z
+sources:
+- id: protocol
+  resource: m3-relationship-protocol.md
+  title: M3 relationship study protocol (frozen)
+- id: results
+  resource: m3-relationship-results.json
+  title: Aggregate relationship-study results
+---
+
 # M3 validation — relationships explorer
 
 M3 is **in progress**. The first deliverable, a facility-by-time heatmap of

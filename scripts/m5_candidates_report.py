@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from edwait.forecast_models import CANDIDATES, SIMPLE
 from scripts.m5_report import save_svg
+from scripts.okf import write_concept
 
 STUDY = Path("build/m5-study-v2")
 DOCS = Path("docs")
@@ -238,7 +239,7 @@ def main():
               "Hourly origins give at most 168 targets per phase, and seven daily blocks make bootstrap intervals coarse. "
               "Overlapping multi-step errors are dependent. `observed_at` stands in for availability. "
               "Forecasts describe the published reading, not an individual patient's wait.", ""]
-    (DOCS / "m5-candidates-validation.md").write_text("\n".join(lines), encoding="utf-8")
+    write_concept(DOCS / "m5-candidates-validation.md", "\n".join(lines), "process:scripts/m5_candidates_report.py")
     results = {"freeze": {k: freeze[k] for k in ("frozen_at", "spec_sha256", "shortlist", "release_rule")},
                "diagnostics": diagnostics, "development": compact(dev), "development_delay1": compact(dev1),
                "calibration": compact(cal), "holdout": None, "public_release": False}

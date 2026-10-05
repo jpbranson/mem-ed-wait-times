@@ -1,3 +1,21 @@
+---
+type: Correspondence Draft
+title: M2 metric inquiry draft — 2026-09-26 UTC
+description: Unsent draft inquiry to Baptist about what CV_ED_Wait measures; sending it is the user's decision, and any reply is to be recorded here.
+tags: [m2, metric, baptist]
+status: draft
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-26T00:10:32Z
+sources:
+- id: waittimes-endpoint
+  resource: https://sites.bmhcc.org/api/waittimes/waittimes.php
+  title: Baptist wait-time endpoint (one request per facility)
+- id: tipton-2017
+  resource: https://www.baptistonline.org/news/baptist-tipton-makes-er-wait-times-visible-to-patients/
+  title: 2017 Baptist Tipton article
+---
+
 # M2 metric inquiry draft — 2026-09-26 UTC
 
 Status: **draft, not sent.** Sending it is the user's decision; nobody has contacted

@@ -1,3 +1,18 @@
+---
+type: Validation Report
+title: M1 method and validation
+description: How the M1 self-comparison method (self-comparison-v1) was selected and validated by past-only replay on 2026-09-14, with implementation, UI and later display follow-ups.
+tags: [m1, self-comparison, validation]
+status: stable
+generated:
+  by: human:jpbranson
+  at: 2026-09-23T04:28:53Z
+sources:
+- id: replay-evidence
+  resource: m1-replay-evidence.json
+  title: M1 past-only replay evidence
+---
+
 # M1 method and validation
 
 The method and local UI checks below were validated on 2026-09-14, before

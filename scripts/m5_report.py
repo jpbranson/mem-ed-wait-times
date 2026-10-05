@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from edwait.forecast import MODELS, HORIZONS
+from scripts.okf import write_concept
 
 
 def save_svg(figure, path):
@@ -119,7 +120,7 @@ def main():
                   "Ingestion/publication timestamps are unavailable: `observed_at` and a one-slot delay are sensitivity assumptions. "
                   "Per-facility/horizon release decisions remain **disabled** until the full protocol passes. "
                   "No forecast record/storage contract or production deployment changed.", ""])
-    args.output.write_text("\n".join(lines), encoding="utf-8")
+    write_concept(args.output, "\n".join(lines), "process:scripts/m5_report.py")
     (args.output.parent / "m5-study-manifest.json").write_text(json.dumps(manifest, indent=2)+"\n", encoding="utf-8")
     (args.output.parent / "m5-benchmark-results.json").write_text(json.dumps({"development": report, "delayed_availability": delayed}, indent=2)+"\n", encoding="utf-8")
     print(args.output)

@@ -1,3 +1,21 @@
+---
+type: Validation Report
+title: M5 ARIMA development pilot — 2026-09-23 UTC
+description: Development-period pilot of ARIMA(1,0,0) and ARIMA(1,1,0) against simple benchmarks (2026-09-23 UTC); no forecast qualified for release.
+tags: [m5, forecasting, arima]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+sources:
+- id: protocol
+  resource: m5-study-protocol.md
+  title: M5 offline study protocol (frozen, amended)
+- id: results
+  resource: m5-arima-results.json
+  title: Aggregate ARIMA pilot results
+---
+
 # M5 ARIMA development pilot — 2026-09-23 UTC
 
 Status: two nonseasonal candidates evaluated locally; no public forecast qualifies for release. Calibration and final holdout remained unscored at this checkpoint; the [v2 candidate study](m5-candidates-validation.md) later scored calibration (2026-09-24), and the holdout remains unscored.

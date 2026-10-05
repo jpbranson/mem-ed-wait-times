@@ -1,3 +1,24 @@
+---
+type: Validation Report
+title: M5 candidate study (v2) — development and calibration, 2026-09-24 UTC
+description: M5 v2 candidate study scored on development and calibration under a frozen specification (2026-09-24 UTC); the final holdout remains unscored and no public forecast exists.
+tags: [m5, forecasting, calibration]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-24T01:25:34Z
+sources:
+- id: protocol
+  resource: m5-study-protocol.md
+  title: M5 offline study protocol (frozen, amended)
+- id: freeze
+  resource: m5-freeze.json
+  title: Frozen v2 specification, selections and release rule
+- id: results
+  resource: m5-candidates-results.json
+  title: Aggregate candidate-study results
+---
+
 # M5 candidate study (v2) — development and calibration, 2026-09-24 UTC
 
 Status: offline only. Development and calibration scored with a frozen specification; the final holdout remains **unscored**. No public forecast, artifact or schema exists.

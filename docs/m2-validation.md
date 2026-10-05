@@ -1,3 +1,21 @@
+---
+type: Validation Report
+title: M2 local validation — 2026-09-14
+description: Local validation of the M2 travel-comparison prototype from 2026-09-14, the initial OSRM prototype history, and 2026-09-26 traffic-profile and rush-hour measurements, with outstanding release work.
+tags: [m2, routing, validation]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+sources:
+- id: replay-evidence
+  resource: m2-replay-evidence.json
+  title: M2 replay evidence
+- id: traffic-profile
+  resource: m2-traffic-profile-2026-09-26.json
+  title: Traffic profile comparison, 2026-09-26
+---
+
 # M2 local validation — 2026-09-14
 
 Status: **local prototype validated; M2 acceptance remains incomplete**. The

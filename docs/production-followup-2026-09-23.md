@@ -1,3 +1,14 @@
+---
+type: Deployment Record
+title: Production follow-up — 2026-09-23 UTC
+description: 'Dated follow-up to the initial AWS release: the first GitHub-hosted build, schedule mitigation, hourly EventBridge dispatch, and the M2/M3 and M4 releases.'
+tags: [deployment, github-actions, eventbridge, m2, m3, m4]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+---
+
 # Production follow-up — 2026-09-23 UTC
 
 This work began September 22 in America/Chicago. It follows the

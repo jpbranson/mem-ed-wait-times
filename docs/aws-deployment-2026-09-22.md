@@ -1,3 +1,14 @@
+---
+type: Deployment Record
+title: AWS deployment — 2026-09-22
+description: Dated record of the 2026-09-22 (America/Chicago) release of the M0 collector and latest publisher, compactor, M1 dashboard and M2 static interface to AWS us-east-1, with validation evidence and rollback notes.
+tags: [deployment, aws, m0, m1, m2]
+status: stable
+generated:
+  by: human:jpbranson
+  at: 2026-09-23T04:28:53Z
+---
+
 # AWS deployment — 2026-09-22
 
 Deployed on September 22 in America/Chicago (2026-09-23 UTC).

@@ -1,3 +1,14 @@
+---
+type: Data Contract
+title: S3 bucket reference
+description: Layout, record contracts, reading rules and verification history for the data bucket mem-ed-wait-times and the website bucket mem-ed-wait-times-dashboard.
+tags: [s3, storage, data-contract]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T19:27:37Z
+---
+
 # S3 bucket reference
 
 Contract updated: 2026-09-14 for M0 and M1; deployed 2026-09-22 with the M2 static

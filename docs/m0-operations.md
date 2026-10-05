@@ -1,3 +1,14 @@
+---
+type: Runbook
+title: M0 operations and deployment
+description: How to validate, package and roll out the M0 collector and latest-reading publisher, with ownership, required access and operator checks.
+tags: [m0, operations, collector, aws]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T17:51:46Z
+---
+
 # M0 operations and deployment
 
 Implementation date: 2026-09-14. Deployed to production on 2026-09-22; both Lambdas

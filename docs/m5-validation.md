@@ -1,3 +1,24 @@
+---
+type: Validation Report
+title: M5 benchmark checkpoint — 2026-09-23 UTC
+description: 'First M5 checkpoint (2026-09-23 UTC): the frozen 107,257-observation snapshot and simple forecasting benchmarks scored on the development period.'
+tags: [m5, forecasting, benchmarks]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+sources:
+- id: protocol
+  resource: m5-study-protocol.md
+  title: M5 offline study protocol (frozen, amended)
+- id: manifest
+  resource: m5-study-manifest.json
+  title: Frozen snapshot manifest
+- id: results
+  resource: m5-benchmark-results.json
+  title: Benchmark results
+---
+
 # M5 benchmark checkpoint — 2026-09-23 UTC
 
 Status: implemented and locally validated offline; M5 remains in progress. No public forecasts.

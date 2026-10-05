@@ -1,3 +1,14 @@
+---
+type: Runbook
+title: M1 preparation and rollout
+description: Environment setup, build and validation, local preview, artifact ownership and caching, refresh troubleshooting and release checks for the dashboard.
+tags: [m1, operations, dashboard, release]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T18:11:49Z
+---
+
 # M1 preparation and rollout
 
 Implemented and locally validated 2026-09-14; **deployed 2026-09-22** with M0.

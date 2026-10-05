@@ -1,3 +1,14 @@
+---
+type: Validation Report
+title: 'M4 validation: area counts and wait stability'
+description: Local validation of M4's area-wide elevated-wait counts and wait-stability summaries, deployed 2026-09-24, and the work that remains.
+tags: [m4, areas, stability]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-24T04:27:59Z
+---
+
 # M4 validation: area counts and wait stability
 
 Dated 2026-09-24 UTC. The validation below was local. The feature was deployed later

@@ -1,3 +1,42 @@
+---
+type: Data Collector
+title: Regional ER publication collector
+description: 'The separate regional collector deployed 2026-09-27 for Methodist, Saint Francis and Forrest City ERs: sources and measures, record contract, local runs, validation and cost, deployment, and dated research notes.'
+tags: [regional, collector, lambda, operations]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T17:51:46Z
+sources:
+- id: methodist-emergency
+  resource: https://www.methodisthealth.org/articles/emergency-care-information
+  title: Methodist emergency care information
+- id: methodist-on-my-way
+  resource: https://mychart.methodisthealth.org/MyChart/Scheduling/OnMyWay
+  title: Methodist MyChart On My Way
+- id: saint-francis-locations
+  resource: https://www.saintfrancishealthsystem.com/services/emergency-room/emergency-room-locations
+  title: Saint Francis ER locations
+- id: saint-francis-memphis
+  resource: https://southern-checkin.inquicker.com/facility/saint-francis-hospital?service=10
+  title: Saint Francis Memphis check-in
+- id: saint-francis-bartlett
+  resource: https://southern-checkin.inquicker.com/facility/saint-francis-hospital-bartlett?service=10
+  title: Saint Francis Bartlett check-in
+- id: forrest-city-er
+  resource: https://forrestcitymedicalcenter.com/er/
+  title: Forrest City Medical Center ER page
+- id: forrest-city-pledge
+  resource: https://forrestcitymedicalcenter.com/er-30-minute-pledge/
+  title: Forrest City 30-minute initial-assessment pledge
+- id: aws-lambda-pricing
+  resource: https://aws.amazon.com/lambda/pricing/
+  title: AWS Lambda pricing
+- id: aws-s3-pricing
+  resource: https://aws.amazon.com/s3/pricing/
+  title: Amazon S3 pricing
+---
+
 # Regional ER publication collector
 
 Implemented and validated 2026-09-27, and **deployed the same day** as Lambda

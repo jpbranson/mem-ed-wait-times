@@ -1,3 +1,45 @@
+---
+type: Research Record
+title: Memphis-area ERs without published wait information
+description: Official evidence and map locations for eight Memphis-area ERs without published wait information, added as map-only directory records and released 2026-09-27.
+tags: [map, facilities, directory]
+status: stable
+generated:
+  by: claude-code/claude-opus-5-5
+  at: 2026-09-27T19:05:08Z
+sources:
+- id: highland-hills-er
+  resource: https://highlandhillsmc.com/er/
+  title: Highland Hills Medical Center ER page
+- id: highland-hills-home
+  resource: https://highlandhillsmc.com/
+  title: Highland Hills Medical Center home page
+- id: regional-one
+  resource: https://www.regionalonehealth.org/main-campus/regional-medical-center/
+  title: Regional One Health – Regional Medical Center
+- id: regional-one-services
+  resource: https://www.regionalonehealth.org/medicine/
+  title: Regional One Health medical services
+- id: le-bonheur-er
+  resource: https://www.lebonheur.org/your-visit/preparing-for-your-visit/emergency-room/
+  title: Le Bonheur Children's Hospital emergency room
+- id: memphis-va
+  resource: https://www.va.gov/memphis-health-care/locations/lt-col-luke-weathers-jr-va-medical-center/
+  title: Lt. Col. Luke Weathers, Jr. VA Medical Center facility page
+- id: alliance-healthcare
+  resource: https://www.alliancehcs.org/
+  title: Alliance HealthCare System home page
+- id: crossridge
+  resource: https://www.stbernards.info/locations/profile/st-bernards-crossridge-community-hospital/
+  title: St. Bernards CrossRidge Community Hospital location page
+- id: smc-regional
+  resource: https://www.mchsys.org/
+  title: Mississippi County Hospital System (SMC Regional Medical Center)
+- id: lauderdale-community
+  resource: https://www.lauderdalehospital.org/getpage.php?name=Emergency_Services&sub=Services
+  title: Lauderdale Community Hospital emergency services
+---
+
 # Memphis-area ERs without published wait information
 
 Reviewed: 2026-09-27. Published on 2026-09-27 by the 18:17 UTC build

@@ -27,6 +27,10 @@ day once failed dispatches could email the user.
 
 ## Project documentation
 
+`docs/` is an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+v0.2 bundle: each document carries YAML frontmatter (type, description, authorship,
+sources), and [docs/index.md](docs/index.md) lists every document by kind.
+
 - [Development plan and design](docs/development-plan.md): priorities, milestone
   status, self-comparisons, travel-and-wait comparison, relationship exploration,
   time-series/ARIMA modeling, validation criteria, and ongoing progress.
